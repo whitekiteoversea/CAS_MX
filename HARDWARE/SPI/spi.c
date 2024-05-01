@@ -1,6 +1,6 @@
 #include "spi.h"
 #include "sys.h"
-#include "delay.h"
+#include "stm32f4xx_hal.h"
 
 #define	DAC8563_SYNC 		PAout(4) 	//CS信号
 #define	DAC8563_SDIN 		PAout(7) 	//MOSI信号
@@ -39,20 +39,20 @@ void DAC8563_Config(void)
 		u8 rtData = 0;
 		// Power up DAC-A  DAC-B
 		rtData = DAC8563_cmd_Write(4,0,3);
-		delay_ms(50);
+		HAL_Delay(50);
 		
 		// LDAC pin inactive for DAC-B and DAC-A  
 		//两个channel均不使用LDAC引脚更新数据 
 		rtData = DAC8563_cmd_Write(6,0,3);
-		delay_ms(50);
+		HAL_Delay(50);
 
 		// 复位DAC-A到0, 并更新输出为0V 
 		DAC8563_cmd_Write(3, 0, spdDownLimitVol);
-		delay_ms(50);
+		HAL_Delay(50);
 
 		// 使能内部参考并复位2个DAC的增益=2  
 		DAC8563_cmd_Write(7, 0, 1);
-		delay_ms(20);
+		HAL_Delay(20);
 }
 
 //SPI1 读写一个字节

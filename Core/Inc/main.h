@@ -36,7 +36,20 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+// 全局时间记录
+typedef struct 
+{
+  unsigned int l_time_cnt_10us;
+  unsigned int l_time_ms;
+  unsigned int g_time_ms;
+} GLOBALTIME;
+// 全局状态标志
+typedef struct 
+{
+  unsigned char l_time_overflow;  // 本地计时溢出
+  unsigned char l_time_heartbeat; // 本地计时心跳
 
+} GLOBALSTATUS;
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
@@ -75,7 +88,7 @@ void Error_Handler(void);
 #define BK_RS485_RE_GPIO_Port GPIOG
 
 /* USER CODE BEGIN Private defines */
-
+extern GLOBALTIME gtime;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

@@ -23,10 +23,10 @@ typedef struct
 	uint8_t Tailer;
 }FeedBackInfoPack;
 
-extern uint8_t UART4_SendBuf[200];   //·¢ËÍ»º³åÇø
+extern uint8_t UART4_SendBuf[200];   //ï¿½ï¿½ï¿½Í»ï¿½ï¿½ï¿½ï¿½ï¿½
 extern FeedBackInfoPack monitorPack;
 
-#define EN_UART4_RX 0 //Ä¬ÈÏ¹Ø±Õuart4½ÓÊÕÖÐ¶Ï£¬Ö»×öµ¥ÏòÊý¾Ý²É¼¯ 
+#define EN_UART4_RX 0 //Ä¬ï¿½Ï¹Ø±ï¿½uart4ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï£ï¿½Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý²É¼ï¿½ 
 #define RS485_RE PGout(10)	// RS485_RE
 
 void uart_init(u32 pclk2,u32 bound); 

@@ -1,5 +1,5 @@
 #include "key.h"
-#include "delay.h" 
+#include "stm32f4xx_hal.h"
 //////////////////////////////////////////////////////////////////////////////////	 
 //本程序只供学习使用，未经作者许可，不得用于其它任何用途
 //ALIENTEK STM32开发板
@@ -39,7 +39,7 @@ u8 KEY_Scan(u8 mode)
 				key_up=1;  //支持连按		  
 		if(key_up&&(KEY0==0||KEY1==0||KEY2==0||WK_UP==1))
 		{
-				delay_ms(10);//去抖动 
+				HAL_Delay(10);//去抖动 
 				key_up=0;
 				if(KEY0==0)return 1;
 				else if(KEY1==0)

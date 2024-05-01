@@ -64,30 +64,32 @@ UART_HandleTypeDef huart3;
 UART_HandleTypeDef huart6;
 
 /* USER CODE BEGIN PV */
-
+GLOBALTIME gTime;
+GLOBALSTATUS gStatus;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_CAN1_Init(void);
-static void MX_CAN2_Init(void);
-static void MX_I2C1_Init(void);
-static void MX_I2C2_Init(void);
-static void MX_SPI1_Init(void);
-static void MX_SPI2_Init(void);
-static void MX_SPI3_Init(void);
-static void MX_SPI4_Init(void);
-static void MX_SPI5_Init(void);
-static void MX_TIM1_Init(void);
+// static void MX_CAN1_Init(void);
+// static void MX_CAN2_Init(void);
+// static void MX_I2C1_Init(void);
+// static void MX_I2C2_Init(void);
+// static void MX_SPI1_Init(void);
+// static void MX_SPI2_Init(void);
+// static void MX_SPI3_Init(void);
+// static void MX_SPI4_Init(void);
+// static void MX_SPI5_Init(void);
+// static void MX_TIM1_Init(void);
 static void MX_TIM3_Init(void);
-static void MX_TIM5_Init(void);
-static void MX_TIM8_Init(void);
+// static void MX_TIM5_Init(void);
+// static void MX_TIM8_Init(void);
 static void MX_UART4_Init(void);
-static void MX_USART1_UART_Init(void);
-static void MX_USART2_UART_Init(void);
-static void MX_USART3_UART_Init(void);
-static void MX_USART6_UART_Init(void);
+// static void MX_USART1_UART_Init(void);
+// static void MX_USART2_UART_Init(void);
+// static void MX_USART3_UART_Init(void);
+// static void MX_USART6_UART_Init(void);
+static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -135,7 +137,7 @@ int main(void)
   // MX_SPI4_Init();
   // MX_SPI5_Init();
   // MX_TIM1_Init();
-  // MX_TIM3_Init();
+  MX_TIM3_Init();
   // MX_TIM5_Init();
   // MX_TIM8_Init();
   MX_UART4_Init();
@@ -143,7 +145,11 @@ int main(void)
   // MX_USART2_UART_Init();
   // MX_USART3_UART_Init();
   // MX_USART6_UART_Init();
+
+  /* Initialize interrupts */
+  MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
+   HAL_TIM_Base_Start_IT(&htim3);
 
   /* USER CODE END 2 */
 
@@ -154,6 +160,10 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+    if (gStatus.l_time_heartbeat == 1) {
+      printf("%d ms HeartBeat Msg \n\r", gTime.l_time_ms);
+      gStatus.l_time_heartbeat = 0;
+    }
   }
   /* USER CODE END 3 */
 }
@@ -208,6 +218,17 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+}
+
+/**
+  * @brief NVIC Configuration.
+  * @retval None
+  */
+static void MX_NVIC_Init(void)
+{
+  /* TIM3_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(TIM3_IRQn, 1, 0);
+  HAL_NVIC_EnableIRQ(TIM3_IRQn);
 }
 
 /**
@@ -659,15 +680,14 @@ static void MX_TIM3_Init(void)
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
-  TIM_OC_InitTypeDef sConfigOC = {0};
 
   /* USER CODE BEGIN TIM3_Init 1 */
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 0;
+  htim3.Init.Prescaler = 89;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 65535;
+  htim3.Init.Period = 9;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
@@ -679,28 +699,15 @@ static void MX_TIM3_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_TIM_PWM_Init(&htim3) != HAL_OK)
-  {
-    Error_Handler();
-  }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
-  sConfigOC.OCMode = TIM_OCMODE_PWM1;
-  sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_4) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN TIM3_Init 2 */
 
   /* USER CODE END TIM3_Init 2 */
-  HAL_TIM_MspPostInit(&htim3);
 
 }
 
@@ -844,7 +851,7 @@ static void MX_UART4_Init(void)
 
   /* USER CODE END UART4_Init 1 */
   huart4.Instance = UART4;
-  huart4.Init.BaudRate = 115200;
+  huart4.Init.BaudRate = 500000;
   huart4.Init.WordLength = UART_WORDLENGTH_8B;
   huart4.Init.StopBits = UART_STOPBITS_1;
   huart4.Init.Parity = UART_PARITY_NONE;
@@ -1115,6 +1122,33 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // 该函数在 stm32f1xx_hal_tim.c 中定义为弱函数(__weak)，由用户再定义
+{
+  static unsigned int heartbeatChangedMs = 0; // 用于标识是否发生变化
+	 if(htim == &htim3)
+	 {
+      // 1、本地计时 10us
+      if (gTime.l_time_cnt_10us < 360000000 ) { // 60min溢出
+        gTime.l_time_cnt_10us++;
+      } else {
+        gTime.l_time_cnt_10us = 0;
+        gTime.l_time_ms = 0;
+        gStatus.l_time_overflow++;
+      }
+      // 2、心跳 1s
+      if (gTime.l_time_cnt_10us % 100 == 0) {
+        gTime.l_time_ms++;
+      }
+
+      if ((gTime.l_time_ms % 1000 == 0) && (0 != gTime.l_time_ms-heartbeatChangedMs)) {
+        gStatus.l_time_heartbeat = 1;
+        heartbeatChangedMs = gTime.l_time_ms;
+      }
+	 }
+}
+/* USER CODE END 1 */
+
+
 
 /* USER CODE END 4 */
 

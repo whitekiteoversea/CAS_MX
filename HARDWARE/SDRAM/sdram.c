@@ -1,5 +1,5 @@
 #include "sdram.h"
-#include "delay.h"
+#include "stm32f4xx_hal.h"
 
 //升级说明
 //V1.1 20180724
@@ -116,7 +116,7 @@ void SDRAM_Init(void)
 	FMC_Bank5_6->SDTR[0]=sdtimereg;	//设置FMC BANK5 SDRAM时序寄存器 
 
 	SDRAM_Send_Cmd(0,1,0,0);		//时钟配置使能
-	delay_us(500);					//至少延迟200us.
+	HAL_Delay_us(500);					//至少延迟200us.
 	SDRAM_Send_Cmd(0,2,0,0);		//对所有存储区预充电
 	SDRAM_Send_Cmd(0,3,8,0);		//设置自刷新次数 
 	mregval|=1<<0;					//设置突发长度:1(可以是1/2/4/8)

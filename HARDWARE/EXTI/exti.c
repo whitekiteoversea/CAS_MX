@@ -1,5 +1,5 @@
 #include "exti.h"
-#include "delay.h" 
+#include "stm32f4xx_hal.h"
 #include "led.h" 
 #include "key.h" 
 //////////////////////////////////////////////////////////////////////////////////	 
@@ -18,7 +18,7 @@
 //外部中断0服务程序
 void EXTI0_IRQHandler(void)
 {
-	delay_ms(10);	//消抖
+	HAL_Delay(10);	//消抖
 	if(WK_UP==1)	 
 	{
 		LED1=!LED1;
@@ -29,7 +29,7 @@ void EXTI0_IRQHandler(void)
 //外部中断2服务程序
 void EXTI2_IRQHandler(void)
 {
-	delay_ms(10);	//消抖
+	HAL_Delay(10);	//消抖
 	if(KEY1==0)	  
 	{	 
 		LED1=!LED1; 			 
@@ -39,7 +39,7 @@ void EXTI2_IRQHandler(void)
 //外部中断3服务程序
 void EXTI3_IRQHandler(void)
 {
-	delay_ms(10);	//消抖
+	HAL_Delay(10);	//消抖
 	if(KEY0==0)	 
 	{
 		LED0=!LED0;
@@ -50,7 +50,7 @@ void EXTI3_IRQHandler(void)
 //外部中断10~15服务程序
 void EXTI15_10_IRQHandler(void)
 {
-	delay_ms(10);	//消抖
+	HAL_Delay(10);	//消抖
 	if(KEY2==0)	 
 	{		
 		LED0=!LED0;			
