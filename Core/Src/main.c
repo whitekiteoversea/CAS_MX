@@ -21,6 +21,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "st7789_hal_spi.h"
+#include "usart.h"
+#include "sys.h"
+#include "lcd_driver.h"
 
 /* USER CODE END Includes */
 
@@ -77,7 +81,7 @@ static void MX_GPIO_Init(void);
 // static void MX_I2C2_Init(void);
 // static void MX_SPI1_Init(void);
 // static void MX_SPI2_Init(void);
-// static void MX_SPI3_Init(void);
+static void MX_SPI3_Init(void);
 // static void MX_SPI4_Init(void);
 // static void MX_SPI5_Init(void);
 // static void MX_TIM1_Init(void);
@@ -133,7 +137,7 @@ int main(void)
   // MX_I2C2_Init();
   // MX_SPI1_Init();
   // MX_SPI2_Init();
-  // MX_SPI3_Init();
+  MX_SPI3_Init();
   // MX_SPI4_Init();
   // MX_SPI5_Init();
   // MX_TIM1_Init();
@@ -149,8 +153,10 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
-   HAL_TIM_Base_Start_IT(&htim3);
+  HAL_TIM_Base_Start_IT(&htim3);
 
+	LCD_Init();
+	Lcd_Full(RED);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -164,6 +170,10 @@ int main(void)
       printf("%d ms HeartBeat Msg \n\r", gTime.l_time_ms);
       gStatus.l_time_heartbeat = 0;
     }
+		
+		Lcd_Full(GREEN);
+		HAL_Delay(500);
+		Lcd_Full(RED);
   }
   /* USER CODE END 3 */
 }
@@ -1032,10 +1042,10 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|SPI1_CS_Pin|SPI3_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|SPI1_CS_Pin|SPI3_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOH, GPIO_PIN_2, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOH, GPIO_PIN_2, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|SPI2_CS_Pin, GPIO_PIN_RESET);

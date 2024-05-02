@@ -2,6 +2,15 @@
     "files.associations": {
         "main.h": "c",
         "stm32f4xx_hal.h": "c",
-        "timer.h": "c"
+        "timer.h": "c",
+        "system_stm32f4xx.h": "c",
+        "usart.h": "c",
+        "lcd_driver.h": "c",
+        "hal_spi_dma.h": "c",
+        "st7789_hal_spi.h": "c",
+        "stm32f4xx_hal_dma.h": "c",
+        "stm32f4xx_hal_spi.h": "c",
+        "sys.h": "c",
+        "stm32f4xx_hal_conf.h": "c"
     }
 }

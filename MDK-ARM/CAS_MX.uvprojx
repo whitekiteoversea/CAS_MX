@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F429xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../SYSTEM/sys;../SYSTEM/usart;../HARDWARE/LED;../HARDWARE/KEY;../HARDWARE/EXTI;../HARDWARE/WDG;../HARDWARE/TIMER;../HARDWARE/TPAD;../HARDWARE/OLED;../HARDWARE/SDRAM;../HARDWARE/CAN;../HARDWARE/RS485;../HARDWARE/PCF8574;../HARDWARE/24CXX;../HARDWARE/SPI;../HARDWARE/utils;../USER</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../SYSTEM/sys;../SYSTEM/usart;../HARDWARE/LED;../HARDWARE/KEY;../HARDWARE/EXTI;../HARDWARE/WDG;../HARDWARE/TIMER;../HARDWARE/TPAD;../HARDWARE/OLED;../HARDWARE/SDRAM;../HARDWARE/CAN;../HARDWARE/RS485;../HARDWARE/PCF8574;../HARDWARE/24CXX;../HARDWARE/SPI;../HARDWARE/utils;../USER;../HARDWARE/st7789</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -689,6 +689,16 @@
               <FileName>wdg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\WDG\wdg.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd_driver.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\st7789\lcd_driver.c</FilePath>
+            </File>
+            <File>
+              <FileName>st7789_hal_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\st7789\st7789_hal_spi.c</FilePath>
             </File>
           </Files>
         </Group>
