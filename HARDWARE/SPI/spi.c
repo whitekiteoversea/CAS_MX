@@ -1,37 +1,31 @@
 #include "spi.h"
 #include "sys.h"
-#include "stm32f4xx_hal.h"
 
-#define	DAC8563_SYNC 		PAout(4) 	//CSÐÅºÅ
-#define	DAC8563_SDIN 		PAout(7) 	//MOSIÐÅºÅ
-#define	DAC8563_SCLK 		PAout(5) 	//SCLKÐÅºÅ
-#define	DAC8563_LDAC 		PBout(0)  //
-#define	DAC8563_CLR 		PBout(1)  //
-
-/*DAC8653µÄÒ»Ö¡ÓÉÈý²¿·Ö¹¹³É
+/*DAC8653ï¿½ï¿½Ò»Ö¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½
 *  bit23-22 not use
 *  bit21-19 cmd
 *  bit18-16 addr
 *  bit15-0  data
 */
+#if HAL_ENABLE
 
 u8 DAC8563_cmd_Write(u8 cmd, u8 addr, u16 data)
 {
-		u8 sndData[3]={0};
-		u8 i =0;
-		u8 returnData = 0;
-		
-		sndData[0] = (cmd << 3) | addr;
-		sndData[1] = (u8)((data & 0xFF00) >> 8);
-		sndData[2] = (u8)(data & 0x00FF);
-		
-		DAC8563_SYNC = 0; //Æ¬Ñ¡À­µÍ¿ªÊ¼Í¨ÐÅ
-		for(i=0;i<3;i++)
-		{
-				returnData = SPI1_ReadWriteByte(sndData[i]);
-		}
-		DAC8563_SYNC = 1;
-		return returnData;
+	u8 sndData[3]={0};
+	u8 i =0;
+	u8 returnData = 0;
+	
+	sndData[0] = (cmd << 3) | addr;
+	sndData[1] = (u8)((data & 0xFF00) >> 8);
+	sndData[2] = (u8)(data & 0x00FF);
+	
+	DAC8563_SYNC = 0; //Æ¬Ñ¡ï¿½ï¿½ï¿½Í¿ï¿½Ê¼Í¨ï¿½ï¿½
+	for(i=0;i<3;i++)
+	{
+			returnData = SPI1_ReadWriteByte(sndData[i]);
+	}
+	DAC8563_SYNC = 1;
+	return returnData;
 }	
 
 void DAC8563_Config(void)
@@ -42,91 +36,139 @@ void DAC8563_Config(void)
 		HAL_Delay(50);
 		
 		// LDAC pin inactive for DAC-B and DAC-A  
-		//Á½¸öchannel¾ù²»Ê¹ÓÃLDACÒý½Å¸üÐÂÊý¾Ý 
+		//ï¿½ï¿½ï¿½ï¿½channelï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½LDACï¿½ï¿½ï¿½Å¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
 		rtData = DAC8563_cmd_Write(6,0,3);
 		HAL_Delay(50);
 
-		// ¸´Î»DAC-Aµ½0, ²¢¸üÐÂÊä³öÎª0V 
+		// ï¿½ï¿½Î»DAC-Aï¿½ï¿½0, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îª0V 
 		DAC8563_cmd_Write(3, 0, spdDownLimitVol);
 		HAL_Delay(50);
 
-		// Ê¹ÄÜÄÚ²¿²Î¿¼²¢¸´Î»2¸öDACµÄÔöÒæ=2  
+		// Ê¹ï¿½ï¿½ï¿½Ú²ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ï¿½ï¿½Î»2ï¿½ï¿½DACï¿½ï¿½ï¿½ï¿½ï¿½ï¿½=2  
 		DAC8563_cmd_Write(7, 0, 1);
 		HAL_Delay(20);
 }
 
-//SPI1 ¶ÁÐ´Ò»¸ö×Ö½Ú
-//TxData:ÒªÐ´ÈëµÄ×Ö½Ú
-//·µ»ØÖµ:¶ÁÈ¡µ½µÄ×Ö½Ú
+//SPI1 ï¿½ï¿½Ð´Ò»ï¿½ï¿½ï¿½Ö½ï¿½
+//TxData:ÒªÐ´ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
+//ï¿½ï¿½ï¿½ï¿½Öµ:ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Ö½ï¿½
 u8 SPI1_ReadWriteByte(u8 TxData)
 {		 			 
-		while((SPI1->SR&1<<1)==0);		//µÈ´ý·¢ËÍÇø¿Õ 
-		SPI1->DR=TxData;	 	  		//·¢ËÍÒ»¸öbyte  
-		while((SPI1->SR&1<<0)==0);		//µÈ´ý½ÓÊÕÍêÒ»¸öbyte  
-		return SPI1->DR;          		//·µ»ØÊÕµ½µÄÊý¾Ý				    
+	while((SPI1->SR&1<<1)==0);		//ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+	SPI1->DR=TxData;	 	  		//ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½byte  
+	while((SPI1->SR&1<<0)==0);		//ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½byte  
+	return SPI1->DR;          		//ï¿½ï¿½ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½				    
 }
 
-//SPI1ËÙ¶ÈÉèÖÃº¯Êý
+//SPI1ï¿½Ù¶ï¿½ï¿½ï¿½ï¿½Ãºï¿½ï¿½ï¿½
 //SpeedSet:0~7
-//SPIËÙ¶È=fAPB2/2^(SpeedSet+1)
-//fAPB2Ê±ÖÓÒ»°ãÎª90Mhz
+//SPIï¿½Ù¶ï¿½=fAPB2/2^(SpeedSet+1)
+//fAPB2Ê±ï¿½ï¿½Ò»ï¿½ï¿½Îª90Mhz
 void SPI1_SetSpeed(u8 SpeedSet)
 {
-		SpeedSet&=0X07;					//ÏÞÖÆ·¶Î§
-		SPI1->CR1&=0XFFC7; 
-		SPI1->CR1|=SpeedSet<<3;	//ÉèÖÃSPI1ËÙ¶È  
-		SPI1->CR1|=1<<6; 				//SPIÉè±¸Ê¹ÄÜ	  
+	SpeedSet&=0X07;					//ï¿½ï¿½ï¿½Æ·ï¿½Î§
+	SPI1->CR1&=0XFFC7; 
+	SPI1->CR1|=SpeedSet<<3;	//ï¿½ï¿½ï¿½ï¿½SPI1ï¿½Ù¶ï¿½  
+	SPI1->CR1|=1<<6; 				//SPIï¿½è±¸Ê¹ï¿½ï¿½	  
 } 
 
 //CAS DAC
 void SPI1_DAC8563_Init(void)
 {
-		u8 temp;   
-		RCC->AHB1ENR |= 1<<1;    			//Ê¹ÄÜPORTBÊ±ÖÓ 
-		RCC->AHB1ENR |= 1<<0;					//Ê¹ÄÜPORTAÊ±ÖÓ
-		RCC->APB2ENR |= 1<<12;				//Ê¹ÄÜSPI1ÍâÉèÊ±ÖÓ
+	u8 temp;   
+	RCC->AHB1ENR |= 1<<1;    			//Ê¹ï¿½ï¿½PORTBÊ±ï¿½ï¿½ 
+	RCC->AHB1ENR |= 1<<0;					//Ê¹ï¿½ï¿½PORTAÊ±ï¿½ï¿½
+	RCC->APB2ENR |= 1<<12;				//Ê¹ï¿½ï¿½SPI1ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+
+	//GPIOÊ¹ï¿½ï¿½
+	GPIO_Set(GPIOA,PIN5|PIN7,GPIO_MODE_AF,GPIO_OTYPE_PP,GPIO_SPEED_50M,GPIO_PUPD_NONE);	 
+	GPIO_Set(GPIOA,PIN4,GPIO_MODE_OUT,GPIO_OTYPE_PP,GPIO_SPEED_50M,GPIO_PUPD_NONE);
+	GPIO_Set(GPIOB,PIN0|PIN1,GPIO_MODE_OUT,GPIO_OTYPE_PP,GPIO_SPEED_50M,GPIO_PUPD_NONE);	
+
+	//SPI1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½SPI1ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½Ç´ï¿½ï¿½Ä£ï¿½ï¿½Ã¿ï¿½ï¿½Î¿ï¿½ï¿½Ö²á£©
+	//GPIO_AF_Set(GPIOA,4,5);		//PA4,AF5 CS
+	GPIO_AF_Set(GPIOA,5,5);		//PA5,AF5 SCLK
+	GPIO_AF_Set(GPIOA,7,5);		//PA7,AF5 MOSI 
+
+	//GPIOï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½
+	DAC8563_LDAC = 0;   				//ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½Í¨ï¿½ï¿½Í¬ï¿½ï¿½Ä£Ê½
+	DAC8563_CLR = 0;
 	
-		//GPIOÊ¹ÄÜ
-		GPIO_Set(GPIOA,PIN5|PIN7,GPIO_MODE_AF,GPIO_OTYPE_PP,GPIO_SPEED_50M,GPIO_PUPD_NONE);	 
-		GPIO_Set(GPIOA,PIN4,GPIO_MODE_OUT,GPIO_OTYPE_PP,GPIO_SPEED_50M,GPIO_PUPD_NONE);
-		GPIO_Set(GPIOB,PIN0|PIN1,GPIO_MODE_OUT,GPIO_OTYPE_PP,GPIO_SPEED_50M,GPIO_PUPD_NONE);	
-	
-		//SPI1¸´ÓÃÉèÖÃ £¨³ÌÐòÄÚµÄSPI1¸´ÓÃÑ¡ÏîÊÇ´íµÄ£¬µÃ¿´²Î¿¼ÊÖ²á£©
-		//GPIO_AF_Set(GPIOA,4,5);		//PA4,AF5 CS
-		GPIO_AF_Set(GPIOA,5,5);		//PA5,AF5 SCLK
-		GPIO_AF_Set(GPIOA,7,5);		//PA7,AF5 MOSI 
-	
-		//GPIOÀ­µÍ£¬·ÀÖ¹¸ÉÈÅ
-		DAC8563_LDAC = 0;   				//²»ÐèÒªÊä³öÍ¨µÀÍ¬²½Ä£Ê½
-		DAC8563_CLR = 0;
-		
-		//³õÊ¼»¯²¢Æô¶¯SPI1
-		SPI1_DAC_Init();
-		SPI1_SetSpeed(SPI_SPEED_16); //µÍËÙMHz Ê¹ÄÜSPI1
-	
-		//Ð´ÈëDAC8563³õÊ¼ÅäÖÃ
-		DAC8563_Config();
+	//ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½SPI1
+	SPI1_DAC_Init();
+	SPI1_SetSpeed(SPI_SPEED_16); //ï¿½ï¿½ï¿½ï¿½MHz Ê¹ï¿½ï¿½SPI1
+
+	//Ð´ï¿½ï¿½DAC8563ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
+	DAC8563_Config();
 }
 
 void SPI1_DAC_Init(void)
 {
-		u16 tempreg = 0;
-	
-		RCC->APB2RSTR |= 1<<12;				//¸´Î»SPI1
-		RCC->APB2RSTR &= ~(1<<12);		//Í£Ö¹¸´Î»SPI1
+	u16 tempreg = 0;
 
-		tempreg|=0<<10;			//È«Ë«¹¤Ä£Ê½	
-		tempreg|=1<<9;			//Èí¼þnss¹ÜÀí
-		tempreg|=1<<8;			 
-		tempreg|=1<<2;			//SPIÖ÷»ú  
-		tempreg|=0<<11;			//8Î»Êý¾Ý¸ñÊ½	
-		tempreg|=1<<1;			//¿ÕÏÐÄ£Ê½ÏÂSCKÎª1 CPOL=1 
-		tempreg&= ~(1<<0);			//Êý¾Ý²ÉÑù´ÓµÚ1¸öÊ±¼ä±ßÑØ¿ªÊ¼,CPHA=0  
-		//¶ÔSPI1ÊôÓÚAPB2µÄÍâÉè.Ê±ÖÓÆµÂÊ×î´óÎª90MhzÆµÂÊ.
-		tempreg|=7<<3;			//Fsck=Fpclk1/256
-		tempreg|=0<<7;			//MSB First  
-		SPI1->CR1=tempreg; 		//ÉèÖÃCR1 
-				
-		SPI1->I2SCFGR &= ~(1<<11);		//Ñ¡ÔñSPIÄ£Ê½
+	RCC->APB2RSTR |= 1<<12;				//ï¿½ï¿½Î»SPI1
+	RCC->APB2RSTR &= ~(1<<12);		//Í£Ö¹ï¿½ï¿½Î»SPI1
+
+	tempreg|=0<<10;			//È«Ë«ï¿½ï¿½Ä£Ê½	
+	tempreg|=1<<9;			//ï¿½ï¿½ï¿½ï¿½nssï¿½ï¿½ï¿½ï¿½
+	tempreg|=1<<8;			 
+	tempreg|=1<<2;			//SPIï¿½ï¿½ï¿½ï¿½  
+	tempreg|=0<<11;			//8Î»ï¿½ï¿½ï¿½Ý¸ï¿½Ê½	
+	tempreg|=1<<1;			//ï¿½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½SCKÎª1 CPOL=1 
+	tempreg&= ~(1<<0);			//ï¿½ï¿½ï¿½Ý²ï¿½ï¿½ï¿½ï¿½Óµï¿½1ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ø¿ï¿½Ê¼,CPHA=0  
+	//ï¿½ï¿½SPI1ï¿½ï¿½ï¿½ï¿½APB2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.Ê±ï¿½ï¿½Æµï¿½ï¿½ï¿½ï¿½ï¿½Îª90MhzÆµï¿½ï¿½.
+	tempreg|=7<<3;			//Fsck=Fpclk1/256
+	tempreg|=0<<7;			//MSB First  
+	SPI1->CR1=tempreg; 		//ï¿½ï¿½ï¿½ï¿½CR1 
+			
+	SPI1->I2SCFGR &= ~(1<<11);		//Ñ¡ï¿½ï¿½SPIÄ£Ê½
 }
 
+#endif
+
+
+HAL_StatusTypeDef HAL_DAC8563_cmd_Write(u8 cmd, u8 addr, u16 data)
+{
+	u8 sndData[3]={0};
+	u8 i =0;
+	HAL_StatusTypeDef returnData = 0;
+	
+	sndData[0] = (cmd << 3) | addr;
+	sndData[1] = (u8)((data & 0xFF00) >> 8);
+	sndData[2] = (u8)(data & 0x00FF);
+
+	GPIO_SPI_DAC8563_SYNC_RESET; 
+	for(i=0;i<3;i++)
+	{
+		returnData = HAL_SPI_Transmit(&hspi1, &sndData[i], 1, 50);
+	}
+	GPIO_SPI_DAC8563_SYNC_SET;
+	return returnData;
+}	
+
+void HAL_DAC8563_Config(void)
+{
+	u8 rtData = 0;
+	// Power up DAC-A  DAC-B
+	rtData = HAL_DAC8563_cmd_Write(4, 0, 3);
+	HAL_Delay(50);
+	
+	// LDAC pin inactive for DAC-B and DAC-A  
+	//ä¸¤ä¸ªchannelå‡ä¸ä½¿ç”¨LDACå¼•è„šæ›´æ–°æ•°æ®  
+	rtData = HAL_DAC8563_cmd_Write(6,0,3);
+	HAL_Delay(50);
+
+	// å¤ä½DAC-Aåˆ°0, å¹¶æ›´æ–°è¾“å‡ºä¸º0V 
+	HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);
+	HAL_Delay(50);
+
+	// ä½¿èƒ½å†…éƒ¨å‚è€ƒå¹¶å¤ä½2ä¸ªDACçš„å¢žç›Š=2  
+	HAL_DAC8563_cmd_Write(7, 0, 1);
+	HAL_Delay(20);
+}
+
+
+void HAL_SPI1_DAC8563_Init(void)
+{
+	HAL_DAC8563_Config();
+}

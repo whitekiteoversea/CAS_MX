@@ -25,6 +25,7 @@
 #include "usart.h"
 #include "sys.h"
 #include "lcd_driver.h"
+#include "spi.h"
 
 /* USER CODE END Includes */
 
@@ -79,7 +80,7 @@ static void MX_GPIO_Init(void);
 // static void MX_CAN2_Init(void);
 // static void MX_I2C1_Init(void);
 // static void MX_I2C2_Init(void);
-// static void MX_SPI1_Init(void);
+static void MX_SPI1_Init(void);
 // static void MX_SPI2_Init(void);
 static void MX_SPI3_Init(void);
 // static void MX_SPI4_Init(void);
@@ -135,7 +136,7 @@ int main(void)
   // MX_CAN2_Init();
   // MX_I2C1_Init();
   // MX_I2C2_Init();
-  // MX_SPI1_Init();
+  MX_SPI1_Init();
   // MX_SPI2_Init();
   MX_SPI3_Init();
   // MX_SPI4_Init();
@@ -157,6 +158,11 @@ int main(void)
 
 	LCD_Init();
 	Lcd_Full(RED);
+
+  HAL_SPI1_DAC8563_Init();   
+  HAL_Delay(500);
+  HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);   // 给定外部速度初值
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -171,9 +177,6 @@ int main(void)
       gStatus.l_time_heartbeat = 0;
     }
 		
-		Lcd_Full(GREEN);
-		HAL_Delay(500);
-		Lcd_Full(RED);
   }
   /* USER CODE END 3 */
 }
@@ -434,7 +437,8 @@ static void MX_SPI1_Init(void)
   hspi1.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi1.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi1.Init.NSS = SPI_NSS_SOFT;
-  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+  // hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
+  hspi1.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
   hspi1.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi1.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi1.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
