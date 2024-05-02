@@ -36,20 +36,44 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+
+// 全局工作模式
+enum WORKMODE {
+  IDLEMODE = 0,
+  CANMODE,
+  ETHMODE
+};
+
 // 全局时间记录
-typedef struct 
-{
+typedef struct {
   unsigned int l_time_cnt_10us;
   unsigned int l_time_ms;
   unsigned int g_time_ms;
 } GLOBALTIME;
 // 全局状态标志
-typedef struct 
-{
+typedef struct {
   unsigned char l_time_overflow;  // 本地计时溢出
   unsigned char l_time_heartbeat; // 本地计时心跳
-
+  enum WORKMODE workmode;         // 当前工作模式
 } GLOBALSTATUS;
+
+// ETH模式下 UDP参数组
+typedef struct {
+  unsigned char SrcRecvIP[4];
+	unsigned short SrcRecvPort;
+
+  unsigned char DstHostIP[4];
+	unsigned short DstHostPort;
+
+  // unsigned char *DstHostIP[2][4];
+	// unsigned short DstHostPort[2];
+} GLOBAL_ETH_UDP_VAR;
+
+typedef struct {
+  unsigned char NodeID;
+
+} GLOBAL_CAN_VAR;
+
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/

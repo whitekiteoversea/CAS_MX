@@ -1,5 +1,6 @@
 #include "spi.h"
 #include "sys.h"
+#include "usart.h"
 
 /*DAC8653��һ֡�������ֹ���
 *  bit23-22 not use
@@ -131,7 +132,7 @@ HAL_StatusTypeDef HAL_DAC8563_cmd_Write(u8 cmd, u8 addr, u16 data)
 {
 	u8 sndData[3]={0};
 	u8 i =0;
-	HAL_StatusTypeDef returnData = 0;
+	HAL_StatusTypeDef retStatus = 0;
 	
 	sndData[0] = (cmd << 3) | addr;
 	sndData[1] = (u8)((data & 0xFF00) >> 8);
@@ -140,10 +141,10 @@ HAL_StatusTypeDef HAL_DAC8563_cmd_Write(u8 cmd, u8 addr, u16 data)
 	GPIO_SPI_DAC8563_SYNC_RESET; 
 	for(i=0;i<3;i++)
 	{
-		returnData = HAL_SPI_Transmit(&hspi1, &sndData[i], 1, 50);
+		retStatus = HAL_SPI_Transmit(&hspi1, &sndData[i], 1, 50);
 	}
 	GPIO_SPI_DAC8563_SYNC_SET;
-	return returnData;
+	return retStatus;
 }	
 
 void HAL_DAC8563_Config(void)
@@ -167,8 +168,81 @@ void HAL_DAC8563_Config(void)
 	HAL_Delay(20);
 }
 
-
 void HAL_SPI1_DAC8563_Init(void)
 {
 	HAL_DAC8563_Config();
 }
+
+
+/* SPI4 W5500 相关函数*/
+uint8_t HAL_SPI4_WriteAndReadByte(uint8_t TxData)
+{
+	unsigned char retStatus = HAL_OK;
+	unsigned char retData = 0;
+	unsigned int timeToWait_Ms = 50;
+
+	GPIO_SPI_W5500_CS_RESET; 
+	HAL_SPI_TransmitReceive(&hspi4, &TxData, &retData, 1, timeToWait_Ms);
+	GPIO_SPI_W5500_CS_SET; 
+	return retData;
+}
+
+void HAL_SPI4_WriteByte(uint8_t TxData)
+{
+	HAL_StatusTypeDef retStatus = HAL_OK;
+	unsigned int timeToWait_Ms = 50;
+
+	GPIO_SPI_W5500_CS_RESET; 
+	retStatus = HAL_SPI_Transmit(&hspi4, &TxData, 1, timeToWait_Ms);
+	if (retStatus != HAL_OK) {
+		printf(" SPI4 Send Failed! \n\r");
+	}
+	GPIO_SPI_W5500_CS_SET; 
+}
+
+uint8_t HAL_SPI4_ReadByte(void)
+{
+	unsigned char retData = 0xff;
+	unsigned int timeToWait_Ms = 50;
+
+	GPIO_SPI_W5500_CS_RESET; 
+	HAL_SPI_Receive(&hspi4, &retData, 1, timeToWait_Ms);
+	GPIO_SPI_W5500_CS_SET; 
+
+	return retData; 
+}
+
+/**
+  * @brief  进入临界区
+  * @retval None
+  */
+void SPI_CrisEnter(void)
+{
+	__set_PRIMASK(1);
+}
+/**
+  * @brief  退出临界区
+  * @retval None
+  */
+void SPI_CrisExit(void)
+{
+	__set_PRIMASK(0);
+}
+
+/**
+  * @brief  片选信号输出低电平
+  * @retval None
+  */
+void SPI4_CS_Select(void)
+{
+	GPIO_SPI_W5500_CS_RESET;
+}
+/**
+  * @brief  片选信号输出高电平
+  * @retval None
+  */
+void SPI4_CS_Deselect(void)
+{
+	GPIO_SPI_W5500_CS_SET;
+}
+

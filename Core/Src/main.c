@@ -26,6 +26,8 @@
 #include "sys.h"
 #include "lcd_driver.h"
 #include "spi.h"
+#include "socket.h"	
+#include "string.h"
 
 /* USER CODE END Includes */
 
@@ -36,12 +38,13 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define SOCK_TCPS        0
+#define DATA_BUF_SIZE   2048
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+uint8_t gDATABUF[DATA_BUF_SIZE];  // 考虑转移到外部SDRAM，2KByte占了内置SRAM的50%
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -71,6 +74,14 @@ UART_HandleTypeDef huart6;
 /* USER CODE BEGIN PV */
 GLOBALTIME gTime;
 GLOBALSTATUS gStatus;
+GLOBAL_ETH_UDP_VAR w5500_udp_var;
+GLOBAL_CAN_VAR can_var;
+wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
+                            .ip = {192, 168, 1, 1},
+                            .sn = {255,255,255,0},
+                            .gw = {192, 168, 1, 1},
+                            .dns = {8,8,8,8},
+                            .dhcp = NETINFO_STATIC };
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -83,7 +94,7 @@ static void MX_GPIO_Init(void);
 static void MX_SPI1_Init(void);
 // static void MX_SPI2_Init(void);
 static void MX_SPI3_Init(void);
-// static void MX_SPI4_Init(void);
+static void MX_SPI4_Init(void);
 // static void MX_SPI5_Init(void);
 // static void MX_TIM1_Init(void);
 static void MX_TIM3_Init(void);
@@ -96,7 +107,9 @@ static void MX_UART4_Init(void);
 // static void MX_USART6_UART_Init(void);
 static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
-
+void network_register(void);
+void network_init(void);								// Initialize Network information and display it
+void systemParaInit(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -111,7 +124,7 @@ static void MX_NVIC_Init(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	uint8_t ret =0;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -139,7 +152,7 @@ int main(void)
   MX_SPI1_Init();
   // MX_SPI2_Init();
   MX_SPI3_Init();
-  // MX_SPI4_Init();
+  MX_SPI4_Init();
   // MX_SPI5_Init();
   // MX_TIM1_Init();
   MX_TIM3_Init();
@@ -153,12 +166,20 @@ int main(void)
 
   /* Initialize interrupts */
   MX_NVIC_Init();
-  /* USER CODE BEGIN 2 */
+  /* USER CODE BEGIN 2 */	
+	systemParaInit();
+	
+  // 1. local timebase
   HAL_TIM_Base_Start_IT(&htim3);
-
+  // 2. LCD Status Display
 	LCD_Init();
 	Lcd_Full(RED);
 
+  // 3. ETH Initial
+  network_register();
+  network_init();
+
+  // 4. Motor Torque Controller
   HAL_SPI1_DAC8563_Init();   
   HAL_Delay(500);
   HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);   // 给定外部速度初值
@@ -177,7 +198,28 @@ int main(void)
       gStatus.l_time_heartbeat = 0;
     }
 		
-  }
+    switch(getSn_SR(0))																						// 获取socket0的状态
+		{
+			case SOCK_UDP:																							// Socket处于初始化完成(打开)状态
+					HAL_Delay(100); // 时间太长了，需要看看能不能减少
+					if(getSn_IR(0) & Sn_IR_RECV)
+					{
+						setSn_IR(0, Sn_IR_RECV);															// Sn_IR的RECV位置1
+					}
+					// 数据回环测试程序：数据从远程上位机发给W5500，W5500接收到数据后再回给远程上位机
+					if((ret=getSn_RX_RSR(0))>0)
+					{ 
+						memset(gDATABUF,0,ret+1);
+						recvfrom(0,gDATABUF, ret, w5500_udp_var.DstHostIP,&w5500_udp_var.DstHostPort);			// W5500接收来自远程上位机的数据，并通过SPI发送给MCU
+						printf("%s\r\n",gDATABUF);															// 串口打印接收到的数据
+						sendto(0,gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  		// 接收到数据后再回给远程上位机，完成数据回环
+					}
+			break;
+			case SOCK_CLOSED:																						// Socket处于关闭状态
+					socket(0, Sn_MR_UDP, w5500_udp_var.SrcRecvPort, 0x00);												// 打开Socket0，并配置为UDP模式，打开一个本地端口
+			break;
+		}
+	}
   /* USER CODE END 3 */
 }
 
@@ -549,8 +591,8 @@ static void MX_SPI4_Init(void)
   hspi4.Init.Mode = SPI_MODE_MASTER;
   hspi4.Init.Direction = SPI_DIRECTION_2LINES;
   hspi4.Init.DataSize = SPI_DATASIZE_8BIT;
-  hspi4.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi4.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi4.Init.CLKPolarity = SPI_POLARITY_HIGH;
+  hspi4.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi4.Init.NSS = SPI_NSS_SOFT;
   hspi4.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
   hspi4.Init.FirstBit = SPI_FIRSTBIT_MSB;
@@ -1197,3 +1239,77 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
+
+// ETH初始化
+void network_init(void)
+{
+    uint8_t tmpstr[6];
+    ctlnetwork(CN_SET_NETINFO, (void*)&gWIZNETINFO);
+    ctlnetwork(CN_GET_NETINFO, (void*)&gWIZNETINFO);
+
+    // Display Network Information
+    ctlwizchip(CW_GET_ID,(void*)tmpstr);
+    printf("\r\n === %d ms %s NET CONF ===\r\n", gTime.l_time_ms, (char*)tmpstr);
+    printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\r\n",gWIZNETINFO.mac[0],gWIZNETINFO.mac[1],gWIZNETINFO.mac[2],
+        gWIZNETINFO.mac[3],gWIZNETINFO.mac[4],gWIZNETINFO.mac[5]);
+    printf("SIP: %d.%d.%d.%d\r\n", gWIZNETINFO.ip[0],gWIZNETINFO.ip[1],gWIZNETINFO.ip[2],gWIZNETINFO.ip[3]);
+    printf("GAR: %d.%d.%d.%d\r\n", gWIZNETINFO.gw[0],gWIZNETINFO.gw[1],gWIZNETINFO.gw[2],gWIZNETINFO.gw[3]);
+    printf("SUB: %d.%d.%d.%d\r\n", gWIZNETINFO.sn[0],gWIZNETINFO.sn[1],gWIZNETINFO.sn[2],gWIZNETINFO.sn[3]);
+    printf("DNS: %d.%d.%d.%d\r\n", gWIZNETINFO.dns[0],gWIZNETINFO.dns[1],gWIZNETINFO.dns[2],gWIZNETINFO.dns[3]);
+    printf("======================\r\n");
+}
+
+void network_register(void)
+{
+	uint8_t tmp;
+	int16_t ret = 0;
+  uint8_t memsize[2][8] = {{2,2,2,2,2,2,2,2},{2,2,2,2,2,2,2,2}};
+		
+  reg_wizchip_cris_cbfunc(SPI_CrisEnter, SPI_CrisExit);	//注册临界区函数
+  /* Chip selection call back */
+  #if   _WIZCHIP_IO_MODE_ == _WIZCHIP_IO_MODE_SPI_VDM_
+    reg_wizchip_cs_cbfunc(SPI4_CS_Select, SPI4_CS_Deselect);//注册SPI片选信号函数
+  #elif _WIZCHIP_IO_MODE_ == _WIZCHIP_IO_MODE_SPI_FDM_
+    reg_wizchip_cs_cbfunc(SPI_CS_Select, SPI_CS_Deselect);  // CS must be tried with LOW.
+  #else
+    #if (_WIZCHIP_IO_MODE_ & _WIZCHIP_IO_MODE_SIP_) != _WIZCHIP_IO_MODE_SIP_
+        #error "Unknown _WIZCHIP_IO_MODE_"
+    #else
+        reg_wizchip_cs_cbfunc(wizchip_select, wizchip_deselect);
+    #endif
+  #endif
+    /* SPI Read & Write callback function */
+    reg_wizchip_spi_cbfunc(HAL_SPI4_ReadByte, HAL_SPI4_WriteByte);	//注册读写函数
+
+    /* WIZCHIP SOCKET Buffer initialize */
+    if(ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1){
+      printf("%d ms WIZCHIP Initialized fail.\r\n", gTime.l_time_ms);
+      while(1);
+    }
+
+    /* PHY link status check */
+    do{
+      if(ctlwizchip(CW_GET_PHYLINK, (void*)&tmp) == -1){
+          printf("Unknown PHY Link stauts.\r\n");
+      }
+    }while(tmp == PHY_LINK_OFF);
+}
+
+void systemParaInit(void)
+{
+  gStatus.workmode = IDLEMODE; //启动后默认可进行ETH和CAN通信，实际DAC输出前需切换到CAN/ETH单一模式下
+  
+  can_var.NodeID = 0x01; // 上电后从EEPROM读取
+  
+  w5500_udp_var.DstHostIP[0] = 192;
+	w5500_udp_var.DstHostIP[1] = 168;
+	w5500_udp_var.DstHostIP[2] = 1;
+	w5500_udp_var.DstHostIP[3] = 5;
+	w5500_udp_var.DstHostPort = 8888;
+	
+	w5500_udp_var.SrcRecvIP[0] = 192;
+	w5500_udp_var.SrcRecvIP[1] = 168;
+	w5500_udp_var.SrcRecvIP[2] = 1;
+	w5500_udp_var.SrcRecvIP[3] = 11;
+  w5500_udp_var.SrcRecvPort = 8001;
+}
