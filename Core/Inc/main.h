@@ -38,10 +38,16 @@ extern "C" {
 /* USER CODE BEGIN ET */
 
 // 全局工作模式
-enum WORKMODE {
+enum TELMODE {
   IDLEMODE = 0,
   CANMODE,
   ETHMODE
+};
+
+enum WORKMODE {
+		RECVSPEEDMODE = 0,
+		PIPOSIMODE,     
+		PREPOSIMODE
 };
 
 // 全局时间记录
@@ -50,14 +56,17 @@ typedef struct {
   unsigned int l_time_ms;
   unsigned int g_time_ms;
 } GLOBALTIME;
-// 全局状态标志
+// 全局状�?�记�?
 typedef struct {
-  unsigned char l_time_overflow;  // 本地计时溢出
-  unsigned char l_time_heartbeat; // 本地计时心跳
-  enum WORKMODE workmode;         // 当前工作模式
+  volatile unsigned char l_time_overflow;   // 本地计时溢出
+  volatile unsigned char l_time_heartbeat;  // 本地计时心跳
+  enum TELMODE telmode;                   // 当前工作模式
+	enum WORKMODE workmode;                 // Algorithm WorkMode: Speed/Torque/Position
+  volatile unsigned char l_can1_recv_flag; 
+  volatile unsigned char l_can2_recv_flag; 
 } GLOBALSTATUS;
 
-// ETH模式下 UDP参数组
+// ETH模式�?? UDP参数�??
 typedef struct {
   unsigned char SrcRecvIP[4];
 	unsigned short SrcRecvPort;
@@ -68,6 +77,14 @@ typedef struct {
   // unsigned char *DstHostIP[2][4];
 	// unsigned short DstHostPort[2];
 } GLOBAL_ETH_UDP_VAR;
+
+typedef struct {
+	int32_t g_Distance; 	// um
+	int16_t g_Speed; 			// rpm
+	
+	uint32_t g_InitialPosi; //um
+
+} MOTIONVAR;
 
 typedef struct {
   unsigned char NodeID;

@@ -13,6 +13,9 @@
         "sys.h": "c",
         "stm32f4xx_hal_conf.h": "c",
         "socket.h": "c",
-        "spi.h": "c"
+        "spi.h": "c",
+        "can.h": "c",
+        "led.h": "c",
+        "hal_delay.h": "c"
     }
 }

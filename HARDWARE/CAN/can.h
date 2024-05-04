@@ -1,24 +1,40 @@
 #ifndef __CAN_H
 #define __CAN_H	 
 #include "sys.h"	    
+#include "stm32f4xx_hal.h"
 
-//CAN1����RX0�ж�ʹ��
-#define CAN1_RX0_INT_ENABLE			0		 			//0,��ʹ��;1,ʹ��.	
-#define CAN2_RX0_INT_ENABLE			0		 			//0,��ʹ��;1,ʹ��.
+#define REG_CAN_ENABLE             		(0)
 
-#define CAN_BoardCastID 0x3F
+#define CAN1_FILTER_MODE_MASK_ENABLE    (1)
+#define CAN2_FILTER_MODE_MASK_ENABLE    (1)
+                 
+#define PCNODEID                        (0)
 
-// ϵͳͨѶCAN�ڵ���
-#define NetNodeNum 		(3)
+/* CAN Frame Type 0x00-0x1F total 32 Type*/
+
+#define CANSpeedCmd                     (1)
+#define CANSpeedPreCmd                  (2)
+#define CANTimeSyncCmd                  (4)
+#define CANPisiAcquireCmd               (5)
+#define CANTimeSyncErrorCalCmd          (6)
+#define CANLocalPITestCmd               (7)
+
+#define CANDriverInfoAcquire            (10)
+
+
+
+// #define CAN1_RX0_INT_ENABLE			1		 			
+// #define CAN2_RX0_INT_ENABLE			1		 		
+
+// #define CAN_BoardCastID 0x3F
+// #define NetNodeNum 		(3)
 
 #pragma pack(1)															
-//���ϼ��ṹ������
 typedef union
 {
-	//�������λ���ǰ�0-11�͵��߷���ģ������Ҫע������˳�򣬱����������
 	struct 
 	{
-		uint32_t MasterOrSlave : 1; 	//���ӽ�ɫ
+		uint32_t MasterOrSlave : 1; 	//主发1 从回0
 		uint32_t CTRCode : 5; 				
 		uint32_t NodeOrGroupID : 5; 		
 		uint32_t Reserved : 21;        //����
@@ -36,14 +52,20 @@ typedef struct
 
 #define recvBufLen 3000
 
-//��DAC�·�����ָ��ķ���ʱ�䣬�ظ�����ʱ�䣬�·������ٶ�
 typedef struct 
 {
 	uint32_t transTimeStamp;	//
-	uint16_t givenSpeed;  		//�·������ٶ�
+	uint16_t givenSpeed;  		//
 }DACSndStorage;	
 
 #pragma pack()
+
+
+
+
+
+
+#if REG_CAN_ENABLE      
 
 u8 CAN1_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode);//CAN��ʼ��
 u8 CAN1_Tx_Msg(u32 id,u8 ide,u8 rtr,u8 len,u8 *dat);	//��������
@@ -73,6 +95,23 @@ extern uint8_t CAN2_RecData[8];
 extern uint8_t canRecvSyncFlag;
 
 extern u8 canlocalCharacNode; //���ذ��ݵ�CAN�ڵ��ɫ
+
+#endif
+
+uint8_t HAL_CAN_Ext_Transmit(CAN_HandleTypeDef *hcan, const void* buf, uint32_t len, uint32_t Ext_ID);
+
+extern CAN_HandleTypeDef hcan1;
+extern CAN_HandleTypeDef hcan2;
+
+extern CAN_HandleTypeDef hcan1;
+extern CAN_HandleTypeDef hcan2;
+
+extern CAN_ID_Union CAN1RecvFrame;
+extern CAN_ID_Union CAN2RecvFrame;
+extern uint8_t CAN1_RecData[8];
+extern uint8_t CAN2_RecData[8]; 
+
+
 
 #endif
 

@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F429xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../SYSTEM/sys;../SYSTEM/usart;../HARDWARE/LED;../HARDWARE/KEY;../HARDWARE/EXTI;../HARDWARE/WDG;../HARDWARE/TIMER;../HARDWARE/TPAD;../HARDWARE/OLED;../HARDWARE/SDRAM;../HARDWARE/CAN;../HARDWARE/RS485;../HARDWARE/PCF8574;../HARDWARE/24CXX;../HARDWARE/SPI;../HARDWARE/utils;../USER;../HARDWARE/st7789;../HARDWARE/W5500</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../SYSTEM/sys;../SYSTEM/usart;../HARDWARE/LED;../HARDWARE/KEY;../HARDWARE/EXTI;../HARDWARE/WDG;../HARDWARE/TIMER;../HARDWARE/TPAD;../HARDWARE/OLED;../HARDWARE/SDRAM;../HARDWARE/CAN;../HARDWARE/RS485;../HARDWARE/PCF8574;../HARDWARE/24CXX;../HARDWARE/SPI;../HARDWARE/utils;../USER;../HARDWARE/st7789;../HARDWARE/W5500;../SYSTEM/hal_delay</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -780,6 +780,11 @@
               <FileName>usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\SYSTEM\usart\usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>hal_delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SYSTEM\hal_delay\hal_delay.c</FilePath>
             </File>
           </Files>
         </Group>
