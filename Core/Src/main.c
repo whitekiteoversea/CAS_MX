@@ -110,6 +110,7 @@ static void MX_NVIC_Init(void);
 void network_register(void);
 void network_init(void);								// Initialize Network information and display it
 void systemParaInit(void);
+void HAL_Delay_us(uint32_t nus);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -172,16 +173,16 @@ int main(void)
   // 1. local timebase
   HAL_TIM_Base_Start_IT(&htim3);
   // 2. LCD Status Display
-	LCD_Init();
-	Lcd_Full(RED);
+	// LCD_Init();
+	// Lcd_Full(RED);
 
   // 3. ETH Initial
-  network_register();
-  network_init();
+  // network_register();
+  // network_init();
 
   // 4. Motor Torque Controller
   // HAL_SPI1_DAC8563_Init();   
-  // HAL_Delay(500);
+  HAL_Delay(500);
   // HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);   // 给定外部速度初值
 
   /* USER CODE END 2 */
@@ -197,7 +198,7 @@ int main(void)
       printf("%d ms HeartBeat Msg \n\r", gTime.l_time_ms);
       gStatus.l_time_heartbeat = 0;
     }
-		
+		/*
     switch (getSn_SR(0))																					    // 获取socket0的状态
 		{
 			case SOCK_UDP:																							    // Socket处于初始化完成(打开)状态
@@ -219,6 +220,7 @@ int main(void)
 					socket(0, Sn_MR_UDP, w5500_udp_var.SrcRecvPort, 0x00);			// 打开Socket0，并配置为UDP模式，打开一个本地端口
 			break;
 		}
+    */
 	}
   /* USER CODE END 3 */
 }
@@ -1205,43 +1207,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // 该函数在 stm3
       }
 	 }
 }
-/* USER CODE END 1 */
-
-
-
-/* USER CODE END 4 */
-
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
-void Error_Handler(void)
-{
-  /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1)
-  {
-  }
-  /* USER CODE END Error_Handler_Debug */
-}
-
-#ifdef  USE_FULL_ASSERT
-/**
-  * @brief  Reports the name of the source file and the source line number
-  *         where the assert_param error has occurred.
-  * @param  file: pointer to the source file name
-  * @param  line: assert_param error line source number
-  * @retval None
-  */
-void assert_failed(uint8_t *file, uint32_t line)
-{
-  /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
-}
-#endif /* USE_FULL_ASSERT */
 
 // ETH初始化
 void network_init(void)
@@ -1316,3 +1281,52 @@ void systemParaInit(void)
 	w5500_udp_var.SrcRecvIP[3] = 11;
   w5500_udp_var.SrcRecvPort = 8001;
 }
+
+// 毫秒延时
+void HAL_Delay_us(uint32_t nus)
+{
+	//设置定时1us中断一次
+	HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000000);
+    //调用系统自带的延时函数
+	HAL_Delay(nus - 1);
+    //将定时中断恢复为1ms中断
+	HAL_SYSTICK_Config(HAL_RCC_GetHCLKFreq()/1000);
+}
+
+/* USER CODE END 1 */
+
+
+
+/* USER CODE END 4 */
+
+/**
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
+void Error_Handler(void)
+{
+  /* USER CODE BEGIN Error_Handler_Debug */
+  /* User can add his own implementation to report the HAL error return state */
+  __disable_irq();
+  while (1)
+  {
+  }
+  /* USER CODE END Error_Handler_Debug */
+}
+
+#ifdef  USE_FULL_ASSERT
+/**
+  * @brief  Reports the name of the source file and the source line number
+  *         where the assert_param error has occurred.
+  * @param  file: pointer to the source file name
+  * @param  line: assert_param error line source number
+  * @retval None
+  */
+void assert_failed(uint8_t *file, uint32_t line)
+{
+  /* USER CODE BEGIN 6 */
+  /* User can add his own implementation to report the file name and line number,
+     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  /* USER CODE END 6 */
+}
+#endif /* USE_FULL_ASSERT */
