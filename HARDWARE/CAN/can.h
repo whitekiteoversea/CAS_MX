@@ -2,26 +2,26 @@
 #define __CAN_H	 
 #include "sys.h"	    
 
-//CAN1½ÓÊÕRX0ÖÐ¶ÏÊ¹ÄÜ
-#define CAN1_RX0_INT_ENABLE			0		 			//0,²»Ê¹ÄÜ;1,Ê¹ÄÜ.	
-#define CAN2_RX0_INT_ENABLE			0		 			//0,²»Ê¹ÄÜ;1,Ê¹ÄÜ.
+//CAN1ï¿½ï¿½ï¿½ï¿½RX0ï¿½Ð¶ï¿½Ê¹ï¿½ï¿½
+#define CAN1_RX0_INT_ENABLE			0		 			//0,ï¿½ï¿½Ê¹ï¿½ï¿½;1,Ê¹ï¿½ï¿½.	
+#define CAN2_RX0_INT_ENABLE			0		 			//0,ï¿½ï¿½Ê¹ï¿½ï¿½;1,Ê¹ï¿½ï¿½.
 
 #define CAN_BoardCastID 0x3F
 
-// ÏµÍ³Í¨Ñ¶CAN½ÚµãÊý
+// ÏµÍ³Í¨Ñ¶CANï¿½Úµï¿½ï¿½ï¿½
 #define NetNodeNum 		(3)
 
 #pragma pack(1)															
-//ÁªºÏ¼°½á¹¹ÌåÉùÃ÷
+//ï¿½ï¿½ï¿½Ï¼ï¿½ï¿½á¹¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 typedef union
 {
-	//ÕâÀï·ÖÅäÎ»ÊýÊÇ°´0-11µÍµ½¸ß·ÖÅäµÄ£¬Òò´ËÐèÒª×¢ÒâÉùÃ÷Ë³Ðò£¬±ÜÃâ½âÎö´íÎó
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½Ç°ï¿½0-11ï¿½Íµï¿½ï¿½ß·ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òª×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½ò£¬±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	struct 
 	{
-		uint32_t MasterOrSlave : 1; 	//Ö÷´Ó½ÇÉ«
+		uint32_t MasterOrSlave : 1; 	//ï¿½ï¿½ï¿½Ó½ï¿½É«
 		uint32_t CTRCode : 5; 				
 		uint32_t NodeOrGroupID : 5; 		
-		uint32_t Reserved : 21;        //±£Áô
+		uint32_t Reserved : 21;        //ï¿½ï¿½ï¿½ï¿½
 	}CAN_Frame_Union;
 	
 	uint32_t Value;
@@ -36,22 +36,22 @@ typedef struct
 
 #define recvBufLen 3000
 
-//´æDACÏÂ·¢¿ØÖÆÖ¸ÁîµÄ·¢ËÍÊ±¼ä£¬»Ø¸´µ½´ïÊ±¼ä£¬ÏÂ·¢¸ø¶¨ËÙ¶È
+//ï¿½ï¿½DACï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½Ä·ï¿½ï¿½ï¿½Ê±ï¿½ä£¬ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ä£¬ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
 typedef struct 
 {
 	uint32_t transTimeStamp;	//
-	uint16_t givenSpeed;  		//ÏÂ·¢¸ø¶¨ËÙ¶È
+	uint16_t givenSpeed;  		//ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½
 }DACSndStorage;	
 
 #pragma pack()
 
-u8 CAN1_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode);//CAN³õÊ¼»¯
-u8 CAN1_Tx_Msg(u32 id,u8 ide,u8 rtr,u8 len,u8 *dat);	//·¢ËÍÊý¾Ý
-u8 CAN1_Msg_Pend(u8 fifox);								//²éÑ¯ÓÊÏä±¨ÎÄ
-void CAN1_Rx_Msg(u8 fifox,u32 *id,u8 *ide,u8 *rtr,u8 *len,u8 *dat);//½ÓÊÕÊý¾Ý
-u8 CAN1_Tx_Staus(u8 mbox);  							//·µ»Ø·¢ËÍ×´Ì¬
-u8 CAN1_Send_Msg(u8* msg,u8 len);						//·¢ËÍÊý¾Ý
-u8 CAN1_Receive_Msg(u8 *buf);							//½ÓÊÕÊý¾Ý
+u8 CAN1_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode);//CANï¿½ï¿½Ê¼ï¿½ï¿½
+u8 CAN1_Tx_Msg(u32 id,u8 ide,u8 rtr,u8 len,u8 *dat);	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+u8 CAN1_Msg_Pend(u8 fifox);								//ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ä±¨ï¿½ï¿½
+void CAN1_Rx_Msg(u8 fifox,u32 *id,u8 *ide,u8 *rtr,u8 *len,u8 *dat);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+u8 CAN1_Tx_Staus(u8 mbox);  							//ï¿½ï¿½ï¿½Ø·ï¿½ï¿½ï¿½×´Ì¬
+u8 CAN1_Send_Msg(u8* msg,u8 len);						//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+u8 CAN1_Receive_Msg(u8 *buf);							//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 u8 canSendMsg(CAN_ID_Union canSendFrameID, u8* msg,u8 len);
 
 u8 CAN2_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode);
@@ -59,7 +59,7 @@ void CAN2_Rx_Msg(u8 fifox,u32 *id,u8 *ide,u8 *rtr,u8 *len,u8 *dat);
 u8 CAN2_Tx_Msg(u32 id,u8 ide,u8 rtr,u8 len,u8 *dat);
 u8 CAN2_Tx_Staus(u8 mbox);
 u8 can2SendMsg(CAN_ID_Union canSendFrameID, u8* msg,u8 len);
-u8 CAN2_Receive_Msg(u8 *buf);							//½ÓÊÕÊý¾Ý
+u8 CAN2_Receive_Msg(u8 *buf);							//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 u8 CAN2_Msg_Pend(u8 fifox);
 
 extern uint8_t can1RecvFlag;
@@ -72,7 +72,7 @@ extern uint8_t CAN2_RecData[8];
 
 extern uint8_t canRecvSyncFlag;
 
-extern u8 canlocalCharacNode; //±¾µØ°çÑÝµÄCAN½Úµã½ÇÉ«
+extern u8 canlocalCharacNode; //ï¿½ï¿½ï¿½Ø°ï¿½ï¿½Ýµï¿½CANï¿½Úµï¿½ï¿½É«
 
 #endif
 

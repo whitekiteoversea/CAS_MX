@@ -192,12 +192,12 @@ void HAL_SPI4_WriteByte(uint8_t TxData)
 	HAL_StatusTypeDef retStatus = HAL_OK;
 	unsigned int timeToWait_Ms = 50;
 
-	GPIO_SPI_W5500_CS_RESET; 
+	// GPIO_SPI_W5500_CS_RESET; 
 	retStatus = HAL_SPI_Transmit(&hspi4, &TxData, 1, timeToWait_Ms);
 	if (retStatus != HAL_OK) {
 		printf(" SPI4 Send Failed! \n\r");
 	}
-	GPIO_SPI_W5500_CS_SET; 
+	// GPIO_SPI_W5500_CS_SET; 
 }
 
 uint8_t HAL_SPI4_ReadByte(void)
@@ -205,9 +205,9 @@ uint8_t HAL_SPI4_ReadByte(void)
 	unsigned char retData = 0xff;
 	unsigned int timeToWait_Ms = 50;
 
-	GPIO_SPI_W5500_CS_RESET; 
+	// GPIO_SPI_W5500_CS_RESET; 
 	HAL_SPI_Receive(&hspi4, &retData, 1, timeToWait_Ms);
-	GPIO_SPI_W5500_CS_SET; 
+	// GPIO_SPI_W5500_CS_SET; 
 
 	return retData; 
 }

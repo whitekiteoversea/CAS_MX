@@ -77,7 +77,7 @@ GLOBALSTATUS gStatus;
 GLOBAL_ETH_UDP_VAR w5500_udp_var;
 GLOBAL_CAN_VAR can_var;
 wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
-                            .ip = {192, 168, 1, 1},
+                            .ip = {192, 168, 1, 11},
                             .sn = {255,255,255,0},
                             .gw = {192, 168, 1, 1},
                             .dns = {8,8,8,8},
@@ -180,9 +180,9 @@ int main(void)
   network_init();
 
   // 4. Motor Torque Controller
-  HAL_SPI1_DAC8563_Init();   
-  HAL_Delay(500);
-  HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);   // 给定外部速度初值
+  // HAL_SPI1_DAC8563_Init();   
+  // HAL_Delay(500);
+  // HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);   // 给定外部速度初值
 
   /* USER CODE END 2 */
 
@@ -198,25 +198,25 @@ int main(void)
       gStatus.l_time_heartbeat = 0;
     }
 		
-    switch(getSn_SR(0))																						// 获取socket0的状态
+    switch (getSn_SR(0))																					    // 获取socket0的状态
 		{
-			case SOCK_UDP:																							// Socket处于初始化完成(打开)状态
+			case SOCK_UDP:																							    // Socket处于初始化完成(打开)状态
 					HAL_Delay(100); // 时间太长了，需要看看能不能减少
 					if(getSn_IR(0) & Sn_IR_RECV)
 					{
-						setSn_IR(0, Sn_IR_RECV);															// Sn_IR的RECV位置1
+						setSn_IR(0, Sn_IR_RECV);															    // Sn_IR的RECV位置1
 					}
 					// 数据回环测试程序：数据从远程上位机发给W5500，W5500接收到数据后再回给远程上位机
-					if((ret=getSn_RX_RSR(0))>0)
+					if((ret = getSn_RX_RSR(0)) > 0)
 					{ 
-						memset(gDATABUF,0,ret+1);
-						recvfrom(0,gDATABUF, ret, w5500_udp_var.DstHostIP,&w5500_udp_var.DstHostPort);			// W5500接收来自远程上位机的数据，并通过SPI发送给MCU
-						printf("%s\r\n",gDATABUF);															// 串口打印接收到的数据
-						sendto(0,gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  		// 接收到数据后再回给远程上位机，完成数据回环
+						memset(gDATABUF, 0, ret+1);
+						recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &w5500_udp_var.DstHostPort);			// W5500接收来自远程上位机的数据，并通过SPI发送给MCU
+						printf(" %d ms %s\r\n", gTime.l_time_ms, gDATABUF);															  // 串口打印接收到的数据
+						sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  		// 接收到数据后再回给远程上位机，完成数据回环
 					}
 			break;
-			case SOCK_CLOSED:																						// Socket处于关闭状态
-					socket(0, Sn_MR_UDP, w5500_udp_var.SrcRecvPort, 0x00);												// 打开Socket0，并配置为UDP模式，打开一个本地端口
+			case SOCK_CLOSED:																						    // Socket处于关闭状态
+					socket(0, Sn_MR_UDP, w5500_udp_var.SrcRecvPort, 0x00);			// 打开Socket0，并配置为UDP模式，打开一个本地端口
 			break;
 		}
 	}
@@ -595,6 +595,7 @@ static void MX_SPI4_Init(void)
   hspi4.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi4.Init.NSS = SPI_NSS_SOFT;
   hspi4.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+	//hspi4.Init.BaudRatePrescaler =SPI_BAUDRATEPRESCALER_256; // 90MHz/64 =  1.4MKbps
   hspi4.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi4.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi4.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -1174,6 +1175,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(BK_RS485_RE_GPIO_Port, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
+	HAL_GPIO_WritePin(GPIOE, SPI4_CS_Pin, GPIO_PIN_SET); // SPI CS默认不使能
+
 /* USER CODE END MX_GPIO_Init_2 */
 }
 
