@@ -41,6 +41,9 @@
 /* USER CODE BEGIN PD */
 #define SOCK_TCPS        0
 #define DATA_BUF_SIZE   2048
+
+#define CAN2_SENDTEST_ON (0)
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -85,7 +88,7 @@ wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
                             .dns = {8,8,8,8},
                             .dhcp = NETINFO_STATIC };
 
-uint8_t flagStatus = 0; 					// �����λ���ڱ�ʶ���յ���Ӧ�ڵ������														
+uint8_t flagStatus = 0; 					// �����λ���ڱ�ʶ���յ���Ӧ�ڵ������?														
 int32_t avgPosiErr[2] = {0}; 			// ƽ��ͬ������ȡ
 /* USER CODE END PV */
 
@@ -111,7 +114,6 @@ static void MX_USART2_UART_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_USART6_UART_Init(void);
 static void MX_NVIC_Init(void);
-
 /* USER CODE BEGIN PFP */
 void network_register(void);
 void network_init(void);								// Initialize Network information and display it
@@ -138,6 +140,10 @@ int main(void)
 	uint8_t ret =0;
 	uint8_t snddata[8] = {0};
 	CAN_ID_Union ext_ID;
+  unsigned int sensorData = 0;
+  uint8_t cnt = 0;
+	
+	uint8_t prx = 0;
 
   /* USER CODE END 1 */
 
@@ -193,14 +199,27 @@ int main(void)
   // network_register();
   // network_init();
 
-  // 4. Motor Torque Controller
+  // 4. BISS-C Sensor Data Acquire
+	HAL_Delay(500);
+  
+	
+	mb4_read_status(&prx, 1);
+	printf("prx is %d\n\r", prx);
+	
+	
+	//HAL_BISSC_Setup();
+
+  // 5. Motor Torque Controller
   // HAL_SPI1_DAC8563_Init();   
   // HAL_Delay(500);
   // HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);   // �����ⲿ�ٶȳ�???
 
+#if CAN2_SENDTEST_ON
 	ext_ID.CAN_Frame_Union.CTRCode = CANTimeSyncCmd; // position acquire pack type
 	ext_ID.CAN_Frame_Union.MasterOrSlave = 0x00; // reply pack slave
 	ext_ID.CAN_Frame_Union.NodeOrGroupID = PCNODEID;  // Send to PC Node
+
+#endif
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -215,6 +234,19 @@ int main(void)
       gStatus.l_time_heartbeat = 0;
     }
 
+    // 1000ms Acquire BISS-C TEST
+//    if (gStatus.l_bissc_sensor_acquire == 1) {
+//      HAL_SG_SenSorAcquire(motionStatus.g_posi);
+//			sensorData = 0;
+//      for (cnt=0; cnt<5; cnt++) {
+//        sensorData |= motionStatus.g_posi[cnt];
+//        sensorData <<= 8;
+//      }
+//      printf("%d ms Posi is %d unit \n\r", gTime.l_time_ms, sensorData);
+//      gStatus.l_bissc_sensor_acquire = 0;
+//    }
+
+
     if (gStatus.l_can1_recv_flag == 1) {
         CANRecvMsgDeal(&hcan1, CAN1RecvFrame.CAN_Frame_Union.CTRCode);
 			  gStatus.l_can1_recv_flag = 0;
@@ -224,10 +256,13 @@ int main(void)
         CANRecvMsgDeal(&hcan2, CAN2RecvFrame.CAN_Frame_Union.CTRCode);
 			  gStatus.l_can2_recv_flag = 0;
     }  
-		
+
+
+
+#if CAN2_SENDTEST_ON
 		HAL_CAN_Ext_Transmit(&hcan2, (void *)snddata, 4, ext_ID.Value);
 		HAL_Delay(500);
-		
+#endif
 		/*
     switch (getSn_SR(0))																					    // ��ȡsocket0��״???
 		{
@@ -243,7 +278,7 @@ int main(void)
 						memset(gDATABUF, 0, ret+1);
 						recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &w5500_udp_var.DstHostPort);			// W5500��������Զ����λ�������ݣ���ͨ��SPI��???��MCU
 						printf(" %d ms %s\r\n", gTime.l_time_ms, gDATABUF);															  // ���ڴ�ӡ���յ�������
-						sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  		// ���յ����ݺ��ٻظ�Զ����λ����������ݻ�???
+						sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  		// ���յ����ݺ��ٻظ�Զ����λ����������ݻ�????
 					}
 			break;
 			case SOCK_CLOSED:																						    // Socket���ڹر�״???
@@ -314,13 +349,13 @@ void SystemClock_Config(void)
 static void MX_NVIC_Init(void)
 {
   /* CAN1_RX0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 1, 1);
+  HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
   /* CAN2_RX0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(CAN2_RX0_IRQn, 1, 2);
+  HAL_NVIC_SetPriority(CAN2_RX0_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
   /* TIM3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(TIM3_IRQn, 2, 3);
+  HAL_NVIC_SetPriority(TIM3_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(TIM3_IRQn);
 }
 
@@ -590,6 +625,7 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CRCPolynomial = 10;
   if (HAL_SPI_Init(&hspi2) != HAL_OK)
   {
+    printf("%d ms SPI2 Init Failed! \n\r", gTime.l_time_ms);
     Error_Handler();
   }
   /* USER CODE BEGIN SPI2_Init 2 */
@@ -1162,8 +1198,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|SPI2_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5
-                          |GPIO_PIN_6, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1|GETSENS_Pin|NER_Pin|NWR_E_Pin
+                          |NRD_RNW_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(BK_RS485_RE_GPIO_Port, BK_RS485_RE_Pin, GPIO_PIN_RESET);
@@ -1175,8 +1211,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PI11 PI2 */
-  GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_2;
+  /*Configure GPIO pins : PI11 EOT_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_11|EOT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOI, &GPIO_InitStruct);
@@ -1222,10 +1258,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(Magnet_RS485_RE_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PI1 PI3 PI4 PI5
-                           PI6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_3|GPIO_PIN_4|GPIO_PIN_5
-                          |GPIO_PIN_6;
+  /*Configure GPIO pins : PI1 GETSENS_Pin NER_Pin NWR_E_Pin
+                           NRD_RNW_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_1|GETSENS_Pin|NER_Pin|NWR_E_Pin
+                          |NRD_RNW_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -1240,6 +1276,9 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 	HAL_GPIO_WritePin(GPIOE, SPI4_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
+  HAL_GPIO_WritePin(GPIOB, SPI2_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
+  HAL_GPIO_WritePin(GPIOF, SPI5_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
+  HAL_GPIO_WritePin(GPIOA, SPI1_CS_Pin|SPI3_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
 
 /* USER CODE END MX_GPIO_Init_2 */
 }
@@ -1251,7 +1290,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // weak �ú���
 	 if(htim == &htim3)
 	 {
       // 1�����ؼ�??? 10us
-      if (gTime.l_time_cnt_10us < 360000000 ) { // 60min���
+      if (gTime.l_time_cnt_10us < 360000000 ) { // 60min���?
         gTime.l_time_cnt_10us++;
       } else {
         gTime.l_time_cnt_10us = 0;
@@ -1266,6 +1305,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // weak �ú���
       if ((gTime.l_time_ms % 1000 == 0) && (0 != gTime.l_time_ms-heartbeatChangedMs)) {
         gStatus.l_time_heartbeat = 1;
         heartbeatChangedMs = gTime.l_time_ms;
+				
+				gStatus.l_bissc_sensor_acquire = 1;
       }
 	 }
 }
@@ -1347,7 +1388,7 @@ void network_register(void)
     #endif
   #endif
     /* SPI Read & Write callback function */
-    reg_wizchip_spi_cbfunc(HAL_SPI4_ReadByte, HAL_SPI4_WriteByte);	//ע���д����
+    reg_wizchip_spi_cbfunc(HAL_SPI4_ReadByte, HAL_SPI4_WriteByte);	//ע���д����?
 
     /* WIZCHIP SOCKET Buffer initialize */
     if(ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1){
@@ -1366,7 +1407,7 @@ void network_register(void)
 void systemParaInit(void)
 {
   gStatus.telmode = IDLEMODE; //������Ĭ�Ͽɽ���ETH��CANͨ�ţ�ʵ��DAC���ǰ���л���CAN/ETH��һģʽ???
-  gStatus.workmode = RECVSPEEDMODE; // ����ģʽ�������������������������
+  gStatus.workmode = RECVSPEEDMODE; // ����ģʽ�������������������������?
 	
 	motionStatus.g_Distance = 0; // �ϵ���eeprom��ȡ
 	motionStatus.g_Speed = 0;
@@ -1399,7 +1440,7 @@ int32_t avgErrCollect(uint8_t node, int32_t sampleData)
 	}
 	avgPosiErr[node] = sampleData;
 
-	//��3λ����3���ڵ��Լ�����Ϣ�ռ����
+	//��3λ����3���ڵ��Լ�����Ϣ�ռ����?
 	flagStatus |= (0x01 << (node-1));
 
 	return duss_result;
@@ -1455,7 +1496,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
           }
         break;
         
-        //�ٶ�Ԥ�����
+        //�ٶ�Ԥ�����?
         case CANSpeedPreCmd:
           curGivenSpeed = CAN1_RecData[5];
           curGivenSpeed <<= 8;
@@ -1468,7 +1509,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
               //��Hex�ֽ��·������ٶ�ֵ��-1800rpm��1800rpm���ֱ���1rpm��ת��Ϊ��Ӧ��ѹDAC�ź� ��10V
               // 16384 - 10V -1800rpm
           
-              //DAC��� 2022.05.27
+              //DAC���? 2022.05.27
               HAL_DAC8563_cmd_Write(3, 0, tempGivenVol);
               printf("UTC: %d ms CAS: %d, update Speed :%d rpm, t\n\r",  gTime.g_time_ms,
                                                                         gTime.l_time_ms,
@@ -1496,7 +1537,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
       
         //SEC λ�Ʋ�ѯ
         case CANPisiAcquireCmd:
-            //֡�� + ʱ������ٶ��޻�·ʱ�ӣ�
+            //֡�� + ʱ������ٶ��޻�·ʱ�ӣ�?
             memcpy(snddata, CAN1_RecData, 8);
             //������ڻ�·ʱ�ӣ��򽫱��ظ���ʱ�������;��������ڣ�������λ������ʱ�����ȡ
             
@@ -1513,7 +1554,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
             printf("UTC:%d ms CAS: %d CurPosi is %d \n\r", gTime.g_time_ms, gTime.l_time_ms, motionStatus.g_Distance);
         break;
 
-        // SEC ƽ��ͬ�����ʵʱ����: ʱ���+ƽ����� (�������ڵ�ᷢ����λ���ڵ㲻�·�)
+        // SEC ƽ��ͬ�����ʵʱ����?: ʱ���?+ƽ�����? (�������ڵ�ᷢ����λ���ڵ㲻�·�?)
         case CANTimeSyncErrorCalCmd: 
             tempRecvPosi = CAN1_RecData[5];
             tempRecvPosi <<= 8;
@@ -1524,13 +1565,13 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
                 tempPosiErr = avgErrUpdate(avgPosiErr);
                 flagStatus = 0;	
 
-              // 1�Žڵ����ϸ���ƽ��ͬ�����
+              // 1�Žڵ����ϸ���ƽ��ͬ�����?
               if (can_var.NodeID == 0x01) {
-                  // ʱ���(ȫ��ʱ���ͬ����ֵ)
+                  // ʱ���?(ȫ��ʱ���ͬ�����?)
                   snddata[2] = 0;
                   snddata[3] = 0;
                   snddata[4] = 0;
-                  // ƽ��ͬ�����
+                  // ƽ��ͬ�����?
                   snddata[5] = (tempPosiErr & 0x00FF0000) >> 16;
                   snddata[6] = (tempPosiErr & 0x0000FF00) >> 8;
                   snddata[7] = (tempPosiErr & 0x000000FF);

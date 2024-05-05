@@ -2,6 +2,7 @@
 #define __SPI_H
 #include "sys.h"
 #include "stm32f4xx_hal.h"
+#include "mb4_1sf_driver.h"
 	 				    
 // SPI�����ٶ����� 
 #define SPI_SPEED_2   		0
@@ -23,7 +24,6 @@
 // #define	DAC8563_SCLK 		PAout(5) 	//SCLK�ź�
 // #define	DAC8563_LDAC 		PBout(0)  //
 // #define	DAC8563_CLR 		PBout(1)  //
-
 
 // SPI1 DAC8563 GPIO Operations
 #define	GPIO_SPI_DAC8563_SYNC_SET  	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET)
@@ -52,6 +52,38 @@
 #define	GPIO_SPI_W5500_MOSI_RESET  	HAL_GPIO_WritePin(GPIOE, GPIO_PIN_6, GPIO_PIN_RESET)  
 #define GPIO_SPI_W5500_INT_RESET    HAL_GPIO_WritePin(GPIOI, GPIO_PIN_11, GPIO_PIN_RESET)
 #define GPIO_SPI_W5500_RST_RESET    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_RESET)
+
+// SPI2 BISS-C Operation
+#define	GPIO_SPI_BISSC_CS_SET  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET)
+#define	GPIO_SPI_BISSC_SCLK_SET  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET)
+#define	GPIO_SPI_BISSC_MISO_SET  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_SET)   
+#define	GPIO_SPI_BISSC_MOSI_SET  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_SET)  
+#define GPIO_SPI_BISSC_NRES_SET    HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1, GPIO_PIN_SET)
+#define	GPIO_SPI_BISSC_EOT_SET  	HAL_GPIO_WritePin(GPIOI, GPIO_PIN_2, GPIO_PIN_SET)  
+#define GPIO_SPI_BISSC_GETSENS_SET    HAL_GPIO_WritePin(GPIOI, GPIO_PIN_3, GPIO_PIN_SET)
+#define GPIO_SPI_BISSC_NER_SET    HAL_GPIO_WritePin(GPIOI, GPIO_PIN_4, GPIO_PIN_SET)
+#define	GPIO_SPI_BISSC_NWRE_SET  	HAL_GPIO_WritePin(GPIOI, GPIO_PIN_5, GPIO_PIN_SET)  
+#define GPIO_SPI_BISSC_NRDRNW_SET    HAL_GPIO_WritePin(GPIOI, GPIO_PIN_6, GPIO_PIN_SET)
+
+#define	GPIO_SPI_BISSC_CS_RESET  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_RESET)
+#define	GPIO_SPI_BISSC_SCLK_RESET  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET)
+#define	GPIO_SPI_BISSC_MISO_RESET  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_14, GPIO_PIN_RESET)   
+#define	GPIO_SPI_BISSC_MOSI_RESET  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_15, GPIO_PIN_RESET)  
+#define GPIO_SPI_BISSC_NRES_RESET    HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1, GPIO_PIN_RESET)
+#define	GPIO_SPI_BISSC_EOT_RESET  	HAL_GPIO_WritePin(GPIOI, GPIO_PIN_2, GPIO_PIN_RESET)  
+#define GPIO_SPI_BISSC_GETSENS_RESET    HAL_GPIO_WritePin(GPIOI, GPIO_PIN_3, GPIO_PIN_RESET)
+#define GPIO_SPI_BISSC_NER_RESET    HAL_GPIO_WritePin(GPIOI, GPIO_PIN_4, GPIO_PIN_RESET)
+#define	GPIO_SPI_BISSC_NWRE_RESET  	HAL_GPIO_WritePin(GPIOI, GPIO_PIN_5, GPIO_PIN_RESET)  
+#define GPIO_SPI_BISSC_NRDRNW_RESET    HAL_GPIO_WritePin(GPIOI, GPIO_PIN_6, GPIO_PIN_RESET)
+
+enum BISSC_CMD {
+    WriteData = 0x02,
+    ReadData = 0x03,
+    ReadStatus = 0x05,
+    WriteInstruction = 0x07,
+    ReadData0 = 0x09,
+    WriteData0 = 0x0b 
+};
 
 void SPI5_Init(void);			 //��ʼ��SPI��
 void SPI5_SetSpeed(u8 SpeedSet); //����SPI�ٶ�   
@@ -82,9 +114,27 @@ void SPI_CrisExit(void);
 void SPI4_CS_Select(void);
 void SPI4_CS_Deselect(void);
 
+/* SPI2 BISS-C相关函数*/
+
+// HAL_StatusTypeDef HAL_SPI2_WriteCmd(uint8_t cmd, uint8_t addr, uint8_t data);
+// HAL_StatusTypeDef HAL_SPI2_ReadCmd(uint8_t cmd, uint8_t addr);
+
+void HAL_BISSC_Setup(void);
+void HAL_SG_SenSorAcquire(uint8_t *SG_Data); 
+void HAL_CTLRegsWrite_Slave0(uint8_t reg_addr, uint8_t reg_data); // 写寄存器
+uint8_t HAL_CTLRegs_Read_Slave0(uint8_t readAddr);
+
+// 为适配原厂代码 二次封装对寄存器的读写命令，省去cmd参数
+// HAL_StatusTypeDef WriteMaster(uint8_t addr, uint8_t data);
+// HAL_StatusTypeDef ReadMaster(uint8_t addr);
+
+// HAL_StatusTypeDef HAL_SPI2_BISSC_Config(void);
+// HAL_StatusTypeDef HAL_SPI2_BISSC_RegsConfigRead(void);
+// HAL_StatusTypeDef HAL_SPI2_BISSC_RegsConfigWrite(void);
+
 extern SPI_HandleTypeDef hspi1;
 extern SPI_HandleTypeDef hspi4;
-
+extern SPI_HandleTypeDef hspi2;
 		 
 #endif
 
