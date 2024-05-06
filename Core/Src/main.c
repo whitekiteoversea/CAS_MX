@@ -30,6 +30,8 @@
 #include "string.h"
 #include "can.h"
 #include "pid.h"
+#include "oled.h"
+#include "bmp.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -55,7 +57,6 @@ uint8_t gDATABUF[DATA_BUF_SIZE];  // ����ת�Ƶ��ⲿSDRAM???2KByte�
 CAN_HandleTypeDef hcan1;
 CAN_HandleTypeDef hcan2;
 
-I2C_HandleTypeDef hi2c1;
 I2C_HandleTypeDef hi2c2;
 
 SPI_HandleTypeDef hspi1;
@@ -88,7 +89,7 @@ wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
                             .dns = {8,8,8,8},
                             .dhcp = NETINFO_STATIC };
 
-uint8_t flagStatus = 0; 					// �����λ���ڱ�ʶ���յ���Ӧ�ڵ������?														
+uint8_t flagStatus = 0; 					// �����λ���ڱ�ʶ���յ���Ӧ�ڵ�����?��??														
 int32_t avgPosiErr[2] = {0}; 			// ƽ��ͬ������ȡ
 /* USER CODE END PV */
 
@@ -97,7 +98,6 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_CAN1_Init(void);
 static void MX_CAN2_Init(void);
-static void MX_I2C1_Init(void);
 static void MX_I2C2_Init(void);
 static void MX_SPI1_Init(void);
 static void MX_SPI2_Init(void);
@@ -142,7 +142,6 @@ int main(void)
 	CAN_ID_Union ext_ID;
   unsigned int sensorData = 0;
   uint8_t cnt = 0;
-	
 	uint8_t prx = 0;
 
   /* USER CODE END 1 */
@@ -167,7 +166,6 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN1_Init();
   MX_CAN2_Init();
-  MX_I2C1_Init();
   MX_I2C2_Init();
   MX_SPI1_Init();
   MX_SPI2_Init();
@@ -195,19 +193,24 @@ int main(void)
 	// LCD_Init();
 	// Lcd_Full(RED);
 
+  // Backup: I2C1 OLED 128*64
+		OLED_Init();			//��ʼ��OLED  
+	//	OLED_Clear(); 
+	
+    // OLED_ShowNum(30, 30, 15, 2, 16); // ��(30,30)����ʾһ������15��"15"����λ���ַ��ֺ�Ϊ16
+
+		// OLED_DrawBMP(0,0, 128, 8, BMP1);  //ͼƬ��ʾ(ͼƬ��ʾ���ã����ɵ��ֱ��ϴ󣬻�ռ�ý϶�ռ䣬FLASH�ռ�8K��������)
+		// HAL_Delay(8000);
+		// OLED_Clear();
+
   // 3. ETH Initial
   // network_register();
   // network_init();
 
   // 4. BISS-C Sensor Data Acquire
-	HAL_Delay(500);
+	// HAL_Delay(500);
   
-	
-	mb4_read_status(&prx, 1);
-	printf("prx is %d\n\r", prx);
-	
-	
-	//HAL_BISSC_Setup();
+//	HAL_BISSC_Setup();
 
   // 5. Motor Torque Controller
   // HAL_SPI1_DAC8563_Init();   
@@ -233,7 +236,7 @@ int main(void)
       printf("%d ms HeartBeat Msg \n\r", gTime.l_time_ms);
       gStatus.l_time_heartbeat = 0;
     }
-
+    
     // 1000ms Acquire BISS-C TEST
 //    if (gStatus.l_bissc_sensor_acquire == 1) {
 //      HAL_SG_SenSorAcquire(motionStatus.g_posi);
@@ -278,7 +281,7 @@ int main(void)
 						memset(gDATABUF, 0, ret+1);
 						recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &w5500_udp_var.DstHostPort);			// W5500��������Զ����λ�������ݣ���ͨ��SPI��???��MCU
 						printf(" %d ms %s\r\n", gTime.l_time_ms, gDATABUF);															  // ���ڴ�ӡ���յ�������
-						sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  		// ���յ����ݺ��ٻظ�Զ����λ����������ݻ�????
+						sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  		// ���յ����ݺ��ٻظ�Զ����λ����������ݻ�??????
 					}
 			break;
 			case SOCK_CLOSED:																						    // Socket���ڹر�״???
@@ -462,54 +465,6 @@ static void MX_CAN2_Init(void)
 }
 
 /**
-  * @brief I2C1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_I2C1_Init(void)
-{
-
-  /* USER CODE BEGIN I2C1_Init 0 */
-
-  /* USER CODE END I2C1_Init 0 */
-
-  /* USER CODE BEGIN I2C1_Init 1 */
-
-  /* USER CODE END I2C1_Init 1 */
-  hi2c1.Instance = I2C1;
-  hi2c1.Init.ClockSpeed = 400000;
-  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
-  hi2c1.Init.OwnAddress1 = 0;
-  hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-  hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
-  hi2c1.Init.OwnAddress2 = 0;
-  hi2c1.Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
-  hi2c1.Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
-  if (HAL_I2C_Init(&hi2c1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure Analogue filter
-  */
-  if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure Digital filter
-  */
-  if (HAL_I2CEx_ConfigDigitalFilter(&hi2c1, 0) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN I2C1_Init 2 */
-
-  /* USER CODE END I2C1_Init 2 */
-
-}
-
-/**
   * @brief I2C2 Initialization Function
   * @param None
   * @retval None
@@ -625,7 +580,6 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CRCPolynomial = 10;
   if (HAL_SPI_Init(&hspi2) != HAL_OK)
   {
-    printf("%d ms SPI2 Init Failed! \n\r", gTime.l_time_ms);
     Error_Handler();
   }
   /* USER CODE BEGIN SPI2_Init 2 */
@@ -1186,7 +1140,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(SPI5_CS_GPIO_Port, SPI5_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1|RS485_Senser_RE_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|SPI1_CS_Pin|SPI3_CS_Pin, GPIO_PIN_RESET);
@@ -1204,11 +1158,14 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(BK_RS485_RE_GPIO_Port, BK_RS485_RE_Pin, GPIO_PIN_RESET);
 
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, I2C1_SCLK_Pin|I2C1_SDA_Pin, GPIO_PIN_SET);
+
   /*Configure GPIO pins : PE3 SPI4_CS_Pin */
   GPIO_InitStruct.Pin = GPIO_PIN_3|SPI4_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PI11 EOT_Pin */
@@ -1221,42 +1178,36 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pin = SPI5_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(SPI5_CS_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PC1 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1;
+  /*Configure GPIO pins : PC1 RS485_Senser_RE_Pin */
+  GPIO_InitStruct.Pin = GPIO_PIN_1|RS485_Senser_RE_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PA1 SPI1_CS_Pin SPI3_CS_Pin */
   GPIO_InitStruct.Pin = GPIO_PIN_1|SPI1_CS_Pin|SPI3_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PH2 */
   GPIO_InitStruct.Pin = GPIO_PIN_2;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PB0 PB1 SPI2_CS_Pin */
   GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_1|SPI2_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : Magnet_RS485_RE_Pin */
-  GPIO_InitStruct.Pin = Magnet_RS485_RE_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(Magnet_RS485_RE_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PI1 GETSENS_Pin NER_Pin NWR_E_Pin
                            NRD_RNW_Pin */
@@ -1264,21 +1215,31 @@ static void MX_GPIO_Init(void)
                           |NRD_RNW_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(GPIOI, &GPIO_InitStruct);
 
   /*Configure GPIO pin : BK_RS485_RE_Pin */
   GPIO_InitStruct.Pin = BK_RS485_RE_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
   HAL_GPIO_Init(BK_RS485_RE_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : I2C1_SCLK_Pin I2C1_SDA_Pin */
+  GPIO_InitStruct.Pin = I2C1_SCLK_Pin|I2C1_SDA_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 	HAL_GPIO_WritePin(GPIOE, SPI4_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
   HAL_GPIO_WritePin(GPIOB, SPI2_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
   HAL_GPIO_WritePin(GPIOF, SPI5_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
   HAL_GPIO_WritePin(GPIOA, SPI1_CS_Pin|SPI3_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
+	
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET); //LCD ��ʼ��ʱΪ��������״̬
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);  //���⿪��
 
 /* USER CODE END MX_GPIO_Init_2 */
 }
@@ -1290,7 +1251,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // weak �ú���
 	 if(htim == &htim3)
 	 {
       // 1�����ؼ�??? 10us
-      if (gTime.l_time_cnt_10us < 360000000 ) { // 60min���?
+      if (gTime.l_time_cnt_10us < 360000000 ) { // 60min���???
         gTime.l_time_cnt_10us++;
       } else {
         gTime.l_time_cnt_10us = 0;
@@ -1388,7 +1349,7 @@ void network_register(void)
     #endif
   #endif
     /* SPI Read & Write callback function */
-    reg_wizchip_spi_cbfunc(HAL_SPI4_ReadByte, HAL_SPI4_WriteByte);	//ע���д����?
+    reg_wizchip_spi_cbfunc(HAL_SPI4_ReadByte, HAL_SPI4_WriteByte);	//ע���д����???
 
     /* WIZCHIP SOCKET Buffer initialize */
     if(ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1){
@@ -1407,7 +1368,7 @@ void network_register(void)
 void systemParaInit(void)
 {
   gStatus.telmode = IDLEMODE; //������Ĭ�Ͽɽ���ETH��CANͨ�ţ�ʵ��DAC���ǰ���л���CAN/ETH��һģʽ???
-  gStatus.workmode = RECVSPEEDMODE; // ����ģʽ�������������������������?
+  gStatus.workmode = RECVSPEEDMODE; // ����ģʽ�������������������������???
 	
 	motionStatus.g_Distance = 0; // �ϵ���eeprom��ȡ
 	motionStatus.g_Speed = 0;
@@ -1440,7 +1401,7 @@ int32_t avgErrCollect(uint8_t node, int32_t sampleData)
 	}
 	avgPosiErr[node] = sampleData;
 
-	//��3λ����3���ڵ��Լ�����Ϣ�ռ����?
+	//��3λ����3���ڵ��Լ�����Ϣ�ռ����???
 	flagStatus |= (0x01 << (node-1));
 
 	return duss_result;
@@ -1496,7 +1457,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
           }
         break;
         
-        //�ٶ�Ԥ�����?
+        //�ٶ�Ԥ�����???
         case CANSpeedPreCmd:
           curGivenSpeed = CAN1_RecData[5];
           curGivenSpeed <<= 8;
@@ -1509,7 +1470,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
               //��Hex�ֽ��·������ٶ�ֵ��-1800rpm��1800rpm���ֱ���1rpm��ת��Ϊ��Ӧ��ѹDAC�ź� ��10V
               // 16384 - 10V -1800rpm
           
-              //DAC���? 2022.05.27
+              //DAC���??? 2022.05.27
               HAL_DAC8563_cmd_Write(3, 0, tempGivenVol);
               printf("UTC: %d ms CAS: %d, update Speed :%d rpm, t\n\r",  gTime.g_time_ms,
                                                                         gTime.l_time_ms,
@@ -1537,9 +1498,9 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
       
         //SEC λ�Ʋ�ѯ
         case CANPisiAcquireCmd:
-            //֡�� + ʱ������ٶ��޻�·ʱ�ӣ�?
+            //֡�� + ʱ������ٶ��޻�·ʱ�ӣ�???
             memcpy(snddata, CAN1_RecData, 8);
-            //������ڻ�·ʱ�ӣ��򽫱��ظ���ʱ�������;��������ڣ�������λ������ʱ�����ȡ
+            //������ڻ�·ʱ�ӣ���?���ظ���ʱ�������?;��������ڣ�������λ������ʱ�����ȡ
             
             //����������
             snddata[5] = (motionStatus.g_Distance & 0x00FF0000) >> 16;
@@ -1554,7 +1515,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
             printf("UTC:%d ms CAS: %d CurPosi is %d \n\r", gTime.g_time_ms, gTime.l_time_ms, motionStatus.g_Distance);
         break;
 
-        // SEC ƽ��ͬ�����ʵʱ����?: ʱ���?+ƽ�����? (�������ڵ�ᷢ����λ���ڵ㲻�·�?)
+        // SEC ƽ��ͬ�����ʵʱ����???: ʱ���???+ƽ�����??? (�������ڵ��?����λ���ڵ㲻�·�??)
         case CANTimeSyncErrorCalCmd: 
             tempRecvPosi = CAN1_RecData[5];
             tempRecvPosi <<= 8;
@@ -1565,13 +1526,13 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
                 tempPosiErr = avgErrUpdate(avgPosiErr);
                 flagStatus = 0;	
 
-              // 1�Žڵ����ϸ���ƽ��ͬ�����?
+              // 1�Žڵ����ϸ���ƽ��ͬ�����???
               if (can_var.NodeID == 0x01) {
-                  // ʱ���?(ȫ��ʱ���ͬ�����?)
+                  // ʱ���???(ȫ��ʱ����?�����??)
                   snddata[2] = 0;
                   snddata[3] = 0;
                   snddata[4] = 0;
-                  // ƽ��ͬ�����?
+                  // ƽ��ͬ�����???
                   snddata[5] = (tempPosiErr & 0x00FF0000) >> 16;
                   snddata[6] = (tempPosiErr & 0x0000FF00) >> 8;
                   snddata[7] = (tempPosiErr & 0x000000FF);

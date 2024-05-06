@@ -15,7 +15,6 @@ void LCD_Init(void)
 #if USE_HAL_SPI
 	// hal_spi_gpio_init();
 	hal_spi_hard_reset();
-	// GPIO_SPI_LEDA_SET;// ¿ªÆô±³¹â
 	hal_spi_lcd_init();
 #else
 	gpio_spi_init();

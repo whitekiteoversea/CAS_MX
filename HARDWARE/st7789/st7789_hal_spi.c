@@ -59,9 +59,9 @@ void hal_spi_write_16bit_data(SPI_HandleTypeDef *hspi, uint16_t data)
 //��Ļ��λ
 void hal_spi_hard_reset(void)
 {
-     GPIO_SPI_RST_CLR;//RST�������Ϊ��
+    GPIO_SPI_RST_CLR;//RST�������Ϊ��
     HAL_Delay(1000);
-     GPIO_SPI_RST_SET;//RST�������Ϊ��
+    GPIO_SPI_RST_SET;//RST�������Ϊ��
     HAL_Delay(100);
 }
 
@@ -96,8 +96,8 @@ void hal_spi_clear(uint16_t color)
 
 	hal_spi_setregion(0, 0, LCD_WIDTH, LCD_HEIGHT);
 	
-    GPIO_SPI_CS_CLR;
-    GPIO_SPI_DC_SET;
+    GPIO_SPI_CS_CLR;  // 重启屏幕
+    GPIO_SPI_DC_SET;  // 传输数据
 	for(row = 0;row < LCD_WIDTH; row++)             //ROW loop
 	{
 		for(column = 0;column < LCD_HEIGHT; column++) //column loop

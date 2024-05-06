@@ -56,7 +56,7 @@ typedef struct {
   unsigned int l_time_ms;
   unsigned int g_time_ms;
 } GLOBALTIME;
-// 全局状�?�记�?
+// 全局状�?�记�??
 typedef struct {
   volatile unsigned char l_time_overflow;   // 本地计时溢出
   volatile unsigned char l_time_heartbeat;  // 本地计时心跳
@@ -68,7 +68,7 @@ typedef struct {
   volatile unsigned int  l_bissc_sensor_acquire; // 获取BISS-C 数据
 } GLOBALSTATUS;
 
-// ETH模式�?? UDP参数�??
+// ETH模式�??? UDP参数�???
 typedef struct {
   unsigned char SrcRecvIP[4];
 	unsigned short SrcRecvPort;
@@ -124,8 +124,8 @@ void Error_Handler(void);
 #define SPI1_CS_GPIO_Port GPIOA
 #define SPI2_CS_Pin GPIO_PIN_12
 #define SPI2_CS_GPIO_Port GPIOB
-#define Magnet_RS485_RE_Pin GPIO_PIN_8
-#define Magnet_RS485_RE_GPIO_Port GPIOC
+#define RS485_Senser_RE_Pin GPIO_PIN_8
+#define RS485_Senser_RE_GPIO_Port GPIOC
 #define EOT_Pin GPIO_PIN_2
 #define EOT_GPIO_Port GPIOI
 #define GETSENS_Pin GPIO_PIN_3
@@ -134,6 +134,10 @@ void Error_Handler(void);
 #define SPI3_CS_GPIO_Port GPIOA
 #define BK_RS485_RE_Pin GPIO_PIN_10
 #define BK_RS485_RE_GPIO_Port GPIOG
+#define I2C1_SCLK_Pin GPIO_PIN_8
+#define I2C1_SCLK_GPIO_Port GPIOB
+#define I2C1_SDA_Pin GPIO_PIN_9
+#define I2C1_SDA_GPIO_Port GPIOB
 #define NER_Pin GPIO_PIN_4
 #define NER_GPIO_Port GPIOI
 #define NWR_E_Pin GPIO_PIN_5

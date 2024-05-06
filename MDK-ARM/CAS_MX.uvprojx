@@ -720,6 +720,11 @@
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\IC_MB4\mb4_1sf_driver.c</FilePath>
             </File>
+            <File>
+              <FileName>oled.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\OLED\oled.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
