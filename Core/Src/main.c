@@ -168,19 +168,19 @@ int main(void)
   MX_CAN2_Init();
   MX_I2C2_Init();
   MX_SPI1_Init();
-  MX_SPI2_Init();
-  MX_SPI3_Init();
-  MX_SPI4_Init();
-  MX_SPI5_Init();
+//  MX_SPI2_Init();
+//  MX_SPI3_Init();
+//  MX_SPI4_Init();
+//  MX_SPI5_Init();
   MX_TIM1_Init();
   MX_TIM3_Init();
   MX_TIM5_Init();
   MX_TIM8_Init();
   MX_UART4_Init();
-  MX_USART1_UART_Init();
-  MX_USART2_UART_Init();
-  MX_USART3_UART_Init();
-  MX_USART6_UART_Init();
+//  MX_USART1_UART_Init();
+//  MX_USART2_UART_Init();
+//  MX_USART3_UART_Init();
+//  MX_USART6_UART_Init();
 
   /* Initialize interrupts */
   MX_NVIC_Init();
@@ -190,32 +190,31 @@ int main(void)
   // 1. local timebase
   HAL_TIM_Base_Start_IT(&htim3);
   // 2. LCD Status Display
-	// LCD_Init();
-	// Lcd_Full(RED);
+	LCD_Init();
+	Lcd_Full(RED);
 
   // Backup: I2C1 OLED 128*64
-		OLED_Init();			//初始化OLED  
-	//	OLED_Clear(); 
+	OLED_Init();			//初始化OLED  
+	OLED_Clear(); 
 	
-    // OLED_ShowNum(30, 30, 15, 2, 16); // 在(30,30)处显示一个数字15，"15"有两位，字符字号为16
-
-		// OLED_DrawBMP(0,0, 128, 8, BMP1);  //图片显示(图片显示慎用，生成的字表较大，会占用较多空间，FLASH空间8K以下慎用)
-		// HAL_Delay(8000);
-		// OLED_Clear();
+  OLED_ShowNum(30, 30, 15, 2, 16); // 在(30,30)处显示一个数字15，"15"有两位，字符字号为16
+	OLED_DrawBMP(0,0, 128, 8, BMP1);  //图片显示(图片显示慎用，生成的字表较大，会占用较多空间，FLASH空间8K以下慎用)
+	HAL_Delay(8000);
+	OLED_Clear();
 
   // 3. ETH Initial
-  // network_register();
-  // network_init();
+  network_register();
+  network_init();
 
   // 4. BISS-C Sensor Data Acquire
 	// HAL_Delay(500);
   
-//	HAL_BISSC_Setup();
+	HAL_BISSC_Setup();
 
   // 5. Motor Torque Controller
-  // HAL_SPI1_DAC8563_Init();   
-  // HAL_Delay(500);
-  // HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);   // 锟斤拷锟斤拷锟解部锟劫度筹拷???
+  HAL_SPI1_DAC8563_Init();   
+  HAL_Delay(500);
+  HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol+28000);   // 锟斤拷锟斤拷锟解部锟劫度筹拷???
 
 #if CAN2_SENDTEST_ON
 	ext_ID.CAN_Frame_Union.CTRCode = CANTimeSyncCmd; // position acquire pack type
