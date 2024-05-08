@@ -339,7 +339,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F429xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../SYSTEM/sys;../SYSTEM/usart;../HARDWARE/LED;../HARDWARE/KEY;../HARDWARE/EXTI;../HARDWARE/WDG;../HARDWARE/TIMER;../HARDWARE/TPAD;../HARDWARE/OLED;../HARDWARE/SDRAM;../HARDWARE/CAN;../HARDWARE/RS485;../HARDWARE/PCF8574;../HARDWARE/24CXX;../HARDWARE/SPI;../HARDWARE/utils;../USER;../HARDWARE/st7789;../HARDWARE/W5500;../SYSTEM/hal_delay;../HARDWARE/IC_MB4</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;../SYSTEM/sys;../SYSTEM/usart;../HARDWARE/LED;../HARDWARE/KEY;../HARDWARE/EXTI;../HARDWARE/WDG;../HARDWARE/TIMER;../HARDWARE/TPAD;../HARDWARE/OLED;../HARDWARE/SDRAM;../HARDWARE/CAN;../HARDWARE/RS485;../HARDWARE/PCF8574;../HARDWARE/24CXX;../HARDWARE/SPI;../HARDWARE/utils;../USER;../HARDWARE/st7789;../HARDWARE/W5500;../SYSTEM/hal_delay;../HARDWARE/IC_MB4;../CANOpen/include/STM32;../CANOpen/src;../CANOpen/include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -691,16 +691,6 @@
               <FilePath>..\HARDWARE\WDG\wdg.c</FilePath>
             </File>
             <File>
-              <FileName>lcd_driver.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\st7789\lcd_driver.c</FilePath>
-            </File>
-            <File>
-              <FileName>st7789_hal_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\st7789\st7789_hal_spi.c</FilePath>
-            </File>
-            <File>
               <FileName>socket.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\W5500\socket.c</FilePath>
@@ -724,6 +714,16 @@
               <FileName>oled.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\OLED\oled.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\ST7789\lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\ST7789\lcd_init.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -810,6 +810,76 @@
               <FileName>sysTime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\USER\sysTime.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>CANOpen</GroupName>
+          <Files>
+            <File>
+              <FileName>dcf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\src\dcf.c</FilePath>
+            </File>
+            <File>
+              <FileName>emcy.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\src\emcy.c</FilePath>
+            </File>
+            <File>
+              <FileName>lifegrd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\src\lifegrd.c</FilePath>
+            </File>
+            <File>
+              <FileName>lss.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\src\lss.c</FilePath>
+            </File>
+            <File>
+              <FileName>nmtMaster.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\src\nmtMaster.c</FilePath>
+            </File>
+            <File>
+              <FileName>nmtSlave.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\src\nmtSlave.c</FilePath>
+            </File>
+            <File>
+              <FileName>objacces.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\src\objacces.c</FilePath>
+            </File>
+            <File>
+              <FileName>pdo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\src\pdo.c</FilePath>
+            </File>
+            <File>
+              <FileName>sdo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\src\sdo.c</FilePath>
+            </File>
+            <File>
+              <FileName>states.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\src\states.c</FilePath>
+            </File>
+            <File>
+              <FileName>symbols.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\src\symbols.c</FilePath>
+            </File>
+            <File>
+              <FileName>sync.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\src\sync.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\src\timer.c</FilePath>
             </File>
           </Files>
         </Group>

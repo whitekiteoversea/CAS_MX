@@ -56,7 +56,7 @@ typedef struct {
   unsigned int l_time_ms;
   unsigned int g_time_ms;
 } GLOBALTIME;
-// 全局状�?�记�??
+// 全局状�?�记�???
 typedef struct {
   volatile unsigned char l_time_overflow;   // 本地计时溢出
   volatile unsigned char l_time_heartbeat;  // 本地计时心跳
@@ -68,7 +68,7 @@ typedef struct {
   volatile unsigned int  l_bissc_sensor_acquire; // 获取BISS-C 数据
 } GLOBALSTATUS;
 
-// ETH模式�??? UDP参数�???
+// ETH模式�???? UDP参数�????
 typedef struct {
   unsigned char SrcRecvIP[4];
 	unsigned short SrcRecvPort;
@@ -88,6 +88,11 @@ typedef struct {
 	uint32_t g_InitialPosi; //um
 
 } MOTIONVAR;
+
+typedef struct {
+  uint8_t canopenTimer_trigger;
+
+} CANOPEN_VAR;
 
 typedef struct {
   unsigned char NodeID;

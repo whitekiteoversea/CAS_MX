@@ -303,9 +303,6 @@ void HAL_BISSC_Setup(void)
 	//Start AGS
 	txData[0] = 0x01;
 	mb4_write_registers(0xF4, txData, 1); // 使能对传感器数据自动获取
-	
-	mb4_read_registers(0xC0, &rData, 1);
-	printf ("rData is %d \n\r", rData);
 }
 
 // 获取传感器过程数据

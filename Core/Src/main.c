@@ -21,10 +21,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "st7789_hal_spi.h"
 #include "usart.h"
 #include "sys.h"
-#include "lcd_driver.h"
+#include "lcd.h"
+#include "lcd_init.h"
 #include "spi.h"
 #include "socket.h"	
 #include "string.h"
@@ -67,6 +67,7 @@ SPI_HandleTypeDef hspi5;
 
 TIM_HandleTypeDef htim1;
 TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
 TIM_HandleTypeDef htim8;
 
@@ -82,6 +83,7 @@ GLOBALSTATUS gStatus;
 MOTIONVAR motionStatus;
 GLOBAL_ETH_UDP_VAR w5500_udp_var;
 GLOBAL_CAN_VAR can_var;
+CANOPEN_VAR canopenDriver_var;
 wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
                             .ip = {192, 168, 1, 11},
                             .sn = {255,255,255,0},
@@ -89,7 +91,7 @@ wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
                             .dns = {8,8,8,8},
                             .dhcp = NETINFO_STATIC };
 
-uint8_t flagStatus = 0; 					// �����λ���ڱ�ʶ���յ���Ӧ�ڵ�����?��??														
+uint8_t flagStatus = 0; 					// �����λ���ڱ�ʶ���յ���Ӧ�ڵ�����?��??														
 int32_t avgPosiErr[2] = {0}; 			// ƽ��ͬ������ȡ
 /* USER CODE END PV */
 
@@ -113,6 +115,7 @@ static void MX_USART1_UART_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_USART6_UART_Init(void);
+static void MX_TIM4_Init(void);
 static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
 void network_register(void);
@@ -140,9 +143,11 @@ int main(void)
 	uint8_t ret =0;
 	uint8_t snddata[8] = {0};
 	CAN_ID_Union ext_ID;
-  unsigned int sensorData = 0;
+  unsigned char sensorData = 0;
   uint8_t cnt = 0;
 	uint8_t prx = 0;
+  uint8_t SG_Data[8] = {0}; // 传感器周期反馈数据
+  uint64_t Sensor38bit = 0;
 
   /* USER CODE END 1 */
 
@@ -168,8 +173,8 @@ int main(void)
   MX_CAN2_Init();
   MX_I2C2_Init();
   MX_SPI1_Init();
-//  MX_SPI2_Init();
-//  MX_SPI3_Init();
+  MX_SPI2_Init();
+// MX_SPI3_Init();
 //  MX_SPI4_Init();
 //  MX_SPI5_Init();
   MX_TIM1_Init();
@@ -177,10 +182,11 @@ int main(void)
   MX_TIM5_Init();
   MX_TIM8_Init();
   MX_UART4_Init();
-//  MX_USART1_UART_Init();
-//  MX_USART2_UART_Init();
-//  MX_USART3_UART_Init();
-//  MX_USART6_UART_Init();
+  MX_USART1_UART_Init();
+  MX_USART2_UART_Init();
+  MX_USART3_UART_Init();
+  MX_USART6_UART_Init();
+  MX_TIM4_Init();
 
   /* Initialize interrupts */
   MX_NVIC_Init();
@@ -189,32 +195,24 @@ int main(void)
 	
   // 1. local timebase
   HAL_TIM_Base_Start_IT(&htim3);
-  // 2. LCD Status Display
-	LCD_Init();
-	Lcd_Full(RED);
-
-  // Backup: I2C1 OLED 128*64
-	OLED_Init();			//��ʼ��OLED  
-	OLED_Clear(); 
-	
-  OLED_ShowNum(30, 30, 15, 2, 16); // ��(30,30)����ʾһ������15��"15"����λ���ַ��ֺ�Ϊ16
-	OLED_DrawBMP(0,0, 128, 8, BMP1);  //ͼƬ��ʾ(ͼƬ��ʾ���ã����ɵ��ֱ��ϴ󣬻�ռ�ý϶�ռ䣬FLASH�ռ�8K��������)
-	HAL_Delay(8000);
-	OLED_Clear();
+  HAL_TIM_Base_Start_IT(&htim4);
 
   // 3. ETH Initial
-  network_register();
-  network_init();
+  //network_register();
+  //network_init();
 
   // 4. BISS-C Sensor Data Acquire
-	// HAL_Delay(500);
-  
+	HAL_Delay(500);
 	HAL_BISSC_Setup();
 
   // 5. Motor Torque Controller
-  HAL_SPI1_DAC8563_Init();   
+  // HAL_SPI1_DAC8563_Init();   
+  // HAL_Delay(500);
+  // HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);   // �������ٶ�Ϊ0
+
+
   HAL_Delay(500);
-  HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol+28000);   // �����ⲿ�ٶȳ�???
+  printf("%d ms All Function Initial Finished! \n\r", gTime.l_time_ms);
 
 #if CAN2_SENDTEST_ON
 	ext_ID.CAN_Frame_Union.CTRCode = CANTimeSyncCmd; // position acquire pack type
@@ -235,25 +233,29 @@ int main(void)
       printf("%d ms HeartBeat Msg \n\r", gTime.l_time_ms);
       gStatus.l_time_heartbeat = 0;
     }
+    // CanOpen heartbeat
+    if (canopenDriver_var.canopenTimer_trigger == 1) {
+      // canopenTask();
+      canopenDriver_var.canopenTimer_trigger = 0;
+    }
     
-    // 1000ms Acquire BISS-C TEST
-//    if (gStatus.l_bissc_sensor_acquire == 1) {
-//      HAL_SG_SenSorAcquire(motionStatus.g_posi);
-//			sensorData = 0;
-//      for (cnt=0; cnt<5; cnt++) {
-//        sensorData |= motionStatus.g_posi[cnt];
-//        sensorData <<= 8;
-//      }
-//      printf("%d ms Posi is %d unit \n\r", gTime.l_time_ms, sensorData);
-//      gStatus.l_bissc_sensor_acquire = 0;
-//    }
-
-
+    //
+    if (gStatus.l_bissc_sensor_acquire == 1) {
+      HAL_SG_SenSorAcquire(SG_Data);
+      for (cnt =0 ;cnt<5; cnt++) {
+        Sensor38bit |= SG_Data[cnt];
+        Sensor38bit <<= 8;
+      }
+      printf(" %d ms Acquire SG_Data %5x \n\r", gTime.g_time_ms, Sensor38bit);
+      gStatus.l_bissc_sensor_acquire = 0;
+    }
+    // CAN Protocol
     if (gStatus.l_can1_recv_flag == 1) {
         CANRecvMsgDeal(&hcan1, CAN1RecvFrame.CAN_Frame_Union.CTRCode);
 			  gStatus.l_can1_recv_flag = 0;
     }
 
+    // Driver CANOpen
     if (gStatus.l_can2_recv_flag == 1) {
         CANRecvMsgDeal(&hcan2, CAN2RecvFrame.CAN_Frame_Union.CTRCode);
 			  gStatus.l_can2_recv_flag = 0;
@@ -280,7 +282,7 @@ int main(void)
 						memset(gDATABUF, 0, ret+1);
 						recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &w5500_udp_var.DstHostPort);			// W5500��������Զ����λ�������ݣ���ͨ��SPI��???��MCU
 						printf(" %d ms %s\r\n", gTime.l_time_ms, gDATABUF);															  // ���ڴ�ӡ���յ�������
-						sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  		// ���յ����ݺ��ٻظ�Զ����λ����������ݻ�??????
+						sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  		// ���յ����ݺ��ٻظ�Զ����λ����������ݻ�??????
 					}
 			break;
 			case SOCK_CLOSED:																						    // Socket���ڹر�״???
@@ -351,14 +353,17 @@ void SystemClock_Config(void)
 static void MX_NVIC_Init(void)
 {
   /* CAN1_RX0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 1, 1);
   HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
   /* CAN2_RX0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(CAN2_RX0_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(CAN2_RX0_IRQn, 1, 2);
   HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
   /* TIM3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(TIM3_IRQn, 1, 0);
+  HAL_NVIC_SetPriority(TIM3_IRQn, 3, 1);
   HAL_NVIC_EnableIRQ(TIM3_IRQn);
+  /* TIM4_IRQn interrupt configuration */
+  HAL_NVIC_SetPriority(TIM4_IRQn, 2, 1);
+  HAL_NVIC_EnableIRQ(TIM4_IRQn);
 }
 
 /**
@@ -579,6 +584,7 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CRCPolynomial = 10;
   if (HAL_SPI_Init(&hspi2) != HAL_OK)
   {
+		printf(" SPI2 Init  Failed \n\r");
     Error_Handler();
   }
   /* USER CODE BEGIN SPI2_Init 2 */
@@ -610,13 +616,15 @@ static void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_HIGH;
   hspi3.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  // hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+	hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
   hspi3.Init.CRCPolynomial = 10;
   if (HAL_SPI_Init(&hspi3) != HAL_OK)
   {
+		printf(" SPI3 Init  Failed \n\r");
     Error_Handler();
   }
   /* USER CODE BEGIN SPI3_Init 2 */
@@ -818,6 +826,51 @@ static void MX_TIM3_Init(void)
   /* USER CODE BEGIN TIM3_Init 2 */
 
   /* USER CODE END TIM3_Init 2 */
+
+}
+
+/**
+  * @brief TIM4 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM4_Init(void)
+{
+
+  /* USER CODE BEGIN TIM4_Init 0 */
+
+  /* USER CODE END TIM4_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM4_Init 1 */
+
+  /* USER CODE END TIM4_Init 1 */
+  htim4.Instance = TIM4;
+  htim4.Init.Prescaler = 8999;
+  htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim4.Init.Period = 9;
+  htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM4_Init 2 */
+
+  /* USER CODE END TIM4_Init 2 */
 
 }
 
@@ -1238,7 +1291,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, SPI1_CS_Pin|SPI3_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
 	
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET); //LCD ��ʼ��ʱΪ��������״̬
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);  //���⿪��
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);  //LCD背光
 
 /* USER CODE END MX_GPIO_Init_2 */
 }
@@ -1249,25 +1302,35 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // weak �ú���
   static unsigned int heartbeatChangedMs = 0; // ���ڱ�ʶ�Ƿ����仯
 	 if(htim == &htim3)
 	 {
+<<<<<<< HEAD
       // 1�����ؼ�??? 10us
-      if (gTime.l_time_cnt_10us < 360000000 ) { // 60min���???
+      if (gTime.l_time_cnt_10us < 360000000 ) { // 60min���???
+=======
+      // 10us timecnt
+      if (gTime.l_time_cnt_10us < 360000000 ) { // 60min reset local timing
+>>>>>>> ed2eb02 (NEW: 测试BISS-C SPI2读取MB4 寄存器状态成功)
         gTime.l_time_cnt_10us++;
       } else {
         gTime.l_time_cnt_10us = 0;
         gTime.l_time_ms = 0;
         gStatus.l_time_overflow++;
       }
-      // 2����??? 1s
+      // 1ms timecnt
       if (gTime.l_time_cnt_10us % 100 == 0) {
         gTime.l_time_ms++;
-      }
 
+        canopenDriver_var.canopenTimer_trigger = 1;
+      }
+      // 1s update local time and Sensor
       if ((gTime.l_time_ms % 1000 == 0) && (0 != gTime.l_time_ms-heartbeatChangedMs)) {
         gStatus.l_time_heartbeat = 1;
         heartbeatChangedMs = gTime.l_time_ms;
-				
-				gStatus.l_bissc_sensor_acquire = 1;
       }
+			
+			// 10s test
+			if (gTime.l_time_cnt_10us % 1000000 == 0) {
+				gStatus.l_bissc_sensor_acquire = 1;
+			}
 	 }
 }
 
@@ -1348,7 +1411,7 @@ void network_register(void)
     #endif
   #endif
     /* SPI Read & Write callback function */
-    reg_wizchip_spi_cbfunc(HAL_SPI4_ReadByte, HAL_SPI4_WriteByte);	//ע���д����???
+    reg_wizchip_spi_cbfunc(HAL_SPI4_ReadByte, HAL_SPI4_WriteByte);	//ע���д����???
 
     /* WIZCHIP SOCKET Buffer initialize */
     if(ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1){
@@ -1367,7 +1430,7 @@ void network_register(void)
 void systemParaInit(void)
 {
   gStatus.telmode = IDLEMODE; //������Ĭ�Ͽɽ���ETH��CANͨ�ţ�ʵ��DAC���ǰ���л���CAN/ETH��һģʽ???
-  gStatus.workmode = RECVSPEEDMODE; // ����ģʽ�������������������������???
+  gStatus.workmode = RECVSPEEDMODE; // ����ģʽ�������������������������???
 	
 	motionStatus.g_Distance = 0; // �ϵ���eeprom��ȡ
 	motionStatus.g_Speed = 0;
@@ -1400,7 +1463,7 @@ int32_t avgErrCollect(uint8_t node, int32_t sampleData)
 	}
 	avgPosiErr[node] = sampleData;
 
-	//��3λ����3���ڵ��Լ�����Ϣ�ռ����???
+	//��3λ����3���ڵ��Լ�����Ϣ�ռ����???
 	flagStatus |= (0x01 << (node-1));
 
 	return duss_result;
@@ -1456,7 +1519,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
           }
         break;
         
-        //�ٶ�Ԥ�����???
+        //�ٶ�Ԥ�����???
         case CANSpeedPreCmd:
           curGivenSpeed = CAN1_RecData[5];
           curGivenSpeed <<= 8;
@@ -1469,7 +1532,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
               //��Hex�ֽ��·������ٶ�ֵ��-1800rpm��1800rpm���ֱ���1rpm��ת��Ϊ��Ӧ��ѹDAC�ź� ��10V
               // 16384 - 10V -1800rpm
           
-              //DAC���??? 2022.05.27
+              //DAC���??? 2022.05.27
               HAL_DAC8563_cmd_Write(3, 0, tempGivenVol);
               printf("UTC: %d ms CAS: %d, update Speed :%d rpm, t\n\r",  gTime.g_time_ms,
                                                                         gTime.l_time_ms,
@@ -1497,9 +1560,9 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
       
         //SEC λ�Ʋ�ѯ
         case CANPisiAcquireCmd:
-            //֡�� + ʱ������ٶ��޻�·ʱ�ӣ�???
+            //֡�� + ʱ������ٶ��޻�·ʱ�ӣ�???
             memcpy(snddata, CAN1_RecData, 8);
-            //������ڻ�·ʱ�ӣ���?���ظ���ʱ�������?;��������ڣ�������λ������ʱ�����ȡ
+            //������ڻ�·ʱ�ӣ���?���ظ���ʱ�������?;��������ڣ�������λ������ʱ�����ȡ
             
             //����������
             snddata[5] = (motionStatus.g_Distance & 0x00FF0000) >> 16;
@@ -1514,7 +1577,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
             printf("UTC:%d ms CAS: %d CurPosi is %d \n\r", gTime.g_time_ms, gTime.l_time_ms, motionStatus.g_Distance);
         break;
 
-        // SEC ƽ��ͬ�����ʵʱ����???: ʱ���???+ƽ�����??? (�������ڵ��?����λ���ڵ㲻�·�??)
+        // SEC ƽ��ͬ�����ʵʱ����???: ʱ���???+ƽ�����??? (�������ڵ��?����λ���ڵ㲻�·�??)
         case CANTimeSyncErrorCalCmd: 
             tempRecvPosi = CAN1_RecData[5];
             tempRecvPosi <<= 8;
@@ -1525,13 +1588,13 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
                 tempPosiErr = avgErrUpdate(avgPosiErr);
                 flagStatus = 0;	
 
-              // 1�Žڵ����ϸ���ƽ��ͬ�����???
+              // 1�Žڵ����ϸ���ƽ��ͬ�����???
               if (can_var.NodeID == 0x01) {
-                  // ʱ���???(ȫ��ʱ����?�����??)
+                  // ʱ���???(ȫ��ʱ����?�����??)
                   snddata[2] = 0;
                   snddata[3] = 0;
                   snddata[4] = 0;
-                  // ƽ��ͬ�����???
+                  // ƽ��ͬ�����???
                   snddata[5] = (tempPosiErr & 0x00FF0000) >> 16;
                   snddata[6] = (tempPosiErr & 0x0000FF00) >> 8;
                   snddata[7] = (tempPosiErr & 0x000000FF);

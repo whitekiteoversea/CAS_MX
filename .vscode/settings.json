@@ -17,6 +17,7 @@
         "can.h": "c",
         "led.h": "c",
         "hal_delay.h": "c",
-        "oled.h": "c"
+        "oled.h": "c",
+        "applicfg.h": "c"
     }
 }

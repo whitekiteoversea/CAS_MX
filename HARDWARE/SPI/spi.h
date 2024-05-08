@@ -135,6 +135,7 @@ uint8_t HAL_CTLRegs_Read_Slave0(uint8_t readAddr);
 extern SPI_HandleTypeDef hspi1;
 extern SPI_HandleTypeDef hspi4;
 extern SPI_HandleTypeDef hspi2;
+extern SPI_HandleTypeDef hspi3;
 		 
 #endif
 
