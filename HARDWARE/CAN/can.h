@@ -98,6 +98,7 @@ extern u8 canlocalCharacNode; //���ذ��ݵ�CAN�ڵ��ɫ
 
 #endif
 
+uint8_t HAL_CAN_Std_Transmit(CAN_HandleTypeDef *hcan, const void* buf, uint32_t len, uint32_t Std_ID);
 uint8_t HAL_CAN_Ext_Transmit(CAN_HandleTypeDef *hcan, const void* buf, uint32_t len, uint32_t Ext_ID);
 
 extern CAN_HandleTypeDef hcan1;

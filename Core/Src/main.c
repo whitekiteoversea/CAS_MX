@@ -32,6 +32,11 @@
 #include "pid.h"
 #include "oled.h"
 #include "bmp.h"
+
+#include "canfestival_timer.h"
+#include "canfestival_can.h"
+#include "timers.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -50,7 +55,7 @@
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-uint8_t gDATABUF[DATA_BUF_SIZE];  // ����ת�Ƶ��ⲿSDRAM???2KByteռ������SRAM???50%
+uint8_t gDATABUF[DATA_BUF_SIZE];  
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -91,8 +96,8 @@ wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
                             .dns = {8,8,8,8},
                             .dhcp = NETINFO_STATIC };
 
-uint8_t flagStatus = 0; 					// �����λ���ڱ�ʶ���յ���Ӧ�ڵ�����?��??														
-int32_t avgPosiErr[2] = {0}; 			// ƽ��ͬ������ȡ
+uint8_t flagStatus = 0; 																	
+int32_t avgPosiErr[2] = {0}; 			
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -146,8 +151,9 @@ int main(void)
   unsigned char sensorData = 0;
   uint8_t cnt = 0;
 	uint8_t prx = 0;
+	
   uint8_t SG_Data[8] = {0}; // 传感器周期反馈数据
-  uint64_t Sensor38bit = 0;
+  uint64_t sensor38bit = 0;
 
   /* USER CODE END 1 */
 
@@ -194,22 +200,21 @@ int main(void)
 	systemParaInit();
 	
   // 1. local timebase
-  HAL_TIM_Base_Start_IT(&htim3);
-  HAL_TIM_Base_Start_IT(&htim4);
+  HAL_TIM_Base_Start_IT(&htim3);   // (pass)
+  HAL_TIM_Base_Start_IT(&htim4);   //CANOpen Timer
 
   // 3. ETH Initial
   //network_register();
   //network_init();
 
-  // 4. BISS-C Sensor Data Acquire
+  // 4. BISS-C Sensor Data Acquire (pass)
 	HAL_Delay(500);
 	HAL_BISSC_Setup();
 
-  // 5. Motor Torque Controller
+  // 5. Motor Torque Controller (pass)
   // HAL_SPI1_DAC8563_Init();   
   // HAL_Delay(500);
   // HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);   // �������ٶ�Ϊ0
-
 
   HAL_Delay(500);
   printf("%d ms All Function Initial Finished! \n\r", gTime.l_time_ms);
@@ -234,19 +239,23 @@ int main(void)
       gStatus.l_time_heartbeat = 0;
     }
     // CanOpen heartbeat
-    if (canopenDriver_var.canopenTimer_trigger == 1) {
-      // canopenTask();
-      canopenDriver_var.canopenTimer_trigger = 0;
-    }
-    
+//    if (canopenDriver_var.canopenTimer_trigger == 1) {
+//      // canopenTask();
+//      canopenDriver_var.canopenTimer_trigger = 0;
+//    }
+		
+		
+		HAL_CAN_Std_Transmit(&hcan2, (void *)snddata, 8, ext_ID.Value);
+		HAL_Delay(500);
+
     //
     if (gStatus.l_bissc_sensor_acquire == 1) {
       HAL_SG_SenSorAcquire(SG_Data);
-      for (cnt =0 ;cnt<5; cnt++) {
-        Sensor38bit |= SG_Data[cnt];
-        Sensor38bit <<= 8;
+      for (cnt = 0 ;cnt<5; cnt++) {
+        sensor38bit |= SG_Data[cnt];
+        sensor38bit <<= 8;
       }
-      printf(" %d ms Acquire SG_Data %5x \n\r", gTime.g_time_ms, Sensor38bit);
+      printf(" %d ms Acquire SG_Data %d \n\r", gTime.g_time_ms, sensor38bit);
       gStatus.l_bissc_sensor_acquire = 0;
     }
     // CAN Protocol
@@ -850,7 +859,7 @@ static void MX_TIM4_Init(void)
   htim4.Instance = TIM4;
   htim4.Init.Prescaler = 8999;
   htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim4.Init.Period = 9;
+  htim4.Init.Period = 9; // 1ms
   htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
@@ -1302,13 +1311,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // weak �ú���
   static unsigned int heartbeatChangedMs = 0; // ���ڱ�ʶ�Ƿ����仯
 	 if(htim == &htim3)
 	 {
-<<<<<<< HEAD
-      // 1�����ؼ�??? 10us
-      if (gTime.l_time_cnt_10us < 360000000 ) { // 60min���???
-=======
       // 10us timecnt
       if (gTime.l_time_cnt_10us < 360000000 ) { // 60min reset local timing
->>>>>>> ed2eb02 (NEW: 测试BISS-C SPI2读取MB4 寄存器状态成功)
         gTime.l_time_cnt_10us++;
       } else {
         gTime.l_time_cnt_10us = 0;
@@ -1331,7 +1335,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) // weak �ú���
 			if (gTime.l_time_cnt_10us % 1000000 == 0) {
 				gStatus.l_bissc_sensor_acquire = 1;
 			}
-	 }
+	 } else if (htim == &htim4) {
+       TimeDispatch(); // canfestival的库
+   } else {
+      printf("%d ms Unknown TIMER Interupt! \r\n", gTime.l_time_ms);
+   }
 }
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *phcan)
@@ -1357,7 +1365,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *phcan)
         }
     } else if (phcan == &hcan2) {
         HAL_CAN_GetRxMessage(phcan, CAN_RX_FIFO0, &RxMessage, rxbuf);
-        CAN2RecvFrame.Value = RxMessage.ExtId;
+        CAN2RecvFrame.Value = RxMessage.StdId;
         if (CAN2RecvFrame.CAN_Frame_Union.NodeOrGroupID == can_var.NodeID) {
             for (cnt = 0; cnt < 8; cnt++) {
                 CAN2_RecData[cnt] = rxbuf[cnt];
