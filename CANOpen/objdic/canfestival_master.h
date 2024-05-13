@@ -10,7 +10,7 @@ UNS32 Master_valueRangeTest (UNS8 typeValue, void * value);
 const indextable * Master_scanIndexOD (CO_Data *d, UNS16 wIndex, UNS32 * errorCode);
 
 /* Master node data struct */
-extern CO_Data Master_Data;
+extern CO_Data masterObjdict_Data;
 extern INTEGER32 D0;		/* Mapped at index 0x2000, subindex 0x00*/
 extern UNS32 D1;		/* Mapped at index 0x2001, subindex 0x00*/
 extern UNS32 D2;		/* Mapped at index 0x2002, subindex 0x00*/

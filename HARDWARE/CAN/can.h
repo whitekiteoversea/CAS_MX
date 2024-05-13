@@ -60,11 +60,6 @@ typedef struct
 
 #pragma pack()
 
-
-
-
-
-
 #if REG_CAN_ENABLE      
 
 u8 CAN1_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode);//CAN��ʼ��
@@ -104,15 +99,8 @@ uint8_t HAL_CAN_Ext_Transmit(CAN_HandleTypeDef *hcan, const void* buf, uint32_t 
 extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
 
-extern CAN_HandleTypeDef hcan1;
-extern CAN_HandleTypeDef hcan2;
-
 extern CAN_ID_Union CAN1RecvFrame;
-extern CAN_ID_Union CAN2RecvFrame;
 extern uint8_t CAN1_RecData[8];
-extern uint8_t CAN2_RecData[8]; 
-
-
 
 #endif
 
