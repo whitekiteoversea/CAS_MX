@@ -17,10 +17,10 @@ void USART6_IRQHandler(void)
 {
 	uint8_t res;
 	//如果串口接收缓冲区非空
-	if((__HAL_UART_GET_FLAG(&huart6, UART_FLAG_RXNE)!=RESET)) //接收中断
+	if((__HAL_UART_GET_FLAG(&huart6, UART_FLAG_RXNE) != RESET)) //接收中断
 	{
-		modbusPosi.g_RTU_Startflag = 1;         //刷新定时器
-		modbusPosi.g_10ms_Cnt = 0;				//计时重新开始
+		modbusPosi.g_RTU_Startflag = 1;   // 刷新定时器
+		modbusPosi.g_10ms_Cnt = 0;		  // 计时重新开始
 	
 		HAL_UART_Receive(&huart6, &res, 1, 50);
 		USART_RX_BUF[modbusPosi.comRecvCnt++] = res;

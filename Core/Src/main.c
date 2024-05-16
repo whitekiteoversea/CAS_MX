@@ -50,8 +50,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define SOCK_TCPS        0
-#define DATA_BUF_SIZE   2048
+#define SOCK_TCPS        (0)
+#define DATA_BUF_SIZE   (2048)
 
 #define CAN2_SENDTEST_ON (0)
 
@@ -275,7 +275,7 @@ int main(void)
     }
     // Send packet to AMG2000 to Acquire abs Posi data
     if (gStatus.l_rs485_getposiEnable == 1) {
-			//g_RS485_sendPacket(&huart6, 1, rs485_posi_acquire_data);
+			// g_RS485_sendPacket(&huart6, 1, rs485_posi_acquire_data);
       gStatus.l_rs485_getposiEnable = 0;
     }
 
@@ -1308,6 +1308,8 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOB, SPI2_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
   HAL_GPIO_WritePin(GPIOF, SPI5_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
   HAL_GPIO_WritePin(GPIOA, SPI1_CS_Pin|SPI3_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
+	  HAL_GPIO_WritePin(GPIOC, RS485_Senser_RE_Pin, GPIO_PIN_RESET); // RS485 RE = 0
+	
 	
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET); //LCD ��ʼ��ʱΪ��������״̬
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);  //LCD背光
@@ -1321,7 +1323,7 @@ static void MX_GPIO_Init(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) 
 {
    static unsigned int heartbeatChangedMs = 0; 
-   unsigned int cmpVal = POSI_CHECK_PERIOD_10US;
+   unsigned int cmpVal = POSI_CHECK_PERIOD_1MS;
 	 if (htim == &htim3) {
       // 10us timecnt
       if (gTime.l_time_cnt_10us < 360000000 ) { // 60min reset local timing
@@ -1334,25 +1336,28 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       // 1ms timecnt
       if (gTime.l_time_cnt_10us % 100 == 0) {
         gTime.l_time_ms++;
+				
+			// 20ms 触发位置检测
+				if (gStatus.l_rs485_getposi_cnt >= 20) {
+					gStatus.l_rs485_getposiEnable = 1;
+					gStatus.l_rs485_getposi_cnt = 0;
+				}
+				// 新RTU帧接收已经使能 10us一查
+				if (modbusPosi.g_RTU_Startflag == 1) {
+					modbusPosi.g_10ms_Cnt++;
+					cmpVal = MODBUS_INTERNAL_1MS;
+					//消息间隔超过10ms
+					if (modbusPosi.g_10ms_Cnt >= 10) {
+						 modbusPosi.g_10ms_Cnt = 0;
+						 modbusPosi.g_RTU_Startflag = 0;
+					
+						//RTU接收完成标识
+						 modbusPosi.g_RTU_RcvFinishedflag = 1;
+					}
+				}
+				gStatus.l_rs485_getposi_cnt++; // 1ms ++
       }
-      // 20ms 触发位置检测
-      if ((gStatus.l_rs485_getposi_cnt - cmpVal) > 0) {
-        gStatus.l_rs485_getposiEnable = 1;
-        gStatus.l_rs485_getposi_cnt = 0;
-      }
-      // 新RTU帧接收已经使能 10us一查
-      if (modbusPosi.g_RTU_Startflag == 1) {
-        modbusPosi.g_10ms_Cnt++;
-        cmpVal = MODBUS_INTERNAL_10US;
-        //消息间隔超过10ms
-        if ((modbusPosi.g_10ms_Cnt - cmpVal) > 0) {
-           modbusPosi.g_10ms_Cnt = 0;
-           modbusPosi.g_RTU_Startflag = 0;
-        
-          //RTU接收完成标识
-           modbusPosi.g_RTU_RcvFinishedflag = 1;
-        }
-      }
+
       // 1s update local time and Sensor
       if ((gTime.l_time_ms % 1000 == 0) && (0 != gTime.l_time_ms-heartbeatChangedMs)) {
         gStatus.l_time_heartbeat = 1;
@@ -1363,8 +1368,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       if (gTime.l_time_cnt_10us % 1000000 == 0) {
         gStatus.l_bissc_sensor_acquire = 1;
       }
-      gStatus.l_rs485_getposi_cnt++; // 10us ++
-
     } else if (htim == &htim4) {
       TimeDispatch(); // canfestival software timer
     } else {

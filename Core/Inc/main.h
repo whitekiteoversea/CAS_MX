@@ -90,8 +90,8 @@ void Error_Handler(void);
 #define NRD_RNW_Pin GPIO_PIN_6
 #define NRD_RNW_GPIO_Port GPIOI
 
-#define POSI_CHECK_PERIOD_10US  (2000)
-#define MODBUS_INTERNAL_10US    (1000)
+#define POSI_CHECK_PERIOD_1MS  (20)
+#define MODBUS_INTERNAL_1MS    (10)
 
 #define MAX_ALLOWED_SPEED_RPM   (1000)
 #define MIN_ALLOWED_SPEED_RPM   (-1000) 
