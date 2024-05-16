@@ -15,15 +15,11 @@
 #define SPI_SPEED_256 		7
 
 #define spdDownLimitVol (32820)
-#define spdUpLimitVol   (58000)
+#define spdUpLimitVol   (43742)
 
-#define HAL_ENABLE      (0)  
+#define HAL_ENABLE       (0)  
+#define HAL_BISSC_ENABLE (1)
 
-// #define	DAC8563_SYNC 		PAout(4) 	//CS�ź�
-// #define	DAC8563_SDIN 		PAout(7) 	//MOSI�ź�
-// #define	DAC8563_SCLK 		PAout(5) 	//SCLK�ź�
-// #define	DAC8563_LDAC 		PBout(0)  //
-// #define	DAC8563_CLR 		PBout(1)  //
 
 // SPI1 DAC8563 GPIO Operations
 #define	GPIO_SPI_DAC8563_SYNC_SET  	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET)
@@ -53,6 +49,7 @@
 #define GPIO_SPI_W5500_INT_RESET    HAL_GPIO_WritePin(GPIOI, GPIO_PIN_11, GPIO_PIN_RESET)
 #define GPIO_SPI_W5500_RST_RESET    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3, GPIO_PIN_RESET)
 
+#ifdef HAL_BISSC_ENABLE
 // SPI2 BISS-C Operation
 #define	GPIO_SPI_BISSC_CS_SET  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_12, GPIO_PIN_SET)
 #define	GPIO_SPI_BISSC_SCLK_SET  	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET)
@@ -85,6 +82,8 @@ enum BISSC_CMD {
     WriteData0 = 0x0b 
 };
 
+#endif
+
 void SPI5_Init(void);			 //��ʼ��SPI��
 void SPI5_SetSpeed(u8 SpeedSet); //����SPI�ٶ�   
 u8 SPI5_ReadWriteByte(u8 TxData);//SPI���߶�дһ���ֽ�
@@ -114,6 +113,8 @@ void SPI_CrisExit(void);
 void SPI4_CS_Select(void);
 void SPI4_CS_Deselect(void);
 
+#ifdef HAL_BISSC_ENABLE
+
 /* SPI2 BISS-C相关函数*/
 
 // HAL_StatusTypeDef HAL_SPI2_WriteCmd(uint8_t cmd, uint8_t addr, uint8_t data);
@@ -131,6 +132,8 @@ uint8_t HAL_CTLRegs_Read_Slave0(uint8_t readAddr);
 // HAL_StatusTypeDef HAL_SPI2_BISSC_Config(void);
 // HAL_StatusTypeDef HAL_SPI2_BISSC_RegsConfigRead(void);
 // HAL_StatusTypeDef HAL_SPI2_BISSC_RegsConfigWrite(void);
+
+#endif
 
 extern SPI_HandleTypeDef hspi1;
 extern SPI_HandleTypeDef hspi4;

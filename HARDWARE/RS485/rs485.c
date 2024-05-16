@@ -3,15 +3,7 @@
 #include "stm32f4xx_hal.h"
 #include "stdio.h"
 #include "usart.h"
-#include "pid.h"
 #include "string.h"
-
-uint8_t comRecvCnt = 0;							//缓冲区总接收字节长度
-cmdRecvData curPosiTime;                   	    // 存储伺服器返回的反馈速度及接收时间
-
-uint8_t g_RTU_Startflag = 0;   					//RTU 10ms计时开始
-uint8_t g_RTU_RcvFinishedflag = 0; 				//RTU接收一帧结束
-uint8_t g_10ms_Cnt = 0;   						//10ms间隔计时
  	
 uint8_t USART_RX_BUF[USART_REC_LEN];     		//接收缓冲,最大USART_REC_LEN个字节.
 												//接收状态
@@ -20,30 +12,135 @@ uint8_t USART_RX_BUF[USART_REC_LEN];     		//接收缓冲,最大USART_REC_LEN个字节.
 												//bit13~0，	接收到的有效字节数目
 uint8_t *lrcResult = NULL; //用于获取转化为Hex文件后的串口数据（需要及时读取，不然会被覆盖）
 
-#if EN_USART2_RX   		//如果使能了接收   	  
-//接收缓存区 	
-u8 RS485_RX_BUF[64];  	//接收缓冲,最大64个字节.
-//接收到的数据长度
-u8 RS485_RX_CNT=0;   
-
 //MODBUS RTU 10ms断帧
-void USART2_IRQHandler(void)
+void USART6_IRQHandler(void)
 {
+	uint8_t res;
 	//如果串口接收缓冲区非空
-	if(USART2->SR&(1<<5))
+	if((__HAL_UART_GET_FLAG(&huart6, UART_FLAG_RXNE)!=RESET)) //接收中断
 	{
-		g_RTU_Startflag = 1;         //刷新定时器
-		g_10ms_Cnt = 0;							 //计时重新开始
+		modbusPosi.g_RTU_Startflag = 1;         //刷新定时器
+		modbusPosi.g_10ms_Cnt = 0;				//计时重新开始
 	
-		USART_RX_BUF[comRecvCnt++] = USART2->DR; //读取当前字节
+		HAL_UART_Receive(&huart6, &res, 1, 50);
+		USART_RX_BUF[modbusPosi.comRecvCnt++] = res;
+
 		//缓存区溢出
-		if(comRecvCnt >= USART_REC_LEN-1)
-		{
-			comRecvCnt = 0;
+		if(modbusPosi.comRecvCnt >= USART_REC_LEN-1) {
+			modbusPosi.comRecvCnt = 0;
 		}
 	}
 } 
-#endif	
+
+//CRC16校验码生成
+u16 g_RS485_CRC16Test(u8 *data, u8 num)
+{
+	u8 i,j,con1,con2;
+	u16 CrcR = 0xffff, con3=0x00;
+	for(i=0;i<num; i++)
+	{
+		//把第一个8位二进制数据（既通讯信息帧的第一个字节）与16位的CRC寄存器的低
+		//8位相异或，把结果放于CRC寄存器，高八位数据不变；
+		con1=CrcR&0xff;
+		con3=CrcR&0xff00;
+		CrcR=con3+data[i]^con1;
+		//把CRC寄存器的内容右移一位（朝低位）用0填补最高位，并检查右移后的移出位；
+		for(j=0;j<8;j++)
+		{
+			con2=CrcR&0x0001;
+			CrcR=CrcR>>1;
+			if(con2==1)
+			{
+				CrcR=CrcR^0xA001;
+			}
+		}
+	}
+	con1=CrcR>>8;//高字节
+	con2=CrcR&0xff;//低字节
+	CrcR=con2;
+	CrcR=(CrcR<<8)+con1;
+	return CrcR;
+}
+//USART2 RS485报文查询下发
+void g_RS485_sendPacket(UART_HandleTypeDef *husart, uint8_t packType, uint8_t *data)
+{
+	switch (packType) {
+		case 0x01: HAL_RS485_Send_Data(husart, data, 8);
+			break;
+		default: 
+			break;
+	}
+}
+
+//串口6 磁栅尺 Modbus RTU 接收数据解包处理
+u32 g_RS485_recvDataDeal(void)
+{
+	u8 waitDealArray[USART_REC_LEN]={0};
+	u16 testCRC16 = 0x0000;	
+	u32 returnPosi = 0;
+	static int rcvFrameCnt = 0;
+	
+	//单次接收到数据长度小于缓存区
+	if (modbusPosi.comRecvCnt >= 9 && modbusPosi.comRecvCnt <= USART_REC_LEN-1) {
+		memcpy (waitDealArray, USART_RX_BUF, modbusPosi.comRecvCnt);
+		
+		testCRC16 = waitDealArray[modbusPosi.comRecvCnt-2];
+		testCRC16 = testCRC16 << 8;
+		testCRC16 |= waitDealArray[modbusPosi.comRecvCnt-1];
+	
+		if (g_RS485_CRC16Test(waitDealArray, modbusPosi.comRecvCnt-2) == testCRC16) {
+			//找到包头，查询结果03
+			switch(waitDealArray[1]) {
+				//查询报文回复解包：这里只查位移
+				case 0x03:
+				//3-4 低 5-6 高
+				returnPosi |= waitDealArray[5];
+				returnPosi <<= 8;
+				returnPosi |= waitDealArray[6];
+				returnPosi <<= 8;
+				returnPosi |= waitDealArray[3];
+				returnPosi <<= 8;
+				returnPosi |= waitDealArray[4];
+				
+				modbusPosi.l_recv_abs_posi_time = gTime.l_time_ms;
+				modbusPosi.latest_abs_posi_um = returnPosi;
+				
+				//首帧接收
+				if(rcvFrameCnt == 0) {
+					modbusPosi.l_init_abs_posi_time = gTime.l_time_ms;
+					modbusPosi.init_abs_posi_um = returnPosi;
+				}
+				break;
+				
+				default:
+				break;
+			}
+			rcvFrameCnt++;
+		}
+	} else {
+		printf("%d ms RS485 recv data length overflow! \n\r", gTime.l_time_ms);
+	}
+	
+	//单条解析完成，直接清零
+	modbusPosi.comRecvCnt = 0;
+	return returnPosi;
+}
+
+// HAL_RS485_Send
+void HAL_RS485_Send_Data(UART_HandleTypeDef *husart, u8 *buf, u8 len)
+{
+	HAL_StatusTypeDef retStatus = HAL_OK;
+	GPIO_SPI_RS485_RE_SET;
+	retStatus = HAL_UART_Transmit(husart, buf, len, 50); // 串口发送数据
+	GPIO_SPI_RS485_RE_RESET;				 // 设置为接收模式	
+
+	if (retStatus != HAL_OK) {
+		printf("RS485 Send Failed! \n\r");
+	}
+}
+
+
+#ifdef HAL_RS485_ENBALE 
 
 //LRC校验函数
 uint8_t* g_lrc_Test(uint8_t *StartAddr, uint8_t TestLen)
@@ -198,7 +295,7 @@ void RS485_Receive_Data(u8 *buf,u8 *len)
 //en:0,接收;1,发送.
 void RS485_TX_Set(u8 en)
 {
-		RS485_RE = 1;
+	RS485_RE = 1;
 }
 
 //USART2串口初始化
@@ -369,101 +466,5 @@ uint8_t g_Modbus_lrc_SendTest(uint8_t *StartAddr, uint8_t TestLen)
     return lrcRes;
 }
 
-//CRC16校验码生成
-u16 g_RS485_CRC16Test(u8 *data, u8 num)
-{
-	u8 i,j,con1,con2;
-	u16 CrcR = 0xffff, con3=0x00;
-	for(i=0;i<num; i++)
-	{
-		//把第一个8位二进制数据（既通讯信息帧的第一个字节）与16位的CRC寄存器的低
-		//8位相异或，把结果放于CRC寄存器，高八位数据不变；
-		con1=CrcR&0xff;
-		con3=CrcR&0xff00;
-		CrcR=con3+data[i]^con1;
-		//把CRC寄存器的内容右移一位（朝低位）用0填补最高位，并检查右移后的移出位；
-		for(j=0;j<8;j++)
-		{
-			con2=CrcR&0x0001;
-			CrcR=CrcR>>1;
-			if(con2==1)
-			{
-				CrcR=CrcR^0xA001;
-			}
-		}
-	}
-	con1=CrcR>>8;//高字节
-	con2=CrcR&0xff;//低字节
-	CrcR=con2;
-	CrcR=(CrcR<<8)+con1;
-	return CrcR;
-}
-//USART2 RS485报文查询下发
-void g_RS485_sendPacket(uint8_t packType, uint8_t *data)
-{
-	switch(packType) {
-		case 0x01: RS485_Send_Data(data, 8);break;
-		default: break;
-	}
-}
+#endif
 
-//串口2 编码器 Modbus RTU 接收数据解包处理
-u32 g_RS485_recvDataDeal(void)
-{
-	u8 waitDealArray[USART_REC_LEN]={0};
-	u16 testCRC16 = 0x0000;	
-	u32 returnPosi = 0;
-	static int rcvFrameCnt = 0;
-	u8 ii =0;
-	
-	//单次接收到数据长度小于缓存区
-	if(comRecvCnt >= 9 && comRecvCnt <= USART_REC_LEN-1)
-	{
-		memcpy(waitDealArray, USART_RX_BUF, comRecvCnt);
-		
-		testCRC16 = waitDealArray[comRecvCnt-2];
-		testCRC16 = testCRC16 << 8;
-		testCRC16 |= waitDealArray[comRecvCnt-1];
-	
-		if(g_RS485_CRC16Test(waitDealArray, comRecvCnt-2) == testCRC16)
-		{
-			//找到包头，查询结果03
-			switch(waitDealArray[1])
-			{
-				//查询报文回复解包：这里只查位移
-				case 0x03:
-				//3-4 低 5-6 高
-				returnPosi |= waitDealArray[5];
-				returnPosi <<= 8;
-				returnPosi |= waitDealArray[6];
-				returnPosi <<= 8;
-				returnPosi |= waitDealArray[3];
-				returnPosi <<= 8;
-				returnPosi |= waitDealArray[4];
-				
-				//获取接收时间 1ms
-				curPosiTime.recvTimeStamp = systemPaceCnt;
-				curPosiTime.feedbackPosi = returnPosi;
-				
-				//首帧接收
-				if(rcvFrameCnt == 0) {
-					recvPosiInitVal = curPosiTime.feedbackPosi;
-				}
-				break;
-				
-				default:
-				break;
-		
-			}
-			rcvFrameCnt++;
-		}
-	} else {
-		printf("UTC: %d ms Local: %d Sensor:  no useable posi data is %d pulse\n\r",  timeSpecStamp,
-																																									systemPaceCnt,
-																																									returnPosi);
-	}
-	
-	//单条解析完成，直接清零
-	comRecvCnt = 0;
-	return returnPosi;
-}

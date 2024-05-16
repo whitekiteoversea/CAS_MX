@@ -23,6 +23,7 @@
         "canfestival_timer.h": "c",
         "data.h": "c",
         "canfestival_can.h": "c",
-        "canfestival.h": "c"
+        "canfestival.h": "c",
+        "systime.h": "c"
     }
 }

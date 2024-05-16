@@ -28,6 +28,8 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
+#include  "global_data.h"
+#include "math.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -36,61 +38,6 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
-
-// 全局工作模式
-enum TELMODE {
-  IDLEMODE = 0,
-  CANMODE,
-  ETHMODE
-};
-
-enum WORKMODE {
-		RECVSPEEDMODE = 0,
-		PIPOSIMODE,     
-		PREPOSIMODE
-};
-
-// 全局时间记录
-typedef struct {
-  unsigned int l_time_cnt_10us;
-  unsigned int l_time_ms;
-  unsigned int g_time_ms;
-} GLOBALTIME;
-// Global Status Struct
-typedef struct {
-  volatile unsigned char l_time_overflow;   // 本地计时溢出
-  volatile unsigned char l_time_heartbeat;  // 本地计时心跳
-  enum TELMODE telmode;                     // 当前工作模式
-	enum WORKMODE workmode;                   // Algorithm WorkMode: Speed/Torque/Position
-  volatile unsigned char l_can1_recv_flag; 
-  volatile unsigned int  l_bissc_sensor_acquire; // 获取BISS-C 数据
-} GLOBALSTATUS;
-
-// ETH Mode Parameter
-typedef struct {
-  unsigned char SrcRecvIP[4];
-	unsigned short SrcRecvPort;
-
-  unsigned char DstHostIP[4];
-	unsigned short DstHostPort;
-
-  // unsigned char *DstHostIP[2][4];
-	// unsigned short DstHostPort[2];
-} GLOBAL_ETH_UDP_VAR;
-
-typedef struct {
-  uint8_t g_posi[5];      // unit depends on BISS-C
-	int32_t g_Distance; 	// um
-	int16_t g_Speed; 			// rpm
-
-	uint32_t g_InitialPosi; //um
-
-} MOTIONVAR;
-
-typedef struct {
-  unsigned char NodeID;
-
-} GLOBAL_CAN_VAR;
 
 /* USER CODE END ET */
 
@@ -142,6 +89,15 @@ void Error_Handler(void);
 #define NWR_E_GPIO_Port GPIOI
 #define NRD_RNW_Pin GPIO_PIN_6
 #define NRD_RNW_GPIO_Port GPIOI
+
+#define POSI_CHECK_PERIOD_10US  (2000)
+#define MODBUS_INTERNAL_10US    (1000)
+
+#define MAX_ALLOWED_SPEED_RPM   (1000)
+#define MIN_ALLOWED_SPEED_RPM   (-1000) 
+
+#define RPM2Vol_CONVERSE_COFF   (10.922)
+
 
 /* USER CODE BEGIN Private defines */
 extern GLOBALTIME gtime;

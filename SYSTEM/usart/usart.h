@@ -26,8 +26,8 @@ typedef struct
 extern uint8_t UART4_SendBuf[200];   //���ͻ�����
 extern FeedBackInfoPack monitorPack;
 
-#define EN_UART4_RX 0 //Ĭ�Ϲر�uart4�����жϣ�ֻ���������ݲɼ� 
-#define RS485_RE PGout(10)	// RS485_RE
+// #define EN_UART4_RX 0 //Ĭ�Ϲر�uart4�����жϣ�ֻ���������ݲɼ� 
+// #define RS485_RE PGout(10)	// RS485_RE
 
 void uart_init(u32 pclk2,u32 bound); 
 void uart4_init(u32 pclk2,u32 bound);

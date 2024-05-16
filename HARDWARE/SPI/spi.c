@@ -248,6 +248,7 @@ void SPI4_CS_Deselect(void)
 
 /* SPI2 BISS-C*/
 
+#ifdef HAL_BISSC_ENABLE
 
 // MB4 Wrap_Function
 void mb4_spi_transfer(uint8_t *data_tx, uint8_t *data_rx, uint16_t datasize)
@@ -272,6 +273,11 @@ void HAL_BISSC_Setup(void)
 	//BiSS/SSI Interface
 	uint8_t txData[3] = {0};
 	uint8_t rData = 0;
+	uint8_t curStatus = 0x00;
+	
+	HAL_Delay(500);
+	mb4_read_status(&curStatus, 1);
+	printf("BISS-C: Before ALL, Status is %x \n\r", curStatus);
 	
 	txData[0] = 0x01;
 	mb4_write_registers(0xED, txData, 1); //CFGCH1=0x01 (BiSS C)
@@ -296,6 +302,14 @@ void HAL_BISSC_Setup(void)
 	txData[0] = 0x63;
 	mb4_write_registers(0xE8, txData, 1); //FREQAGS=0x63 (10 kHz) 控制RS422的最小循环周期 也就是100us向传感器自动获取一次数据
 
+	txData[0] = 0x10;
+	mb4_write_registers(0xF4, txData, 1); // Initial Slave
+	HAL_Delay(500);
+
+	mb4_read_status(&curStatus, 1);
+	printf("BISS-C: After Initial, Status is %x \n\r", curStatus);
+
+
 	//Reset SVALID flags
 	txData[0] = 0x00;
 	mb4_write_registers(0xF1, txData, 1);
@@ -309,32 +323,47 @@ void HAL_BISSC_Setup(void)
 void HAL_SG_SenSorAcquire(uint8_t *SG_Data) 
 {
 	uint8_t cnt = 0;
+	uint8_t curStatus = 0;
 	uint8_t TxData[8] = {0};
 	uint8_t RxData[8] = {0};
 	uint8_t StatusInformationF0 = 0x00;
 	uint8_t StatusInformationF1 = 0x00;
-	
+
+	// Test AGS
+	// mb4_read_registers(0xF4, &curStatus, 1);
+	// if ((curStatus & 0x01) == 1) {
+	// 	printf(" BISS-C: AGS has Set! \n\r");
+	// }
+
+	curStatus = 0;
+	mb4_read_registers(0xF0, &curStatus, 1);
+	printf("BISS-C: Read 0xF0 Value: %x \n\r", curStatus);
+
 	//Read Status Information register 0xF0, wait for end of transmission EOT=1
 	TxData[0] = 0xF0; 
 	while (( StatusInformationF0 & 0x01) == 0) {
-		mb4_read_registers(0xF0, &StatusInformationF0, 1); // 等待传感器传输完成信号
+		mb4_read_registers(0xF0, &StatusInformationF0, 1);
 	}
 
 	//Read and reset SVALID flags in Status Information register 0xF1
 	mb4_read_registers(0xF1, &StatusInformationF1, 1);
+	printf("BISS-C: Read 0xF1 Value: %x \n\r", StatusInformationF1);
+	
 	TxData[0] = 0x00;
 	mb4_write_registers(0xF1, TxData, 1); // 读取状态后重置0xF1 SVALID1 reg状态
 
-	if ((StatusInformationF0 & 0x70) == 0x70) { // REGEND,EOT均置1
+	if ((StatusInformationF0 & 0x70) == 0x70) { // REGEND, EOT均置1
 		//If Status ok but SVALID flag is not set, restart AGS
-		if ((StatusInformationF1 & 0x02) == 0) { // (除错处理)检查 SVALID1 != 1
-
+		curStatus = (StatusInformationF1 & 0x02); // bit SVALID1
+		if (curStatus == 0) { // if SVALID1 != 1 And ReStart AGS
+			printf(" BISS-C Acquire SG Data Failed! SVALID1 is %d \n\r", curStatus);
 			TxData[0] = 0x80;
 			mb4_write_registers(0xF4, TxData, 1);
 			TxData[0] = 0x01;
 			mb4_write_registers(0xF4, TxData, 1);//Restart AGS
-		} else { // 进行数据获取 //If Status ok and SVALID flag is set, read single-cycle data
+		} else {  //If Status ok and SVALID flag is set, read single-cycle data
 			mb4_read_registers(0x00, SG_Data, 5);
+			printf(" BISS-C: bit SVALID1 Set Success! \n\r");
 		}
 	}
 	else {
@@ -416,3 +445,5 @@ uint8_t HAL_CTLRegs_Read_Slave0(uint8_t readAddr)
 
 	return SlaveRegValue;
 }
+
+#endif
