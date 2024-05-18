@@ -1,0 +1,118 @@
+<html>
+<body>
+<pre>
+<h1>µVision Build Log</h1>
+<h2>Tool Versions:</h2>
+IDE-Version: ¦ÌVision V5.33.0.0
+Copyright (C) 2020 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: 11 WhiteKite2020, 1, LIC=EXJT4-FFLXW-12RLE-59LIX-MV3YX-3X1U5
+ 
+Tool Versions:
+Toolchain:       MDK-ARM Plus  Version: 5.33.0.0
+Toolchain Path:  D:\Keil\ARM\ARMCC\Bin
+C Compiler:      Armcc.exe V5.06 update 7 (build 960)
+Assembler:       Armasm.exe V5.06 update 7 (build 960)
+Linker/Locator:  ArmLink.exe V5.06 update 7 (build 960)
+Library Manager: ArmAr.exe V5.06 update 7 (build 960)
+Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
+CPU DLL:         SARMCM3.DLL V5.33.0.0
+Dialog DLL:      DCM.DLL V1.17.3.0
+Target DLL:      CMSIS_AGDI.dll V1.32.12.0
+Dialog DLL:      TCM.DLL V1.48.0.0
+ 
+<h2>Project:</h2>
+C:\Users\WhiteKite2020\Desktop\CAS_MX\MDK-ARM\CAS_MX.uvprojx
+Project File Date:  05/17/2024
+
+<h2>Output:</h2>
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil\ARM\ARMCC\Bin'
+Build target 'CAS_MX'
+compiling stm32f4xx_it.c...
+compiling lcd_init.c...
+compiling lcd.c...
+compiling socket.c...
+compiling w5500.c...
+compiling stm32f4xx_hal_msp.c...
+compiling main.c...
+../Core/Src/main.c(156): warning:  #177-D: variable "snddata"  was declared but never referenced
+  	uint8_t snddata[8] = {0};
+../Core/Src/main.c(157): warning:  #177-D: variable "ext_ID"  was declared but never referenced
+  	CAN_ID_Union ext_ID;
+../Core/Src/main.c(158): warning:  #177-D: variable "sensorData"  was declared but never referenced
+    unsigned char sensorData = 0;
+../Core/Src/main.c(159): warning:  #177-D: variable "cnt"  was declared but never referenced
+    uint8_t cnt = 0;
+../Core/Src/main.c(160): warning:  #177-D: variable "prx"  was declared but never referenced
+  	uint8_t prx = 0;
+../Core/Src/main.c(162): warning:  #177-D: variable "SG_Data"  was declared but never referenced
+    uint8_t SG_Data[8] = {0}; 
+../Core/Src/main.c(163): warning:  #177-D: variable "sensor38bit"  was declared but never referenced
+    uint64_t sensor38bit = 0;
+../Core/Src/main.c(165): warning:  #177-D: variable "rs485_posi_acquire_data"  was declared but never referenced
+    uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
+../Core/Src/main.c(1295): warning:  #550-D: variable "cmpVal"  was set but never used
+     unsigned int cmpVal = POSI_CHECK_PERIOD_1MS;
+../Core/Src/main.c(1416): warning:  #177-D: variable "ret"  was declared but never referenced
+  	int16_t ret = 0;
+../Core/Src/main.c(1477): warning:  #177-D: variable "snddata"  was declared but never referenced
+  	uint8_t snddata[8] = {0};
+../Core/Src/main.c(1501): warning:  #177-D: variable "sendCnt"  was declared but never referenced
+      u32 sendCnt = 0;
+../Core/Src/main.c(365): warning:  #177-D: function "MX_CAN1_Init"  was declared but never referenced
+  static void MX_CAN1_Init(void)
+../Core/Src/main.c(416): warning:  #177-D: function "MX_CAN2_Init"  was declared but never referenced
+  static void MX_CAN2_Init(void)
+../Core/Src/main.c(467): warning:  #177-D: function "MX_I2C2_Init"  was declared but never referenced
+  static void MX_I2C2_Init(void)
+../Core/Src/main.c(553): warning:  #177-D: function "MX_SPI2_Init"  was declared but never referenced
+  static void MX_SPI2_Init(void)
+../Core/Src/main.c(591): warning:  #177-D: function "MX_SPI3_Init"  was declared but never referenced
+  static void MX_SPI3_Init(void)
+../Core/Src/main.c(667): warning:  #177-D: function "MX_SPI5_Init"  was declared but never referenced
+  static void MX_SPI5_Init(void)
+../Core/Src/main.c(870): warning:  #177-D: function "MX_TIM5_Init"  was declared but never referenced
+  static void MX_TIM5_Init(void)
+../Core/Src/main.c(919): warning:  #177-D: function "MX_TIM8_Init"  was declared but never referenced
+  static void MX_TIM8_Init(void)
+../Core/Src/main.c(1027): warning:  #177-D: function "MX_USART1_UART_Init"  was declared but never referenced
+  static void MX_USART1_UART_Init(void)
+../Core/Src/main.c(1060): warning:  #177-D: function "MX_USART2_UART_Init"  was declared but never referenced
+  static void MX_USART2_UART_Init(void)
+../Core/Src/main.c(1093): warning:  #177-D: function "MX_USART3_UART_Init"  was declared but never referenced
+  static void MX_USART3_UART_Init(void)
+../Core/Src/main.c(1126): warning:  #177-D: function "MX_USART6_UART_Init"  was declared but never referenced
+  static void MX_USART6_UART_Init(void)
+../Core/Src/main.c(825): warning:  #177-D: function "MX_TIM4_Init"  was declared but never referenced
+  static void MX_TIM4_Init(void)
+../Core/Src/main.c: 25 warnings, 0 errors
+linking...
+Program Size: Code=29288 RO-data=964 RW-data=2864 ZI-data=4648  
+FromELF: creating hex file...
+"CAS_MX\CAS_MX.axf" - 0 Error(s), 25 Warning(s).
+
+<h2>Software Packages used:</h2>
+
+Package Vendor: ARM
+                http://www.keil.com/pack/ARM.CMSIS.5.7.0.pack
+                ARM.CMSIS.5.7.0
+                CMSIS (Cortex Microcontroller Software Interface Standard)
+   * Component: CORE Version: 5.4.0
+
+Package Vendor: Keil
+                http://www.keil.com/pack/Keil.STM32F4xx_DFP.2.15.0.pack
+                Keil.STM32F4xx_DFP.2.15.0
+                STMicroelectronics STM32F4 Series Device Support, Drivers and Examples
+
+<h2>Collection of Component include folders:</h2>
+  .\RTE\_CAS_MX
+  D:\Keil_Pack\ARM\CMSIS\5.7.0\CMSIS\Core\Include
+  D:\Keil_Pack\Keil\STM32F4xx_DFP\2.15.0\Drivers\CMSIS\Device\ST\STM32F4xx\Include
+
+<h2>Collection of Component Files used:</h2>
+
+   * Component: ARM::CMSIS:CORE:5.4.0
+      Include file:  CMSIS\Core\Include\tz_context.h
+Build Time Elapsed:  00:00:13
+</pre>
+</body>
+</html>

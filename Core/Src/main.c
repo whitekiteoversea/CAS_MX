@@ -26,7 +26,7 @@
 #include "lcd.h"
 #include "lcd_init.h"
 #include "spi.h"
-// #include "socket.h"	
+#include "socket.h"	
 #include "string.h"
 #include "can.h"
 #include "pid.h"
@@ -53,7 +53,6 @@
 #define SOCK_TCPS        (0)
 #define DATA_BUF_SIZE   (2048)
 
-#define CAN2_SENDTEST_ON (0)
 
 /* USER CODE END PD */
 
@@ -94,10 +93,10 @@ GLOBAL_ETH_UDP_VAR w5500_udp_var;
 GLOBAL_CAN_VAR can_var;
 MODBUSVARS modbusPosi;
 
-#ifdef ETH_ENABLE
+#ifdef HAL_W5500_ENABLE
 
 wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
-                            .ip = {192, 168, 1, 11},
+                            .ip = {192, 168, 1, 10},
                             .sn = {255,255,255,0},
                             .gw = {192, 168, 1, 1},
                             .dns = {8,8,8,8},
@@ -185,15 +184,15 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_CAN1_Init();
+  // MX_CAN1_Init();
   // MX_CAN2_Init();
   // MX_I2C2_Init();
   MX_SPI1_Init();
   // MX_SPI2_Init();
   // MX_SPI3_Init();
-  // MX_SPI4_Init();
+  MX_SPI4_Init();
   // MX_SPI5_Init();
- MX_TIM1_Init();
+  MX_TIM1_Init();
   MX_TIM3_Init();
 //  MX_TIM5_Init();
 //  MX_TIM8_Init();
@@ -201,7 +200,7 @@ int main(void)
   // MX_USART1_UART_Init();
   // MX_USART2_UART_Init();
   // MX_USART3_UART_Init();
-  MX_USART6_UART_Init();
+//  MX_USART6_UART_Init();
 //  MX_TIM4_Init();
 
   /* Initialize interrupts */
@@ -214,11 +213,11 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim4);   //CANOpen Timer
 
   // 3. ETH Initial
-//  network_register();
-//  network_init();
+	network_register();
+	network_init();
 
   // 4. BISS-C Sensor Data Acquire (pass)
-	HAL_Delay(500);  // wait for sensor initial 350ms
+	//HAL_Delay(500);  // wait for sensor initial 350ms
 
 // #ifdef HAL_BISSC_ENABLE
 // 	HAL_BISSC_Setup();
@@ -254,61 +253,31 @@ int main(void)
       gStatus.l_time_heartbeat = 0;
     }
 
-    // BiSS-C
-//#ifdef HAL_BISSC_ENABLE
-//    if (gStatus.l_bissc_sensor_acquire == 1) {
-//      HAL_SG_SenSorAcquire(SG_Data);
-//      for (cnt=0; cnt<5; cnt++) {
-//        sensor38bit |= SG_Data[cnt];
-//        sensor38bit <<= 8;
-//      }
-//      printf(" %d ms Acquire SG_Data %d \n\r", gTime.g_time_ms, sensor38bit);
-//      gStatus.l_bissc_sensor_acquire = 0;
-//    }
-//#endif
-
-    // deal with AMG2000 RS485 MSG
-    if(modbusPosi.g_RTU_RcvFinishedflag == 1) {
-			g_RS485_recvDataDeal();
-      printf("%d ms RS485: cur abs posi %d us", modbusPosi.l_recv_abs_posi_time, modbusPosi.latest_abs_posi_um);
-      modbusPosi.g_RTU_RcvFinishedflag = 0;
-    }
-    // Send packet to AMG2000 to Acquire abs Posi data
-    if (gStatus.l_rs485_getposiEnable == 1) {
-			// g_RS485_sendPacket(&huart6, 1, rs485_posi_acquire_data);
-      gStatus.l_rs485_getposiEnable = 0;
-    }
-
-    // CAN Protocol
-    if (gStatus.l_can1_recv_flag == 1) {
-        CANRecvMsgDeal(&hcan1, CAN1RecvFrame.CAN_Frame_Union.CTRCode);
-			  gStatus.l_can1_recv_flag = 0;
-    }
-
 #if CAN2_SENDTEST_ON
 		HAL_CAN_Std_Transmit(&hcan2, (void *)snddata, 8, ext_ID.Value);
 		HAL_Delay(500);
 #endif
 
-  //   switch (getSn_SR(0))																					 
-	// 	{
-	// 		case SOCK_UDP:																							    
-	// 				HAL_Delay(100); 
-	// 				if(getSn_IR(0) & Sn_IR_RECV) {
-	// 					setSn_IR(0, Sn_IR_RECV);															   
-	// 				}
+#ifdef HAL_W5500_ENABLE
+    switch (getSn_SR(0)) {
+			case SOCK_UDP:																							    
+					HAL_Delay(100); 
+					if(getSn_IR(0) & Sn_IR_RECV) {
+						setSn_IR(0, Sn_IR_RECV);															   
+					}
 					
-	// 				if((ret = getSn_RX_RSR(0)) > 0) { 
-	// 					memset(gDATABUF, 0, ret+1);
-	// 					recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &w5500_udp_var.DstHostPort);			
-	// 					printf(" %d ms %s\r\n", gTime.l_time_ms, gDATABUF);															  
-	// 					sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  	
-	// 				}
-	// 		break;
-	// 		case SOCK_CLOSED:																						   
-	// 				socket(0, Sn_MR_UDP, w5500_udp_var.SrcRecvPort, 0x00);			
-	// 		break;
-	// 	}
+					if((ret = getSn_RX_RSR(0)) > 0) { 
+						memset(gDATABUF, 0, ret+1);
+						recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &w5500_udp_var.DstHostPort);			
+						printf(" %d ms %s\r\n", gTime.l_time_ms, gDATABUF);															  
+						sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  	
+					}
+			break;
+			case SOCK_CLOSED:																						   
+					socket(0, Sn_MR_UDP, w5500_udp_var.SrcRecvPort, 0x00);			
+			break;
+		}
+#endif
 	}
   /* USER CODE END 3 */
 }
@@ -1205,7 +1174,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOG_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3|SPI4_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3|SPI4_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(SPI5_CS_GPIO_Port, SPI5_CS_Pin, GPIO_PIN_RESET);
@@ -1304,15 +1273,15 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
-	HAL_GPIO_WritePin(GPIOE, SPI4_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
-  HAL_GPIO_WritePin(GPIOB, SPI2_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
-  HAL_GPIO_WritePin(GPIOF, SPI5_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
-  HAL_GPIO_WritePin(GPIOA, SPI1_CS_Pin|SPI3_CS_Pin, GPIO_PIN_SET); // SPI CSĬ�ϲ�ʹ???
+	HAL_GPIO_WritePin(GPIOE, SPI4_CS_Pin, GPIO_PIN_SET); 
+  HAL_GPIO_WritePin(GPIOB, SPI2_CS_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOF, SPI5_CS_Pin, GPIO_PIN_SET); 
+  HAL_GPIO_WritePin(GPIOA, SPI1_CS_Pin|SPI3_CS_Pin, GPIO_PIN_SET); 
 	  HAL_GPIO_WritePin(GPIOC, RS485_Senser_RE_Pin, GPIO_PIN_RESET); // RS485 RE = 0
 	
 	
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET); //LCD ��ʼ��ʱΪ��������״̬
-	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);  //LCD背光
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET); 
+	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);  
 
 /* USER CODE END MX_GPIO_Init_2 */
 }
@@ -1336,8 +1305,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       // 1ms timecnt
       if (gTime.l_time_cnt_10us % 100 == 0) {
         gTime.l_time_ms++;
-				
-			// 20ms 触发位置检测
+				// 20ms 触发位置检测
 				if (gStatus.l_rs485_getposi_cnt >= 20) {
 					gStatus.l_rs485_getposiEnable = 1;
 					gStatus.l_rs485_getposi_cnt = 0;
@@ -1402,16 +1370,16 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *phcan)
         HAL_CAN_GetRxMessage(phcan, CAN_RX_FIFO0, &RxMessage, rxbuf);
 
         RMessage.cob_id = RxMessage.StdId;						                  /* ������ͽڵ�ID */
-        if (RxMessage.RTR == CAN_RTR_DATA) {
-						RMessage.rtr = 0;
-				} else {
-						RMessage.rtr = 1;
-				}
+//        if (RxMessage.RTR == CAN_RTR_DATA) {
+//						RMessage.rtr = 0;
+//				} else {
+//						RMessage.rtr = 1;
+//				}
 				
         RMessage.len = RxMessage.DLC;							                      /* ���ݰ����� */
         memcpy(RMessage.data, rxbuf, RxMessage.DLC);		                /* ���� */
 
-        /* canopen���ݰ����䴦������ */
+				/*CANOpen Timer*/
         canDispatch(&masterObjdict_Data, &RMessage);
         
 				consectiveCnt++;
@@ -1421,7 +1389,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *phcan)
     }
 }
 
-#ifdef ETH_ENABLE
+#ifdef HAL_W5500_ENABLE
 
 // ETH initial
 void network_init(void)
@@ -1493,7 +1461,7 @@ void systemParaInit(void)
   w5500_udp_var.DstHostIP[0] = 192;
 	w5500_udp_var.DstHostIP[1] = 168;
 	w5500_udp_var.DstHostIP[2] = 1;
-	w5500_udp_var.DstHostIP[3] = 5;
+	w5500_udp_var.DstHostIP[3] = 20;
 	w5500_udp_var.DstHostPort = 8888;
 	
 	w5500_udp_var.SrcRecvIP[0] = 192;

@@ -177,12 +177,15 @@ void HAL_SPI1_DAC8563_Init(void)
 /* SPI4 W5500 相关函数*/
 uint8_t HAL_SPI4_WriteAndReadByte(uint8_t TxData)
 {
-	unsigned char retStatus = HAL_OK;
+	HAL_StatusTypeDef retStatus = HAL_OK;
 	unsigned char retData = 0;
 	unsigned int timeToWait_Ms = 50;
 
 	GPIO_SPI_W5500_CS_RESET; 
-	HAL_SPI_TransmitReceive(&hspi4, &TxData, &retData, 1, timeToWait_Ms);
+	retStatus = HAL_SPI_TransmitReceive(&hspi4, &TxData, &retData, 1, timeToWait_Ms);
+	if (retStatus != HAL_OK) {
+		printf("W5500: SPI4 WriteAndRecv Failed! \r\n");
+	}
 	GPIO_SPI_W5500_CS_SET; 
 	return retData;
 }
