@@ -200,7 +200,7 @@ int main(void)
   // MX_USART1_UART_Init();
   // MX_USART2_UART_Init();
   // MX_USART3_UART_Init();
-//  MX_USART6_UART_Init();
+  MX_USART6_UART_Init();
 //  MX_TIM4_Init();
 
   /* Initialize interrupts */
@@ -213,8 +213,10 @@ int main(void)
   HAL_TIM_Base_Start_IT(&htim4);   //CANOpen Timer
 
   // 3. ETH Initial
+#if HAL_W5500_ENABLE
 	network_register();
 	network_init();
+#endif
 
   // 4. BISS-C Sensor Data Acquire (pass)
 	//HAL_Delay(500);  // wait for sensor initial 350ms
@@ -253,12 +255,46 @@ int main(void)
       gStatus.l_time_heartbeat = 0;
     }
 
+// BiSS-C
+#if HAL_BISSC_ENABLE
+   if (gStatus.l_bissc_sensor_acquire == 1) {
+     HAL_SG_SenSorAcquire(SG_Data);
+     for (cnt=0; cnt<5; cnt++) {
+       sensor38bit |= SG_Data[cnt];
+       sensor38bit <<= 8;
+     }
+     printf(" %d ms Acquire SG_Data %d \n\r", gTime.g_time_ms, sensor38bit);
+     gStatus.l_bissc_sensor_acquire = 0;
+   }
+
+#else
+  // deal with AMG2000 RS485 MSG
+  if(modbusPosi.g_RTU_RcvFinishedflag == 1) {
+    g_RS485_recvDataDeal();
+    printf("%d ms RS485: cur abs posi %d us", modbusPosi.l_recv_abs_posi_time, modbusPosi.latest_abs_posi_um);
+    modbusPosi.g_RTU_RcvFinishedflag = 0;
+  }  
+  UART_Byte_Receive(&huart6);
+  // Send packet to AMG2000 to Acquire abs Posi data
+  if (gStatus.l_rs485_getposiEnable == 1) {
+    g_RS485_sendPacket(&huart6, 1, rs485_posi_acquire_data);
+    gStatus.l_rs485_getposiEnable = 0;
+  }
+#endif
+
+
+// CAN1 Protocol
+  if (gStatus.l_can1_recv_flag == 1) {
+      CANRecvMsgDeal(&hcan1, CAN1RecvFrame.CAN_Frame_Union.CTRCode);
+      gStatus.l_can1_recv_flag = 0;
+  }
+
 #if CAN2_SENDTEST_ON
 		HAL_CAN_Std_Transmit(&hcan2, (void *)snddata, 8, ext_ID.Value);
 		HAL_Delay(500);
 #endif
 
-#ifdef HAL_W5500_ENABLE
+#if HAL_W5500_ENABLE
     switch (getSn_SR(0)) {
 			case SOCK_UDP:																							    
 					HAL_Delay(100); 
@@ -1146,7 +1182,8 @@ static void MX_USART6_UART_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN USART6_Init 2 */
-
+  // UART_Start_Receive_IT(&huart6, USART_RX_BUF, 1);
+  HAL_UART_Receive_IT(&huart6, USART_IT_BUF, 1);
   /* USER CODE END USART6_Init 2 */
 
 }
@@ -1649,6 +1686,8 @@ int32_t avgErrUpdate(int32_t *sampleData)
 	
 	return duss_result;
 }
+
+
 /* USER CODE END 1 */
 
 

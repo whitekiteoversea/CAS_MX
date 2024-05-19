@@ -17,8 +17,8 @@
 #define spdDownLimitVol (32820)
 #define spdUpLimitVol   (43742)
 
-#define HAL_ENABLE       (0)  
-#define HAL_BISSC_ENABLE (1)
+#define HAL_ENABLE          (0)  
+#define HAL_BISSC_ENABLE    (0)
 
 
 // SPI1 DAC8563 GPIO Operations

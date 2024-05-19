@@ -24,6 +24,7 @@
         "data.h": "c",
         "canfestival_can.h": "c",
         "canfestival.h": "c",
-        "systime.h": "c"
+        "systime.h": "c",
+        "global_data.h": "c"
     }
 }

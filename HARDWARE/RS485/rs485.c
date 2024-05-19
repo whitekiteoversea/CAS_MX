@@ -5,46 +5,41 @@
 #include "usart.h"
 #include "string.h"
  	
-uint8_t USART_RX_BUF[USART_REC_LEN];     		//½ÓÊÕ»º³å,×î´óUSART_REC_LEN¸ö×Ö½Ú.
-												//½ÓÊÕ×´Ì¬
-												//bit15£¬	½ÓÊÕÍê³É±êÖ¾
-												//bit14£¬	½ÓÊÕµ½0x0d
-												//bit13~0£¬	½ÓÊÕµ½µÄÓÐÐ§×Ö½ÚÊýÄ¿
-uint8_t *lrcResult = NULL; //ÓÃÓÚ»ñÈ¡×ª»¯ÎªHexÎÄ¼þºóµÄ´®¿ÚÊý¾Ý£¨ÐèÒª¼°Ê±¶ÁÈ¡£¬²»È»»á±»¸²¸Ç£©
+uint8_t USART_RX_BUF[USART_REC_LEN];  
+uint8_t USART_IT_BUF[USART_REC_LEN]; // TEMP RX BUFFER
+uint8_t *lrcResult = NULL;
 
-//MODBUS RTU 10ms¶ÏÖ¡
+#if !HAL_MODBUS_ENABLE
+
+//MODBUS RTU 10ms
 void USART6_IRQHandler(void)
 {
 	uint8_t res;
-	//Èç¹û´®¿Ú½ÓÊÕ»º³åÇø·Ç¿Õ
-	if((__HAL_UART_GET_FLAG(&huart6, UART_FLAG_RXNE) != RESET)) //½ÓÊÕÖÐ¶Ï
+	if((__HAL_UART_GET_FLAG(&huart6, UART_FLAG_RXNE) != RESET)) //ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½
 	{
-		modbusPosi.g_RTU_Startflag = 1;   // Ë¢ÐÂ¶¨Ê±Æ÷
-		modbusPosi.g_10ms_Cnt = 0;		  // ¼ÆÊ±ÖØÐÂ¿ªÊ¼
+		modbusPosi.g_RTU_Startflag = 1;   // Ë¢ï¿½Â¶ï¿½Ê±ï¿½ï¿½
+		modbusPosi.g_10ms_Cnt = 0;		  // ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Â¿ï¿½Ê¼
 	
 		HAL_UART_Receive(&huart6, &res, 1, 50);
 		USART_RX_BUF[modbusPosi.comRecvCnt++] = res;
 
-		//»º´æÇøÒç³ö
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		if(modbusPosi.comRecvCnt >= USART_REC_LEN-1) {
 			modbusPosi.comRecvCnt = 0;
 		}
 	}
 } 
+#endif
 
-//CRC16Ð£ÑéÂëÉú³É
 u16 g_RS485_CRC16Test(u8 *data, u8 num)
 {
 	u8 i,j,con1,con2;
 	u16 CrcR = 0xffff, con3=0x00;
 	for(i=0;i<num; i++)
 	{
-		//°ÑµÚÒ»¸ö8Î»¶þ½øÖÆÊý¾Ý£¨¼ÈÍ¨Ñ¶ÐÅÏ¢Ö¡µÄµÚÒ»¸ö×Ö½Ú£©Óë16Î»µÄCRC¼Ä´æÆ÷µÄµÍ
-		//8Î»ÏàÒì»ò£¬°Ñ½á¹û·ÅÓÚCRC¼Ä´æÆ÷£¬¸ß°ËÎ»Êý¾Ý²»±ä£»
 		con1=CrcR&0xff;
 		con3=CrcR&0xff00;
 		CrcR=con3+data[i]^con1;
-		//°ÑCRC¼Ä´æÆ÷µÄÄÚÈÝÓÒÒÆÒ»Î»£¨³¯µÍÎ»£©ÓÃ0Ìî²¹×î¸ßÎ»£¬²¢¼ì²éÓÒÒÆºóµÄÒÆ³öÎ»£»
 		for(j=0;j<8;j++)
 		{
 			con2=CrcR&0x0001;
@@ -55,13 +50,13 @@ u16 g_RS485_CRC16Test(u8 *data, u8 num)
 			}
 		}
 	}
-	con1=CrcR>>8;//¸ß×Ö½Ú
-	con2=CrcR&0xff;//µÍ×Ö½Ú
+	con1=CrcR>>8;//ï¿½ï¿½ï¿½Ö½ï¿½
+	con2=CrcR&0xff;//ï¿½ï¿½ï¿½Ö½ï¿½
 	CrcR=con2;
 	CrcR=(CrcR<<8)+con1;
 	return CrcR;
 }
-//USART2 RS485±¨ÎÄ²éÑ¯ÏÂ·¢
+
 void g_RS485_sendPacket(UART_HandleTypeDef *husart, uint8_t packType, uint8_t *data)
 {
 	switch (packType) {
@@ -72,7 +67,6 @@ void g_RS485_sendPacket(UART_HandleTypeDef *husart, uint8_t packType, uint8_t *d
 	}
 }
 
-//´®¿Ú6 ´ÅÕ¤³ß Modbus RTU ½ÓÊÕÊý¾Ý½â°ü´¦Àí
 u32 g_RS485_recvDataDeal(void)
 {
 	u8 waitDealArray[USART_REC_LEN]={0};
@@ -80,7 +74,6 @@ u32 g_RS485_recvDataDeal(void)
 	u32 returnPosi = 0;
 	static int rcvFrameCnt = 0;
 	
-	//µ¥´Î½ÓÊÕµ½Êý¾Ý³¤¶ÈÐ¡ÓÚ»º´æÇø
 	if (modbusPosi.comRecvCnt >= 9 && modbusPosi.comRecvCnt <= USART_REC_LEN-1) {
 		memcpy (waitDealArray, USART_RX_BUF, modbusPosi.comRecvCnt);
 		
@@ -89,11 +82,8 @@ u32 g_RS485_recvDataDeal(void)
 		testCRC16 |= waitDealArray[modbusPosi.comRecvCnt-1];
 	
 		if (g_RS485_CRC16Test(waitDealArray, modbusPosi.comRecvCnt-2) == testCRC16) {
-			//ÕÒµ½°üÍ·£¬²éÑ¯½á¹û03
 			switch(waitDealArray[1]) {
-				//²éÑ¯±¨ÎÄ»Ø¸´½â°ü£ºÕâÀïÖ»²éÎ»ÒÆ
 				case 0x03:
-				//3-4 µÍ 5-6 ¸ß
 				returnPosi |= waitDealArray[5];
 				returnPosi <<= 8;
 				returnPosi |= waitDealArray[6];
@@ -104,9 +94,8 @@ u32 g_RS485_recvDataDeal(void)
 				
 				modbusPosi.l_recv_abs_posi_time = gTime.l_time_ms;
 				modbusPosi.latest_abs_posi_um = returnPosi;
-				
-				//Ê×Ö¡½ÓÊÕ
-				if(rcvFrameCnt == 0) {
+
+				if (rcvFrameCnt == 0) {
 					modbusPosi.l_init_abs_posi_time = gTime.l_time_ms;
 					modbusPosi.init_abs_posi_um = returnPosi;
 				}
@@ -121,7 +110,6 @@ u32 g_RS485_recvDataDeal(void)
 		printf("%d ms RS485 recv data length overflow! \n\r", gTime.l_time_ms);
 	}
 	
-	//µ¥Ìõ½âÎöÍê³É£¬Ö±½ÓÇåÁã
 	modbusPosi.comRecvCnt = 0;
 	return returnPosi;
 }
@@ -131,18 +119,38 @@ void HAL_RS485_Send_Data(UART_HandleTypeDef *husart, u8 *buf, u8 len)
 {
 	HAL_StatusTypeDef retStatus = HAL_OK;
 	GPIO_SPI_RS485_RE_SET;
-	retStatus = HAL_UART_Transmit(husart, buf, len, 50); // ´®¿Ú·¢ËÍÊý¾Ý
-	GPIO_SPI_RS485_RE_RESET;				 // ÉèÖÃÎª½ÓÊÕÄ£Ê½	
+	retStatus = HAL_UART_Transmit(husart, buf, len, 50); 
+	GPIO_SPI_RS485_RE_RESET;				
 
 	if (retStatus != HAL_OK) {
 		printf("RS485 Send Failed! \n\r");
 	}
 }
 
+// Periodically Scanning Recv Reg
+void UART_Byte_Receive(UART_HandleTypeDef *huart) 
+{
+  	HAL_UART_Receive_IT(huart, USART_IT_BUF, 1); // Enable Recv Interrupt
+}
+
+// RES485 Recv Data Logic Deal 
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	if (huart->Instance == USART6) {
+		modbusPosi.g_RTU_Startflag = 1; // Update Modbus RTU Recv Timing
+		modbusPosi.g_10ms_Cnt++;
+
+		USART_RX_BUF[modbusPosi.comRecvCnt++] = huart->Instance->DR; // Acquire One Byte
+		if (modbusPosi.comRecvCnt >= USART_REC_LEN-1) {
+			modbusPosi.comRecvCnt = 0;
+		}
+	}
+}
+
 
 #ifdef HAL_RS485_ENBALE 
 
-//LRCÐ£Ñéº¯Êý
+//LRCÐ£ï¿½éº¯ï¿½ï¿½
 uint8_t* g_lrc_Test(uint8_t *StartAddr, uint8_t TestLen)
 {
     uint8_t lrcResult = 0;
@@ -151,10 +159,10 @@ uint8_t* g_lrc_Test(uint8_t *StartAddr, uint8_t TestLen)
     uint8_t hexCombine = 0; 
     uint8_t *dataPtr = StartAddr;
     static uint8_t hexArray[24] = {0};
-    //1¡¢ºÏ²¢ÎªHex
+    //1ï¿½ï¿½ï¿½Ï²ï¿½ÎªHex
     for(ii =0; ii<TestLen; ii++)
     {
-        if(ii % 2 == 0)//HexºÏ²¢ÆðÊ¼
+        if(ii % 2 == 0)//Hexï¿½Ï²ï¿½ï¿½ï¿½Ê¼
         {
             //1-9
             if((*dataPtr >= '0')&&(*dataPtr <= '9'))
@@ -168,14 +176,14 @@ uint8_t* g_lrc_Test(uint8_t *StartAddr, uint8_t TestLen)
                 hexCombine = (*dataPtr - 'A')+10;
                 hexCombine <<= 4;
             }
-            //a-f²»´¦Àí
+            //a-fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             else
             {
 								;
             }
             dataPtr++;
         }
-        else if(ii % 2 == 1) //HexºÏ²¢Ä©Î²
+        else if(ii % 2 == 1) //Hexï¿½Ï²ï¿½Ä©Î²
         {
             //1-9
             if((*dataPtr >= '0')&&(*dataPtr <= '9'))
@@ -201,15 +209,15 @@ uint8_t* g_lrc_Test(uint8_t *StartAddr, uint8_t TestLen)
             ;
         }
     }
-    //2¡¢ÀÛ¼Ó
+    //2ï¿½ï¿½ï¿½Û¼ï¿½
     for(ii = 0; ii<hexCnt-1 ; ii++)
     {
         lrcResult += hexArray[ii];
     }
-    //3¡¢
+    //3ï¿½ï¿½
     lrcResult = ~lrcResult; 
     lrcResult += 1;
-    //4¡¢Ð£ÑéLRC
+    //4ï¿½ï¿½Ð£ï¿½ï¿½LRC
     if(lrcResult == hexArray[hexCnt-1])
     {
         return hexArray;
@@ -220,128 +228,128 @@ uint8_t* g_lrc_Test(uint8_t *StartAddr, uint8_t TestLen)
     }
 }
 
-//³õÊ¼»¯IO ´®¿Ú2
-//pclk1:PCLK1Ê±ÖÓÆµÂÊ(Mhz),APB1Ò»°ãÎª48Mhz
-//bound:²¨ÌØÂÊ	  
+//ï¿½ï¿½Ê¼ï¿½ï¿½IO ï¿½ï¿½ï¿½ï¿½2
+//pclk1:PCLK1Ê±ï¿½ï¿½Æµï¿½ï¿½(Mhz),APB1Ò»ï¿½ï¿½Îª48Mhz
+//bound:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	  
 void RS485_Init(u32 pclk1,u32 bound)
 {  	 
 		float temp;
 		u16 mantissa;
 		u16 fraction;	   
-		temp=(float)(pclk1*1000000)/(bound*16);//µÃµ½USARTDIV
-		mantissa=temp;				 //µÃµ½ÕûÊý²¿·Ö
-		fraction=(temp-mantissa)*16; //µÃµ½Ð¡Êý²¿·Ö	 
+		temp=(float)(pclk1*1000000)/(bound*16);//ï¿½Ãµï¿½USARTDIV
+		mantissa=temp;				 //ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		fraction=(temp-mantissa)*16; //ï¿½Ãµï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	 
 			mantissa<<=4;
 		mantissa+=fraction; 
 		
-		//PCF8574_Init();				//³õÊ¼»¯PCF8574,ÓÃÓÚ¿ØÖÆRE½Å	
+		//PCF8574_Init();				//ï¿½ï¿½Ê¼ï¿½ï¿½PCF8574,ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½REï¿½ï¿½	
 		
-		RCC->AHB1ENR|=1<<0;   		//Ê¹ÄÜPORTA¿ÚÊ±ÖÓ   
-		GPIO_Set(GPIOA,PIN2|PIN3,GPIO_MODE_AF,GPIO_OTYPE_PP,GPIO_SPEED_50M,GPIO_PUPD_PU);	//PA2,PA3,¸´ÓÃ¹¦ÄÜ,ÉÏÀ­ 
+		RCC->AHB1ENR|=1<<0;   		//Ê¹ï¿½ï¿½PORTAï¿½ï¿½Ê±ï¿½ï¿½   
+		GPIO_Set(GPIOA,PIN2|PIN3,GPIO_MODE_AF,GPIO_OTYPE_PP,GPIO_SPEED_50M,GPIO_PUPD_PU);	//PA2,PA3,ï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ 
 		GPIO_AF_Set(GPIOA,2,7);		//PA2,AF7
 		GPIO_AF_Set(GPIOA,3,7);		//PA3,AF7  	   
 	 
-		RCC->APB1ENR|=1<<17;  		//Ê¹ÄÜ´®¿Ú2Ê±ÖÓ  
-		RCC->APB1RSTR|=1<<17;   	//¸´Î»´®¿Ú2
-		RCC->APB1RSTR&=~(1<<17);	//Í£Ö¹¸´Î»	   	   
-		//²¨ÌØÂÊÉèÖÃ
-		USART2->BRR=mantissa; 		// ²¨ÌØÂÊÉèÖÃ	 
-		USART2->CR1|=0X200C;  		//1Î»Í£Ö¹,ÎÞÐ£ÑéÎ».
-	#if EN_USART2_RX		  		//Èç¹ûÊ¹ÄÜÁË½ÓÊÕ
-		//Ê¹ÄÜ½ÓÊÕÖÐ¶Ï 
-		USART2->CR1|=1<<2;  		//´®¿Ú½ÓÊÕÊ¹ÄÜ
-		USART2->CR1|=1<<5;    		//½ÓÊÕ»º³åÇø·Ç¿ÕÖÐ¶ÏÊ¹ÄÜ	    	
-		MY_NVIC_Init(3,3,USART2_IRQn,2);//×é2£¬×îµÍÓÅÏÈ¼¶ 
+		RCC->APB1ENR|=1<<17;  		//Ê¹ï¿½Ü´ï¿½ï¿½ï¿½2Ê±ï¿½ï¿½  
+		RCC->APB1RSTR|=1<<17;   	//ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½2
+		RCC->APB1RSTR&=~(1<<17);	//Í£Ö¹ï¿½ï¿½Î»	   	   
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		USART2->BRR=mantissa; 		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	 
+		USART2->CR1|=0X200C;  		//1Î»Í£Ö¹,ï¿½ï¿½Ð£ï¿½ï¿½Î».
+	#if EN_USART2_RX		  		//ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½Ë½ï¿½ï¿½ï¿½
+		//Ê¹ï¿½Ü½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ 
+		USART2->CR1|=1<<2;  		//ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½
+		USART2->CR1|=1<<5;    		//ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½Ð¶ï¿½Ê¹ï¿½ï¿½	    	
+		MY_NVIC_Init(3,3,USART2_IRQn,2);//ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ 
 	#endif
-		RS485_TX_Set(0);			//Ä¬ÈÏÉèÖÃÎª½ÓÊÕÄ£Ê½	
+		RS485_TX_Set(0);			//Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ä£Ê½	
 }
 
-//RS485·¢ËÍlen¸ö×Ö½Ú.
-//buf:·¢ËÍÇøÊ×µØÖ·
-//len:·¢ËÍµÄ×Ö½ÚÊý(ÎªÁËºÍ±¾´úÂëµÄ½ÓÊÕÆ¥Åä,ÕâÀï½¨Òé²»Òª³¬¹ý64¸ö×Ö½Ú)
+//RS485ï¿½ï¿½ï¿½ï¿½lenï¿½ï¿½ï¿½Ö½ï¿½.
+//buf:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×µï¿½Ö·
+//len:ï¿½ï¿½ï¿½Íµï¿½ï¿½Ö½ï¿½ï¿½ï¿½(Îªï¿½ËºÍ±ï¿½ï¿½ï¿½ï¿½ï¿½Ä½ï¿½ï¿½ï¿½Æ¥ï¿½ï¿½,ï¿½ï¿½ï¿½ï½¨ï¿½é²»Òªï¿½ï¿½ï¿½ï¿½64ï¿½ï¿½ï¿½Ö½ï¿½)
 void RS485_Send_Data(u8 *buf,u8 len)
 {
 		u8 t;
-		RS485_RE = 1;				//ÉèÖÃÎª·¢ËÍÄ£Ê½
-		for(t=0;t<len;t++)			//Ñ­»··¢ËÍÊý¾Ý
+		RS485_RE = 1;				//ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ä£Ê½
+		for(t=0;t<len;t++)			//Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
-			while((USART2->SR&0X40)==0);//µÈ´ý·¢ËÍ½áÊø		  
+			while((USART2->SR&0X40)==0);//ï¿½È´ï¿½ï¿½ï¿½ï¿½Í½ï¿½ï¿½ï¿½		  
 			USART2->DR=buf[t];
 		}	 
-		while((USART2->SR&0X40)==0);//µÈ´ý·¢ËÍ½áÊø	
+		while((USART2->SR&0X40)==0);//ï¿½È´ï¿½ï¿½ï¿½ï¿½Í½ï¿½ï¿½ï¿½	
 		RS485_RX_CNT=0;	  
-		RS485_RE  = 0;			//ÉèÖÃÎª½ÓÊÕÄ£Ê½	
+		RS485_RE  = 0;			//ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ä£Ê½	
 }
-//RS485²éÑ¯½ÓÊÕµ½µÄÊý¾Ý
-//buf:½ÓÊÕ»º´æÊ×µØÖ·
-//len:¶Áµ½µÄÊý¾Ý³¤¶È
+//RS485ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//buf:ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½×µï¿½Ö·
+//len:ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
 void RS485_Receive_Data(u8 *buf,u8 *len)
 {
 		u8 rxlen=RS485_RX_CNT;
 		u8 i=0;
-		*len=0;				//Ä¬ÈÏÎª0
-		//HAL_Delay(10);		//µÈ´ý10ms,Á¬Ðø³¬¹ý10msÃ»ÓÐ½ÓÊÕµ½Ò»¸öÊý¾Ý,ÔòÈÏÎª½ÓÊÕ½áÊø modbus RTU
-		if(rxlen==RS485_RX_CNT&&rxlen)//½ÓÊÕµ½ÁËÊý¾Ý,ÇÒ½ÓÊÕÍê³ÉÁË
+		*len=0;				//Ä¬ï¿½ï¿½Îª0
+		//HAL_Delay(10);		//ï¿½È´ï¿½10ms,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½10msÃ»ï¿½Ð½ï¿½ï¿½Õµï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½Õ½ï¿½ï¿½ï¿½ modbus RTU
+		if(rxlen==RS485_RX_CNT&&rxlen)//ï¿½ï¿½ï¿½Õµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½Ò½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		{
 			for(i=0;i<rxlen;i++)
 			{
 					buf[i]=RS485_RX_BUF[i];	
 			}		
-			*len=RS485_RX_CNT;	//¼ÇÂ¼±¾´ÎÊý¾Ý³¤¶È
-			RS485_RX_CNT=0;		//ÇåÁã
+			*len=RS485_RX_CNT;	//ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
+			RS485_RX_CNT=0;		//ï¿½ï¿½ï¿½ï¿½
 		}
 } 
-//RS485Ä£Ê½¿ØÖÆ.
-//en:0,½ÓÊÕ;1,·¢ËÍ.
+//RS485Ä£Ê½ï¿½ï¿½ï¿½ï¿½.
+//en:0,ï¿½ï¿½ï¿½ï¿½;1,ï¿½ï¿½ï¿½ï¿½.
 void RS485_TX_Set(u8 en)
 {
 	RS485_RE = 1;
 }
 
-//USART2´®¿Ú³õÊ¼»¯
+//USART2ï¿½ï¿½ï¿½Ú³ï¿½Ê¼ï¿½ï¿½
 void uart2_RS485_init(u32 pclk2,u32 bound)
 {
 		float temp;
 		u16 mantissa;
 		u16 fraction;	 
 	
-		//²¨ÌØÂÊ´¦Àí
-		temp=(float)(pclk2*1000000)/(bound*16);//µÃµ½USARTDIV@OVER8=0
-		mantissa=temp;				 //µÃµ½ÕûÊý²¿·Ö
-		fraction=(temp-mantissa)*16; //µÃµ½Ð¡Êý²¿·Ö@OVER8=0 
+		//ï¿½ï¿½ï¿½ï¿½ï¿½Ê´ï¿½ï¿½ï¿½
+		temp=(float)(pclk2*1000000)/(bound*16);//ï¿½Ãµï¿½USARTDIV@OVER8=0
+		mantissa=temp;				 //ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		fraction=(temp-mantissa)*16; //ï¿½Ãµï¿½Ð¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½@OVER8=0 
 				mantissa<<=4;
 		mantissa+=fraction; 
 	
-		RCC->AHB1ENR|=1<<6;     	//Ê¹ÄÜPORTGÊ±ÖÓ 
-		GPIO_Set(GPIOG, PIN10, GPIO_MODE_OUT, 0, 2, GPIO_PUPD_PD);	//PG10ÉèÖÃÎªÍÆÍìÊä³ö£¬50MHz£¬Ä¬ÈÏÏÂÀ­
-		RS485_RE = 0; //Ä¬ÈÏ½ÓÊÕ
+		RCC->AHB1ENR|=1<<6;     	//Ê¹ï¿½ï¿½PORTGÊ±ï¿½ï¿½ 
+		GPIO_Set(GPIOG, PIN10, GPIO_MODE_OUT, 0, 2, GPIO_PUPD_PD);	//PG10ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½50MHzï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		RS485_RE = 0; //Ä¬ï¿½Ï½ï¿½ï¿½ï¿½
 	
-		RCC->AHB1ENR|=1<<0;   		//Ê¹ÄÜPORTA¿ÚÊ±ÖÓ  
-		//Ê¹ÄÜGPIO
-		GPIO_Set(GPIOA,PIN2|PIN3,GPIO_MODE_AF,GPIO_OTYPE_PP,GPIO_SPEED_50M,GPIO_PUPD_PU);//PA2,PA3,¸´ÓÃ¹¦ÄÜ,ÉÏÀ­Êä³ö
+		RCC->AHB1ENR|=1<<0;   		//Ê¹ï¿½ï¿½PORTAï¿½ï¿½Ê±ï¿½ï¿½  
+		//Ê¹ï¿½ï¿½GPIO
+		GPIO_Set(GPIOA,PIN2|PIN3,GPIO_MODE_AF,GPIO_OTYPE_PP,GPIO_SPEED_50M,GPIO_PUPD_PU);//PA2,PA3,ï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		GPIO_AF_Set(GPIOA,2,7);		//PA2,AF7
 		GPIO_AF_Set(GPIOA,3,7);		//PA3,AF7  	
-		//¿ªÆôÊ±ÖÓ
-		RCC->APB1ENR|=1<<17;  		//Ê¹ÄÜUSART2Ê±ÖÓ 
-		RCC->APB1RSTR|=1<<17;   	//¸´Î»´®¿Ú2
-		RCC->APB1RSTR&=~(1<<17);	//Í£Ö¹¸´Î»	
+		//ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+		RCC->APB1ENR|=1<<17;  		//Ê¹ï¿½ï¿½USART2Ê±ï¿½ï¿½ 
+		RCC->APB1RSTR|=1<<17;   	//ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½2
+		RCC->APB1RSTR&=~(1<<17);	//Í£Ö¹ï¿½ï¿½Î»	
 	
-		//²¨ÌØÂÊÉèÖÃ
-		USART2->BRR=mantissa; 		//²¨ÌØÂÊÉèÖÃ	
-		//RS485¸ñÊ½Ö¡ÉèÖÃ 
-		USART2->CR1|=0X200C;  		//1Î»Í£Ö¹,ÎÞÐ£ÑéÎ»£¬´®¿ÚÊ¹ÄÜ
+		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		USART2->BRR=mantissa; 		//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½	
+		//RS485ï¿½ï¿½Ê½Ö¡ï¿½ï¿½ï¿½ï¿½ 
+		USART2->CR1|=0X200C;  		//1Î»Í£Ö¹,ï¿½ï¿½Ð£ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½
 
-#if EN_USART2_RX		  				//Èç¹ûÊ¹ÄÜÁË½ÓÊÕ
-		//Ê¹ÄÜ½ÓÊÕÖÐ¶Ï 
-		USART2->CR1|=1<<2;  			//´®¿Ú½ÓÊÕÊ¹ÄÜ
-		USART2->CR1|=1<<5;    		//½ÓÊÕ»º³åÇø·Ç¿ÕÖÐ¶ÏÊ¹ÄÜ
-		MY_NVIC_Init(1,1,USART2_IRQn,2);//ÇÀÕ¼1£¬×éÄÚ1£¬ÓÅÏÈ¼¶×é2
+#if EN_USART2_RX		  				//ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½Ë½ï¿½ï¿½ï¿½
+		//Ê¹ï¿½Ü½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ 
+		USART2->CR1|=1<<2;  			//ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½
+		USART2->CR1|=1<<5;    		//ï¿½ï¿½ï¿½Õ»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½Ð¶ï¿½Ê¹ï¿½ï¿½
+		MY_NVIC_Init(1,1,USART2_IRQn,2);//ï¿½ï¿½Õ¼1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½2
 #endif
-		RS485_RE = 0;			//Ä¬ÈÏÉèÖÃÎª½ÓÊÕÄ£Ê½	  		
+		RS485_RE = 0;			//Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ä£Ê½	  		
 }
 
 
-//·¢ËÍ485¿ØÖÆÊý¾Ý ASCII
+//ï¿½ï¿½ï¿½ï¿½485ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ASCII
 void g_RS485_ComSendASCII(uint8_t *data, uint8_t data_Len)
 {
 	uint8_t ii =0;
@@ -349,7 +357,7 @@ void g_RS485_ComSendASCII(uint8_t *data, uint8_t data_Len)
 	uint8_t lrc_Low = 0;
 	uint8_t lrc_High = 0;
 	
-	//1¡¢¼ÆËãLRC
+	//1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½LRC
 	ii = (lrc_Res & 0x0F);
 	if(((ii-0) >= 0) && ((ii-9) <= 0))
 	{
@@ -377,12 +385,12 @@ void g_RS485_ComSendASCII(uint8_t *data, uint8_t data_Len)
 	{
 		;
 	}
-	//2¡¢Êý¾Ý´«Êä
-	RS485_RE = 1;			//ÐÅÏ¢·¢ËÍÄ£Ê½
-	//·¢ËÍ
-	while((USART2->SR&0x40)==0);		//µÈ´ý·¢ËÍ½áÊø
+	//2ï¿½ï¿½ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½
+	RS485_RE = 1;			//ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½Ä£Ê½
+	//ï¿½ï¿½ï¿½ï¿½
+	while((USART2->SR&0x40)==0);		//ï¿½È´ï¿½ï¿½ï¿½ï¿½Í½ï¿½ï¿½ï¿½
 	USART2->DR = 0x3A;
-	while((USART2->SR&0x40)==0);		//µÈ´ý·¢ËÍ½áÊø
+	while((USART2->SR&0x40)==0);		//ï¿½È´ï¿½ï¿½ï¿½ï¿½Í½ï¿½ï¿½ï¿½
 	for(ii = 0;ii<data_Len; ii++)
 	{
 		USART2->DR = data[ii];
@@ -393,16 +401,16 @@ void g_RS485_ComSendASCII(uint8_t *data, uint8_t data_Len)
 	while((USART2->SR&0x40)==0);
 	USART2->DR = lrc_Low;
 	while((USART2->SR&0x40)==0);
-	//½áÊø
+	//ï¿½ï¿½ï¿½ï¿½
 	USART2->DR = 0x0D;
 	while((USART2->SR&0X40)==0);
 	USART2->DR = 0x0A;
 	while((USART2->SR&0X40)==0);
-	//3¡¢·¢ËÍ½áÊø£¬ÖÃÎ»Îª½ÓÊÕÄ£Ê½
-	RS485_RE = 0;			//Ä¬ÈÏÉèÖÃÎª½ÓÊÕÄ£Ê½	
+	//3ï¿½ï¿½ï¿½ï¿½ï¿½Í½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»Îªï¿½ï¿½ï¿½ï¿½Ä£Ê½
+	RS485_RE = 0;			//Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½Ä£Ê½	
 }
 
-//LRCÐ£Ñéº¯Êý
+//LRCÐ£ï¿½éº¯ï¿½ï¿½
 uint8_t g_Modbus_lrc_SendTest(uint8_t *StartAddr, uint8_t TestLen)
 {
     static uint8_t lrcRes = 0;
@@ -411,11 +419,11 @@ uint8_t g_Modbus_lrc_SendTest(uint8_t *StartAddr, uint8_t TestLen)
     uint8_t hexCombine = 0; 
     uint8_t *dataPtr = StartAddr;
     static uint8_t hexArray[24] = {0};
-		//Ã¿´Î½øÈëÐ£ÑéÇ°ÏÈÇå³ýÉÏÒ»´ÎÊ£ÓàlrcResÖµ
+		//Ã¿ï¿½Î½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ê£ï¿½ï¿½lrcResÖµ
 		lrcRes = 0;
-    //1¡¢ºÏ²¢ÎªHex
+    //1ï¿½ï¿½ï¿½Ï²ï¿½ÎªHex
     for(ii =0; ii<TestLen; ii++) {
-		//HexºÏ²¢ÆðÊ¼ 
+		//Hexï¿½Ï²ï¿½ï¿½ï¿½Ê¼ 
         if(ii % 2 == 0) {
             //1-9
             if((*dataPtr >= '0')&&(*dataPtr <= '9')){
@@ -427,13 +435,13 @@ uint8_t g_Modbus_lrc_SendTest(uint8_t *StartAddr, uint8_t TestLen)
                 hexCombine = (*dataPtr - 'A')+10;
                 hexCombine <<= 4;
             }
-            //a-f²»´¦Àí
+            //a-fï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             else {
 								;
             }
             dataPtr++;
         }
-		//HexºÏ²¢Ä©Î²
+		//Hexï¿½Ï²ï¿½Ä©Î²
         else if(ii % 2 == 1) {
             //1-9
             if((*dataPtr >= '0')&&(*dataPtr <= '9')) {
@@ -455,11 +463,11 @@ uint8_t g_Modbus_lrc_SendTest(uint8_t *StartAddr, uint8_t TestLen)
             ;
         }
     }
-    //2¡¢ÀÛ¼Ó
+    //2ï¿½ï¿½ï¿½Û¼ï¿½
     for(ii = 0; ii<hexCnt ; ii++) {
         lrcRes += hexArray[ii];
     }
-    //3¡¢È¡²¹Âë
+    //3ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½
     lrcRes = ~lrcRes; 
     lrcRes += 1;
 

@@ -100,9 +100,8 @@ void Error_Handler(void);
 
 /* function Switch*/
 
-#define HAL_W5500_ENABLE         (1)
+#define HAL_W5500_ENABLE         (0)
 #define CAN2_SENDTEST_ON         (0)
-
 
 
 /* USER CODE BEGIN Private defines */
