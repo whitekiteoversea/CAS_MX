@@ -25,6 +25,9 @@
         "canfestival_can.h": "c",
         "canfestival.h": "c",
         "systime.h": "c",
-        "global_data.h": "c"
+        "global_data.h": "c",
+        "stm32f4xx.h": "c",
+        "rs485.h": "c",
+        "sdram.h": "c"
     }
 }

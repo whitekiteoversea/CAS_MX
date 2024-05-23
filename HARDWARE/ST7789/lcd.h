@@ -1,6 +1,6 @@
 #ifndef __LCD_H
 #define __LCD_H   
-#include "main.h"
+#include "global_data.h"
 
 #define u8 uint8_t
 #define u16 uint16_t

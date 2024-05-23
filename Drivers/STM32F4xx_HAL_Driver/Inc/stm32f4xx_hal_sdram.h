@@ -24,6 +24,9 @@
 extern "C" {
 #endif
 
+// 
+#define FMC_Bank5_6         ((FMC_Bank5_6_TypeDef *) FMC_Bank5_6_R_BASE)
+
 #if defined(FMC_Bank5_6)
 
 /* Includes ------------------------------------------------------------------*/

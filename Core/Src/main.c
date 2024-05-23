@@ -40,6 +40,7 @@
 #include "timers.h"
 
 #include "rs485.h"
+#include "sdram.h"
 
 /* USER CODE END Includes */
 
@@ -85,6 +86,8 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 UART_HandleTypeDef huart6;
 
+SDRAM_HandleTypeDef hsdram1;
+
 /* USER CODE BEGIN PV */
 GLOBALTIME gTime;
 GLOBALSTATUS gStatus;
@@ -128,6 +131,7 @@ static void MX_USART2_UART_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_USART6_UART_Init(void);
 static void MX_TIM4_Init(void);
+static void MX_FMC_Init(void);
 static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
 void network_register(void);
@@ -137,7 +141,9 @@ void systemParaInit(void);
 void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode); // can recv info distribute
 
 int32_t avgErrCollect(uint8_t node, int32_t sampleData);  
-int32_t avgErrUpdate(int32_t *sampleData); 
+int32_t avgErrUpdate(int32_t *sampleData);
+
+void fsmc_sdram_test(void); // SDRAM R/W TEST
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -162,6 +168,7 @@ int main(void)
   uint8_t SG_Data[8] = {0}; 
   uint64_t sensor38bit = 0;
 
+  // RS485 MODBUS RTU Request Code
   uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
 
   /* USER CODE END 1 */
@@ -184,24 +191,25 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  // MX_CAN1_Init();
+  MX_CAN1_Init();
   // MX_CAN2_Init();
   // MX_I2C2_Init();
   MX_SPI1_Init();
-  // MX_SPI2_Init();
-  // MX_SPI3_Init();
+  MX_SPI2_Init();
+  MX_SPI3_Init();
   MX_SPI4_Init();
   // MX_SPI5_Init();
   MX_TIM1_Init();
   MX_TIM3_Init();
-//  MX_TIM5_Init();
-//  MX_TIM8_Init();
+  // MX_TIM5_Init();
+  // MX_TIM8_Init();
   MX_UART4_Init();
-  // MX_USART1_UART_Init();
+  MX_USART1_UART_Init();
   // MX_USART2_UART_Init();
   // MX_USART3_UART_Init();
   MX_USART6_UART_Init();
-//  MX_TIM4_Init();
+  // MX_TIM4_Init();
+  MX_FMC_Init();
 
   /* Initialize interrupts */
   MX_NVIC_Init();
@@ -210,7 +218,7 @@ int main(void)
 	
   // 1. local timebase
   HAL_TIM_Base_Start_IT(&htim3);   // (pass)
-  HAL_TIM_Base_Start_IT(&htim4);   //CANOpen Timer
+// HAL_TIM_Base_Start_IT(&htim4);   //CANOpen Timer
 
   // 3. ETH Initial
 #if HAL_W5500_ENABLE
@@ -240,6 +248,10 @@ int main(void)
   masterSendNMTstateChange(&masterObjdict_Data, 0x01, NMT_Start_Node);
 	*/
   printf("%d ms All Function Initial Finished! \n\r", gTime.l_time_ms);
+
+#if HAL_SDRAM_SELFTEST
+  fsmc_sdram_test();
+#endif
 
   /* USER CODE END 2 */
 
@@ -281,7 +293,6 @@ int main(void)
     gStatus.l_rs485_getposiEnable = 0;
   }
 #endif
-
 
 // CAN1 Protocol
   if (gStatus.l_can1_recv_flag == 1) {
@@ -377,19 +388,19 @@ void SystemClock_Config(void)
 static void MX_NVIC_Init(void)
 {
   /* CAN1_RX0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 1, 1);
+  HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
   /* TIM3_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(TIM3_IRQn, 3, 2);
+  HAL_NVIC_SetPriority(TIM3_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(TIM3_IRQn);
   /* TIM4_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(TIM4_IRQn, 3, 1);
+  HAL_NVIC_SetPriority(TIM4_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(TIM4_IRQn);
   /* USART6_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(USART6_IRQn, 1, 3);
+  HAL_NVIC_SetPriority(USART6_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(USART6_IRQn);
   /* CAN2_RX0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(CAN2_RX0_IRQn, 1, 2);
+  HAL_NVIC_SetPriority(CAN2_RX0_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
 }
 
@@ -747,8 +758,6 @@ static void MX_TIM1_Init(void)
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
-  TIM_OC_InitTypeDef sConfigOC = {0};
-  TIM_BreakDeadTimeConfigTypeDef sBreakDeadTimeConfig = {0};
 
   /* USER CODE BEGIN TIM1_Init 1 */
 
@@ -769,42 +778,15 @@ static void MX_TIM1_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_TIM_OC_Init(&htim1) != HAL_OK)
-  {
-    Error_Handler();
-  }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim1, &sMasterConfig) != HAL_OK)
   {
     Error_Handler();
   }
-  sConfigOC.OCMode = TIM_OCMODE_TIMING;
-  sConfigOC.Pulse = 0;
-  sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
-  sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
-  sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
-  sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
-  sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
-  if (HAL_TIM_OC_ConfigChannel(&htim1, &sConfigOC, TIM_CHANNEL_1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sBreakDeadTimeConfig.OffStateRunMode = TIM_OSSR_DISABLE;
-  sBreakDeadTimeConfig.OffStateIDLEMode = TIM_OSSI_DISABLE;
-  sBreakDeadTimeConfig.LockLevel = TIM_LOCKLEVEL_OFF;
-  sBreakDeadTimeConfig.DeadTime = 0;
-  sBreakDeadTimeConfig.BreakState = TIM_BREAK_DISABLE;
-  sBreakDeadTimeConfig.BreakPolarity = TIM_BREAKPOLARITY_HIGH;
-  sBreakDeadTimeConfig.AutomaticOutput = TIM_AUTOMATICOUTPUT_DISABLE;
-  if (HAL_TIMEx_ConfigBreakDeadTime(&htim1, &sBreakDeadTimeConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN TIM1_Init 2 */
 
   /* USER CODE END TIM1_Init 2 */
-  HAL_TIM_MspPostInit(&htim1);
 
 }
 
@@ -1170,7 +1152,7 @@ static void MX_USART6_UART_Init(void)
 
   /* USER CODE END USART6_Init 1 */
   huart6.Instance = USART6;
-  huart6.Init.BaudRate = 115200;
+  huart6.Init.BaudRate = 3750000;
   huart6.Init.WordLength = UART_WORDLENGTH_8B;
   huart6.Init.StopBits = UART_STOPBITS_1;
   huart6.Init.Parity = UART_PARITY_NONE;
@@ -1186,6 +1168,55 @@ static void MX_USART6_UART_Init(void)
   HAL_UART_Receive_IT(&huart6, USART_IT_BUF, 1);
   /* USER CODE END USART6_Init 2 */
 
+}
+
+/* FMC initialization function */
+static void MX_FMC_Init(void)
+{
+
+  /* USER CODE BEGIN FMC_Init 0 */
+
+  /* USER CODE END FMC_Init 0 */
+
+  FMC_SDRAM_TimingTypeDef SdramTiming = {0};
+
+  /* USER CODE BEGIN FMC_Init 1 */
+
+  /* USER CODE END FMC_Init 1 */
+
+  /** Perform the SDRAM1 memory initialization sequence
+  */
+  hsdram1.Instance = FMC_SDRAM_DEVICE;
+  /* hsdram1.Init */
+  hsdram1.Init.SDBank = FMC_SDRAM_BANK1;
+  hsdram1.Init.ColumnBitsNumber = FMC_SDRAM_COLUMN_BITS_NUM_9;
+  hsdram1.Init.RowBitsNumber = FMC_SDRAM_ROW_BITS_NUM_13;
+  hsdram1.Init.MemoryDataWidth = FMC_SDRAM_MEM_BUS_WIDTH_16;
+  hsdram1.Init.InternalBankNumber = FMC_SDRAM_INTERN_BANKS_NUM_4;
+  hsdram1.Init.CASLatency = FMC_SDRAM_CAS_LATENCY_3;
+  hsdram1.Init.WriteProtection = FMC_SDRAM_WRITE_PROTECTION_DISABLE;
+  hsdram1.Init.SDClockPeriod = FMC_SDRAM_CLOCK_PERIOD_2;
+  hsdram1.Init.ReadBurst = FMC_SDRAM_RBURST_ENABLE;
+  hsdram1.Init.ReadPipeDelay = FMC_SDRAM_RPIPE_DELAY_1;
+  /* SdramTiming */
+  SdramTiming.LoadToActiveDelay = 2;
+  SdramTiming.ExitSelfRefreshDelay = 8;
+  SdramTiming.SelfRefreshTime = 6;
+  SdramTiming.RowCycleDelay = 6;
+  SdramTiming.WriteRecoveryTime = 4;
+  SdramTiming.RPDelay = 2;
+  SdramTiming.RCDDelay = 2;
+
+  if (HAL_SDRAM_Init(&hsdram1, &SdramTiming) != HAL_OK)
+  {
+    Error_Handler( );
+  }
+
+  /* USER CODE BEGIN FMC_Init 2 */
+  SDRAM_Initialization_Sequence(&hsdram1);//发送SDRAM初始化序列
+  HAL_SDRAM_ProgramRefreshRate(&hsdram1, 683);//设置刷新频率
+
+  /* USER CODE END FMC_Init 2 */
 }
 
 /**
@@ -1207,11 +1238,11 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
-  __HAL_RCC_GPIOD_CLK_ENABLE();
   __HAL_RCC_GPIOG_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3|SPI4_CS_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3|SPI4_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(SPI5_CS_GPIO_Port, SPI5_CS_Pin, GPIO_PIN_RESET);
@@ -1342,12 +1373,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       // 1ms timecnt
       if (gTime.l_time_cnt_10us % 100 == 0) {
         gTime.l_time_ms++;
-				// 20ms 触发位置检测
+				// 20ms 触发位置�?�?
 				if (gStatus.l_rs485_getposi_cnt >= 20) {
 					gStatus.l_rs485_getposiEnable = 1;
 					gStatus.l_rs485_getposi_cnt = 0;
 				}
-				// 新RTU帧接收已经使能 10us一查
+				// 新RTU帧接收已经使�? 10us�?�?
 				if (modbusPosi.g_RTU_Startflag == 1) {
 					modbusPosi.g_10ms_Cnt++;
 					cmpVal = MODBUS_INTERNAL_1MS;
@@ -1467,7 +1498,7 @@ void network_register(void)
     #endif
   #endif
     /* SPI Read & Write callback function */
-    reg_wizchip_spi_cbfunc(HAL_SPI4_ReadByte, HAL_SPI4_WriteByte);	//ע���д����????
+    reg_wizchip_spi_cbfunc(HAL_SPI4_ReadByte, HAL_SPI4_WriteByte);	//ע���д����?????
 
     /* WIZCHIP SOCKET Buffer initialize */
     if(ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1){
@@ -1518,10 +1549,7 @@ int32_t avgErrCollect(uint8_t node, int32_t sampleData)
 		return -1;
 	}
 	avgPosiErr[node] = sampleData;
-
-	//��3λ����3���ڵ��Լ�����Ϣ�ռ����????
 	flagStatus |= (0x01 << (node-1));
-
 	return duss_result;
 }
 
@@ -1607,9 +1635,9 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
       
         //SEC λ�Ʋ�ѯ
         case CANPisiAcquireCmd:
-            //֡�� + ʱ������ٶ��޻�·ʱ�ӣ�????
+            //֡�� + ʱ������ٶ��޻�·ʱ�ӣ�?????
             memcpy(snddata, CAN1_RecData, 8);
-            //������ڻ�·ʱ�ӣ���??���ظ���ʱ�������??;��������ڣ�������λ������ʱ�����ȡ
+            //������ڻ�·ʱ�ӣ���???���ظ���ʱ�������???;��������ڣ�������λ������ʱ�����ȡ
             
             //����������
             snddata[5] = (motionStatus.g_Distance & 0x00FF0000) >> 16;
@@ -1624,7 +1652,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
             printf("UTC:%d ms CAS: %d CurPosi is %d \n\r", gTime.g_time_ms, gTime.l_time_ms, motionStatus.g_Distance);
         break;
 
-        // SEC ƽ��ͬ�����ʵʱ����????: ʱ���????+ƽ�����???? (�������ڵ��??����λ���ڵ㲻�·�??)
+        // SEC ƽ��ͬ�����ʵʱ����?????: ʱ���?????+ƽ�����????? (�������ڵ��???����λ���ڵ㲻�·�??)
         case CANTimeSyncErrorCalCmd: 
             tempRecvPosi = CAN1_RecData[5];
             tempRecvPosi <<= 8;
@@ -1635,13 +1663,13 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
                 tempPosiErr = avgErrUpdate(avgPosiErr);
                 flagStatus = 0;	
 
-              // 1�Žڵ����ϸ���ƽ��ͬ�����????
+              // 1�Žڵ����ϸ���ƽ��ͬ�����?????
               if (can_var.NodeID == 0x01) {
-                  // ʱ���????(ȫ��ʱ����?�����???)
+                  // ʱ���?????(ȫ��ʱ����?�����????)
                   snddata[2] = 0;
                   snddata[3] = 0;
                   snddata[4] = 0;
-                  // ƽ��ͬ�����????
+                  // ƽ��ͬ�����?????
                   snddata[5] = (tempPosiErr & 0x00FF0000) >> 16;
                   snddata[6] = (tempPosiErr & 0x0000FF00) >> 8;
                   snddata[7] = (tempPosiErr & 0x000000FF);
@@ -1687,7 +1715,29 @@ int32_t avgErrUpdate(int32_t *sampleData)
 	return duss_result;
 }
 
-
+//SDRAM内存测试	    
+void fsmc_sdram_test()
+{  
+	u32 i=0;  	  
+	u32 temp=0;	   
+	u32 sval=0;	//在地址0读到的数据	  				   
+	//每隔16K字节,写入一个数据,总共写入2048个数据,刚好是32M字节
+	for(i=0;i<32*1024*1024;i+=16*1024) {
+		*(vu32*)(Bank5_SDRAM_ADDR+i)=temp; 
+		temp++;
+	}
+	//依次读出之前写入的数据,进行校验		  
+ 	for(i=0;i<32*1024*1024;i+=16*1024) 
+	{	
+  		temp=*(vu32*)(Bank5_SDRAM_ADDR+i);
+		if (i==0) {
+      sval=temp;
+    } else if (temp<=sval) {
+      break;
+    }//后面读出的数据一定要比第一次读到的数据大.	   		   
+		printf("SDRAM Capacity:%dKB\r\n",(u16)(temp-sval+1)*16);//打印SDRAM容量
+ 	}					 
+}	
 /* USER CODE END 1 */
 
 
