@@ -28,6 +28,10 @@
         "global_data.h": "c",
         "stm32f4xx.h": "c",
         "rs485.h": "c",
-        "sdram.h": "c"
+        "sdram.h": "c",
+        "myiic.h": "c",
+        "userapp.h": "c",
+        "canfestival_master.h": "c",
+        "bmp.h": "c"
     }
 }

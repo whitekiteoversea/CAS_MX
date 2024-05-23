@@ -21,8 +21,6 @@
 
 #define CANDriverInfoAcquire            (10)
 
-
-
 // #define CAN1_RX0_INT_ENABLE			1		 			
 // #define CAN2_RX0_INT_ENABLE			1		 		
 

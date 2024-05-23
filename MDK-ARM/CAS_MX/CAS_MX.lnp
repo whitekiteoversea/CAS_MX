@@ -50,6 +50,7 @@
 "cas_mx\systime.o"
 "cas_mx\luenberger_observer.o"
 "cas_mx\matrix.o"
+"cas_mx\userapp.o"
 "cas_mx\dcf.o"
 "cas_mx\emcy.o"
 "cas_mx\lifegrd.o"

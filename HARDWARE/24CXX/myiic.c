@@ -1,42 +1,29 @@
 #include "myiic.h"
 #include "stm32f4xx_hal.h"
 #include "hal_delay.h"
-//////////////////////////////////////////////////////////////////////////////////	 
-//������ֻ��ѧϰʹ�ã�δ���������ɣ��������������κ���;
-//ALIENTEK STM32������
-//IIC ��������	   
-//����ԭ��@ALIENTEK
-//������̳:www.openedv.com
-//��������:2015/12/27
-//�汾��V1.0
-//��Ȩ���У�����ؾ���
-//Copyright(C) �������������ӿƼ����޹�˾ 2014-2024
-//All rights reserved									  
-////////////////////////////////////////////////////////////////////////////////// 	
-  
-//��ʼ��IIC
+
 void IIC_Init(void)
 {					     
-	RCC->AHB1ENR|=1<<7;    //ʹ��PORTHʱ��	   	  
-	GPIO_Set(GPIOH,PIN4|PIN5,GPIO_MODE_OUT,GPIO_OTYPE_PP,GPIO_SPEED_50M,GPIO_PUPD_PU);//PH4/PH5���� 
+	RCC->AHB1ENR|=1<<7;   	   	  
+	GPIO_Set(GPIOH,PIN4|PIN5,GPIO_MODE_OUT,GPIO_OTYPE_PP,GPIO_SPEED_50M,GPIO_PUPD_PU);//PH4/PH5
 	IIC_SCL=1;
 	IIC_SDA=1;
 }
-//����IIC��ʼ�ź�
+
 void IIC_Start(void)
 {
-	SDA_OUT();     //sda�����
+	SDA_OUT();     
 	IIC_SDA=1;	  	  
 	IIC_SCL=1;
 	HAL_Delay_us(4);
  	IIC_SDA=0;//START:when CLK is high,DATA change form high to low 
 	HAL_Delay_us(4);
-	IIC_SCL=0;//ǯסI2C���ߣ�׼�����ͻ�������� 
+	IIC_SCL=0;
 }	  
-//����IICֹͣ�ź�
+
 void IIC_Stop(void)
 {
-	SDA_OUT();//sda�����
+	SDA_OUT();//sda
 	IIC_SCL=0;
 	IIC_SDA=0;//STOP:when CLK is high DATA change form low to high
  	HAL_Delay_us(4);

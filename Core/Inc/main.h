@@ -32,7 +32,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "global_data.h"
+#include "userApp.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -56,7 +56,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-extern GLOBALTIME gtime;
+
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -90,19 +90,7 @@ extern GLOBALTIME gtime;
 #define NRD_RNW_GPIO_Port GPIOI
 
 /* USER CODE BEGIN Private defines */
-#define POSI_CHECK_PERIOD_1MS  (20)
-#define MODBUS_INTERNAL_1MS    (10)
 
-#define MAX_ALLOWED_SPEED_RPM   (1000)
-#define MIN_ALLOWED_SPEED_RPM   (-1000) 
-
-#define RPM2Vol_CONVERSE_COFF   (10.922)
-
-// function Switch
-
-#define HAL_W5500_ENABLE         (0)
-#define CAN2_SENDTEST_ON         (0)
-#define HAL_SDRAM_SELFTEST       (0)
 
 /* USER CODE END Private defines */
 

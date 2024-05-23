@@ -923,6 +923,11 @@
               <FileType>1</FileType>
               <FilePath>..\USER\utils\matrix.c</FilePath>
             </File>
+            <File>
+              <FileName>userApp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\USER\userApp.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

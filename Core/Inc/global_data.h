@@ -98,6 +98,18 @@ typedef struct {
 
 } GLOBAL_CAN_VAR;
 
+typedef struct {
+  unsigned int recNum;
+  unsigned int CASLocalTime_ms;
+  unsigned int CASPosi_um;
+} POSI_RECORD_VAR;
+
+typedef struct {
+  unsigned int curSTOAddr;
+  unsigned char overWriteFlag;
+  POSI_RECORD_VAR lastestPosiData;
+} SDRAM_STO_VAR;
+
 // extern Var
 extern GLOBALTIME gTime;
 extern GLOBALSTATUS gStatus;
@@ -105,5 +117,6 @@ extern MODBUSVARS modbusPosi;
 extern MOTIONVAR motionStatus;
 extern GLOBAL_ETH_UDP_VAR w5500_udp_var;
 extern GLOBAL_CAN_VAR can_var;
+extern SDRAM_STO_VAR sdram_var;
 
 #endif /* __MAIN_H */

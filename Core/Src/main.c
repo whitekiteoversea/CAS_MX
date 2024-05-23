@@ -21,26 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "usart.h"
-#include "sys.h"
-#include "lcd.h"
-#include "lcd_init.h"
-#include "spi.h"
-#include "socket.h"	
-#include "string.h"
-#include "can.h"
-#include "pid.h"
-#include "oled.h"
-#include "bmp.h"
 
-#include "canfestival_timer.h"
-#include "canfestival_can.h"
-#include "canfestival.h"
-#include "canfestival_master.h"
-#include "timers.h"
-
-#include "rs485.h"
-#include "sdram.h"
 
 /* USER CODE END Includes */
 
@@ -51,15 +32,13 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define SOCK_TCPS        (0)
-#define DATA_BUF_SIZE   (2048)
 
 
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-uint8_t gDATABUF[DATA_BUF_SIZE];  
+
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -89,25 +68,7 @@ UART_HandleTypeDef huart6;
 SDRAM_HandleTypeDef hsdram1;
 
 /* USER CODE BEGIN PV */
-GLOBALTIME gTime;
-GLOBALSTATUS gStatus;
-MOTIONVAR motionStatus;
-GLOBAL_ETH_UDP_VAR w5500_udp_var;
-GLOBAL_CAN_VAR can_var;
-MODBUSVARS modbusPosi;
-
-#ifdef HAL_W5500_ENABLE
-
-wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
-                            .ip = {192, 168, 1, 10},
-                            .sn = {255,255,255,0},
-                            .gw = {192, 168, 1, 1},
-                            .dns = {8,8,8,8},
-                            .dhcp = NETINFO_STATIC };
-#endif
-
-uint8_t flagStatus = 0; 																	
-int32_t avgPosiErr[2] = {0}; 			
+	
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -134,16 +95,9 @@ static void MX_TIM4_Init(void);
 static void MX_FMC_Init(void);
 static void MX_NVIC_Init(void);
 /* USER CODE BEGIN PFP */
-void network_register(void);
-void network_init(void);								// Initialize Network information and display it
 
-void systemParaInit(void);
-void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode); // can recv info distribute
-
-int32_t avgErrCollect(uint8_t node, int32_t sampleData);  
-int32_t avgErrUpdate(int32_t *sampleData);
-
-void fsmc_sdram_test(void); // SDRAM R/W TEST
+void bspInit(void);
+void userAppLoop(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -158,102 +112,9 @@ void fsmc_sdram_test(void); // SDRAM R/W TEST
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-	uint8_t ret =0;
-	uint8_t snddata[8] = {0};
-	CAN_ID_Union ext_ID;
-  unsigned char sensorData = 0;
-  uint8_t cnt = 0;
-	uint8_t prx = 0;
-	
-  uint8_t SG_Data[8] = {0}; 
-  uint64_t sensor38bit = 0;
-
-  // RS485 MODBUS RTU Request Code
-  uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
+  bspInit();
 
   /* USER CODE END 1 */
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
-  SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_CAN1_Init();
-  // MX_CAN2_Init();
-  // MX_I2C2_Init();
-  MX_SPI1_Init();
-  MX_SPI2_Init();
-  MX_SPI3_Init();
-  MX_SPI4_Init();
-  // MX_SPI5_Init();
-  MX_TIM1_Init();
-  MX_TIM3_Init();
-  // MX_TIM5_Init();
-  // MX_TIM8_Init();
-  MX_UART4_Init();
-  MX_USART1_UART_Init();
-  // MX_USART2_UART_Init();
-  // MX_USART3_UART_Init();
-  MX_USART6_UART_Init();
-  // MX_TIM4_Init();
-  MX_FMC_Init();
-
-  /* Initialize interrupts */
-  MX_NVIC_Init();
-  /* USER CODE BEGIN 2 */
-	systemParaInit();
-	
-  // 1. local timebase
-  HAL_TIM_Base_Start_IT(&htim3);   // (pass)
-// HAL_TIM_Base_Start_IT(&htim4);   //CANOpen Timer
-
-  // 3. ETH Initial
-#if HAL_W5500_ENABLE
-	network_register();
-	network_init();
-#endif
-
-  // 4. BISS-C Sensor Data Acquire (pass)
-	//HAL_Delay(500);  // wait for sensor initial 350ms
-
-// #ifdef HAL_BISSC_ENABLE
-// 	HAL_BISSC_Setup();
-// #endif
-
-  // 5. Motor Torque Controller (pass)
-  // HAL_SPI1_DAC8563_Init();   
-  // HAL_Delay(500);
-  // HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);   
-  // HAL_Delay(500);
-
-  // CANOpen NMI Init
-	/*
-  setNodeId(&masterObjdict_Data, 0x00);
-  setState(&masterObjdict_Data, Initialisation);
-  setState(&masterObjdict_Data, Pre_operational);
-  setState(&masterObjdict_Data, Operational);
-  masterSendNMTstateChange(&masterObjdict_Data, 0x01, NMT_Start_Node);
-	*/
-  printf("%d ms All Function Initial Finished! \n\r", gTime.l_time_ms);
-
-#if HAL_SDRAM_SELFTEST
-  fsmc_sdram_test();
-#endif
-
-  /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
@@ -262,71 +123,9 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-    if (gStatus.l_time_heartbeat == 1) {
-      printf("%d ms HeartBeat Msg \n\r", gTime.l_time_ms);
-      gStatus.l_time_heartbeat = 0;
-    }
-
-// BiSS-C
-#if HAL_BISSC_ENABLE
-   if (gStatus.l_bissc_sensor_acquire == 1) {
-     HAL_SG_SenSorAcquire(SG_Data);
-     for (cnt=0; cnt<5; cnt++) {
-       sensor38bit |= SG_Data[cnt];
-       sensor38bit <<= 8;
-     }
-     printf(" %d ms Acquire SG_Data %d \n\r", gTime.g_time_ms, sensor38bit);
-     gStatus.l_bissc_sensor_acquire = 0;
-   }
-
-#else
-  // deal with AMG2000 RS485 MSG
-  if(modbusPosi.g_RTU_RcvFinishedflag == 1) {
-    g_RS485_recvDataDeal();
-    printf("%d ms RS485: cur abs posi %d us", modbusPosi.l_recv_abs_posi_time, modbusPosi.latest_abs_posi_um);
-    modbusPosi.g_RTU_RcvFinishedflag = 0;
-  }  
-  UART_Byte_Receive(&huart6);
-  // Send packet to AMG2000 to Acquire abs Posi data
-  if (gStatus.l_rs485_getposiEnable == 1) {
-    g_RS485_sendPacket(&huart6, 1, rs485_posi_acquire_data);
-    gStatus.l_rs485_getposiEnable = 0;
-  }
-#endif
-
-// CAN1 Protocol
-  if (gStatus.l_can1_recv_flag == 1) {
-      CANRecvMsgDeal(&hcan1, CAN1RecvFrame.CAN_Frame_Union.CTRCode);
-      gStatus.l_can1_recv_flag = 0;
-  }
-
-#if CAN2_SENDTEST_ON
-		HAL_CAN_Std_Transmit(&hcan2, (void *)snddata, 8, ext_ID.Value);
-		HAL_Delay(500);
-#endif
-
-#if HAL_W5500_ENABLE
-    switch (getSn_SR(0)) {
-			case SOCK_UDP:																							    
-					HAL_Delay(100); 
-					if(getSn_IR(0) & Sn_IR_RECV) {
-						setSn_IR(0, Sn_IR_RECV);															   
-					}
-					
-					if((ret = getSn_RX_RSR(0)) > 0) { 
-						memset(gDATABUF, 0, ret+1);
-						recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &w5500_udp_var.DstHostPort);			
-						printf(" %d ms %s\r\n", gTime.l_time_ms, gDATABUF);															  
-						sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  	
-					}
-			break;
-			case SOCK_CLOSED:																						   
-					socket(0, Sn_MR_UDP, w5500_udp_var.SrcRecvPort, 0x00);			
-			break;
-		}
-#endif
+    userAppLoop();
+    /* USER CODE END 3 */
 	}
-  /* USER CODE END 3 */
 }
 
 /**
@@ -1355,393 +1154,168 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
-// 10us TIMER3
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) 
+void bspInit(void)
 {
-   static unsigned int heartbeatChangedMs = 0; 
-   unsigned int cmpVal = POSI_CHECK_PERIOD_1MS;
-	 if (htim == &htim3) {
-      // 10us timecnt
-      if (gTime.l_time_cnt_10us < 360000000 ) { // 60min reset local timing
-        gTime.l_time_cnt_10us++;
-      } else {
-        gTime.l_time_cnt_10us = 0;
-        gTime.l_time_ms = 0;
-        gStatus.l_time_overflow++;
-      }
-      // 1ms timecnt
-      if (gTime.l_time_cnt_10us % 100 == 0) {
-        gTime.l_time_ms++;
-				// 20ms 触发位置�?�?
-				if (gStatus.l_rs485_getposi_cnt >= 20) {
-					gStatus.l_rs485_getposiEnable = 1;
-					gStatus.l_rs485_getposi_cnt = 0;
-				}
-				// 新RTU帧接收已经使�? 10us�?�?
-				if (modbusPosi.g_RTU_Startflag == 1) {
-					modbusPosi.g_10ms_Cnt++;
-					cmpVal = MODBUS_INTERNAL_1MS;
-					//消息间隔超过10ms
-					if (modbusPosi.g_10ms_Cnt >= 10) {
-						 modbusPosi.g_10ms_Cnt = 0;
-						 modbusPosi.g_RTU_Startflag = 0;
-					
-						//RTU接收完成标识
-						 modbusPosi.g_RTU_RcvFinishedflag = 1;
-					}
-				}
-				gStatus.l_rs485_getposi_cnt++; // 1ms ++
-      }
+  unsigned short startupCheckRes = 0x00;
+  uint8_t ret =0;
+	uint8_t snddata[8] = {0};
+	CAN_ID_Union ext_ID;
+  unsigned char sensorData = 0;
+  uint8_t cnt = 0;
+	uint8_t prx = 0;
+	
+  uint8_t SG_Data[8] = {0}; 
+  uint64_t sensor38bit = 0;
 
-      // 1s update local time and Sensor
-      if ((gTime.l_time_ms % 1000 == 0) && (0 != gTime.l_time_ms-heartbeatChangedMs)) {
-        gStatus.l_time_heartbeat = 1;
-        heartbeatChangedMs = gTime.l_time_ms;
-      }
-      
-      // 10s test
-      if (gTime.l_time_cnt_10us % 1000000 == 0) {
-        gStatus.l_bissc_sensor_acquire = 1;
-      }
-    } else if (htim == &htim4) {
-      TimeDispatch(); // canfestival software timer
-    } else {
-      printf("%d ms Unknown TIMER Interupt! \r\n", gTime.l_time_ms);
-    }
-}
+  HAL_Init();
 
-void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *phcan)
-{
-    UNUSED(phcan);
-    CAN_RxHeaderTypeDef RxMessage;
-    Message RMessage;
-    unsigned char rxbuf[8] = {0};
-    unsigned char cnt = 0;
-    static unsigned int consectiveCnt = 0;
+  /* USER CODE BEGIN Init */
 
-		printf("%d ms CAS: recv New Frame \n\r", gTime.l_time_ms);
-		
-    if (phcan == &hcan1) {
-        HAL_CAN_GetRxMessage(phcan, CAN_RX_FIFO0, &RxMessage, rxbuf);
-        CAN1RecvFrame.Value = RxMessage.ExtId;
-        if ((CAN1RecvFrame.CAN_Frame_Union.NodeOrGroupID == can_var.NodeID) && (CAN1RecvFrame.CAN_Frame_Union.MasterOrSlave == 1)){
-            for (cnt = 0; cnt < 8; cnt++) {
-                CAN1_RecData[cnt] = rxbuf[cnt];
-            }
-            printf("%d ms CAS: recv New Frame Type is %d\n\r", gTime.l_time_ms, CAN1RecvFrame.CAN_Frame_Union.CTRCode);
-            gStatus.l_can1_recv_flag = 1;
-        } else {
-            gStatus.l_can1_recv_flag = 0;
-        }
-    } else if (phcan == &hcan2) {
-        HAL_CAN_GetRxMessage(phcan, CAN_RX_FIFO0, &RxMessage, rxbuf);
+  /* USER CODE END Init */
 
-        RMessage.cob_id = RxMessage.StdId;						                  /* ������ͽڵ�ID */
-//        if (RxMessage.RTR == CAN_RTR_DATA) {
-//						RMessage.rtr = 0;
-//				} else {
-//						RMessage.rtr = 1;
-//				}
-				
-        RMessage.len = RxMessage.DLC;							                      /* ���ݰ����� */
-        memcpy(RMessage.data, rxbuf, RxMessage.DLC);		                /* ���� */
+  /* Configure the system clock */
+  SystemClock_Config();
 
-				/*CANOpen Timer*/
-        canDispatch(&masterObjdict_Data, &RMessage);
-        
-				consectiveCnt++;
-        printf("%d CAN2 Recv New Frame! \n\r", consectiveCnt); 
-			} else {
-        printf("%d recv error can frame \n\r", gTime.l_time_ms);
-    }
-}
+  /* USER CODE BEGIN SysInit */
 
-#ifdef HAL_W5500_ENABLE
+  /* USER CODE END SysInit */
 
-// ETH initial
-void network_init(void)
-{
-    uint8_t tmpstr[6];
-    ctlnetwork(CN_SET_NETINFO, (void*)&gWIZNETINFO);
-    ctlnetwork(CN_GET_NETINFO, (void*)&gWIZNETINFO);
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_CAN1_Init();
+  // MX_CAN2_Init();
+  // MX_I2C2_Init();
+  MX_SPI1_Init();
+  MX_SPI2_Init();
+  MX_SPI3_Init();
+  MX_SPI4_Init();
+  // MX_SPI5_Init();
+  MX_TIM1_Init();
+  MX_TIM3_Init();
+  // MX_TIM5_Init();
+  // MX_TIM8_Init();
+  MX_UART4_Init();
+  MX_USART1_UART_Init();
+  // MX_USART2_UART_Init();
+  // MX_USART3_UART_Init();
+  MX_USART6_UART_Init();
+  // MX_TIM4_Init();
+  MX_FMC_Init();
 
-    // Display Network Information
-    ctlwizchip(CW_GET_ID,(void*)tmpstr);
-    printf("\r\n === %d ms %s NET CONF ===\r\n", gTime.l_time_ms, (char*)tmpstr);
-    printf("MAC: %02X:%02X:%02X:%02X:%02X:%02X\r\n",gWIZNETINFO.mac[0],gWIZNETINFO.mac[1],gWIZNETINFO.mac[2],
-        gWIZNETINFO.mac[3],gWIZNETINFO.mac[4],gWIZNETINFO.mac[5]);
-    printf("SIP: %d.%d.%d.%d\r\n", gWIZNETINFO.ip[0],gWIZNETINFO.ip[1],gWIZNETINFO.ip[2],gWIZNETINFO.ip[3]);
-    printf("GAR: %d.%d.%d.%d\r\n", gWIZNETINFO.gw[0],gWIZNETINFO.gw[1],gWIZNETINFO.gw[2],gWIZNETINFO.gw[3]);
-    printf("SUB: %d.%d.%d.%d\r\n", gWIZNETINFO.sn[0],gWIZNETINFO.sn[1],gWIZNETINFO.sn[2],gWIZNETINFO.sn[3]);
-    printf("DNS: %d.%d.%d.%d\r\n", gWIZNETINFO.dns[0],gWIZNETINFO.dns[1],gWIZNETINFO.dns[2],gWIZNETINFO.dns[3]);
-    printf("======================\r\n");
-}
+  /* Initialize interrupts */
+  MX_NVIC_Init();
+  /* USER CODE BEGIN 2 */
+	systemParaInit();
+	
+  // 1. local timebase
+  HAL_TIM_Base_Start_IT(&htim3);   // (pass)
+// HAL_TIM_Base_Start_IT(&htim4);   //CANOpen Timer
 
-void network_register(void)
-{
-	uint8_t tmp;
-	int16_t ret = 0;
-  uint8_t memsize[2][8] = {{2,2,2,2,2,2,2,2},{2,2,2,2,2,2,2,2}};
-		
-  reg_wizchip_cris_cbfunc(SPI_CrisEnter, SPI_CrisExit);	//ע���ٽ�����???
-  /* Chip selection call back */
-  #if   _WIZCHIP_IO_MODE_ == _WIZCHIP_IO_MODE_SPI_VDM_
-    reg_wizchip_cs_cbfunc(SPI4_CS_Select, SPI4_CS_Deselect);//ע��SPIƬ???�źź�???
-  #elif _WIZCHIP_IO_MODE_ == _WIZCHIP_IO_MODE_SPI_FDM_
-    reg_wizchip_cs_cbfunc(SPI_CS_Select, SPI_CS_Deselect);  // CS must be tried with LOW.
-  #else
-    #if (_WIZCHIP_IO_MODE_ & _WIZCHIP_IO_MODE_SIP_) != _WIZCHIP_IO_MODE_SIP_
-        #error "Unknown _WIZCHIP_IO_MODE_"
-    #else
-        reg_wizchip_cs_cbfunc(wizchip_select, wizchip_deselect);
-    #endif
-  #endif
-    /* SPI Read & Write callback function */
-    reg_wizchip_spi_cbfunc(HAL_SPI4_ReadByte, HAL_SPI4_WriteByte);	//ע���д����?????
-
-    /* WIZCHIP SOCKET Buffer initialize */
-    if(ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1){
-      printf("%d ms WIZCHIP Initialized fail.\r\n", gTime.l_time_ms);
-      while(1);
-    }
-
-    /* PHY link status check */
-    do{
-      if(ctlwizchip(CW_GET_PHYLINK, (void*)&tmp) == -1){
-          printf("Unknown PHY Link stauts.\r\n");
-      }
-    }while(tmp == PHY_LINK_OFF);
-}
-
+  // 3. ETH Initial
+#if HAL_W5500_ENABLE
+	network_register();
+	network_init();
 #endif
 
-void systemParaInit(void)
-{
-  gStatus.telmode = IDLEMODE; 
-  gStatus.workmode = RECVSPEEDMODE; 
-	
-	motionStatus.g_Distance = 0; // �ϵ���eeprom��ȡ
-	motionStatus.g_Speed = 0;
-	
-  can_var.NodeID = 0x01; // �ϵ���EEPROM��ȡ
-  
-  w5500_udp_var.DstHostIP[0] = 192;
-	w5500_udp_var.DstHostIP[1] = 168;
-	w5500_udp_var.DstHostIP[2] = 1;
-	w5500_udp_var.DstHostIP[3] = 20;
-	w5500_udp_var.DstHostPort = 8888;
-	
-	w5500_udp_var.SrcRecvIP[0] = 192;
-	w5500_udp_var.SrcRecvIP[1] = 168;
-	w5500_udp_var.SrcRecvIP[2] = 1;
-	w5500_udp_var.SrcRecvIP[3] = 11;
-  w5500_udp_var.SrcRecvPort = 8001;
+  // 4. BISS-C Sensor Data Acquire (pass)
+	//HAL_Delay(500);  // wait for sensor initial 350ms
+
+// #ifdef HAL_BISSC_ENABLE
+// 	HAL_BISSC_Setup();
+// #endif
+
+  // 5. Motor Torque Controller (pass)
+  // HAL_SPI1_DAC8563_Init();   
+  // HAL_Delay(500);
+  // HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);   
+  // HAL_Delay(500);
+
+  // CANOpen NMI Init
+	/*
+  setNodeId(&masterObjdict_Data, 0x00);
+  setState(&masterObjdict_Data, Initialisation);
+  setState(&masterObjdict_Data, Pre_operational);
+  setState(&masterObjdict_Data, Operational);
+  masterSendNMTstateChange(&masterObjdict_Data, 0x01, NMT_Start_Node);
+	*/
+
+  #if HAL_SDRAM_SELFTEST
+    fsmc_sdram_test();
+  #endif
+
+  printf("%d ms All Function Initial Finished! \n\r", gTime.l_time_ms);
 }
 
-int32_t avgErrCollect(uint8_t node, int32_t sampleData) 
+void userAppLoop(void) 
 {
-	int32_t duss_result = 0;
-	uint8_t snddata[8] = {0};
+    // RS485 MODBUS RTU Request Code
+    uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
 
-	if (node >= 3) {
-		printf("UTC:%d ms CAS: %d Recv Error Context Pack\n\r", gTime.g_time_ms, gTime.l_time_ms);
-		return -1;
-	}
-	avgPosiErr[node] = sampleData;
-	flagStatus |= (0x01 << (node-1));
-	return duss_result;
-}
-
-void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
-{
-    UNUSED(phcan);
-   
-    volatile u16 lastNewestSpeed = 0;
-    volatile u32 curLocalTimeStamp = 0;
-
-    u8 snddata[8]={0};
-    short curGivenSpeed = 0; //rpm
-    u32 tempGivenVol = 0;    //mV
-    u32 sendCnt = 0;
-    u16 tempFrameCnt = 0;
-    int32_t tempPosiErr = 0;
-    int32_t tempRecvPosi = 0;
-
-    // Ext CAN ID
-    CAN_ID_Union ext_ID;
-    ext_ID.Value = 0;
-
-    // recv Frame Number just for consective test
-    tempFrameCnt = CAN1_RecData[0];
-    tempFrameCnt <<= 8;
-    tempFrameCnt |= CAN1_RecData[1];
-    
-    switch(CTRCode)
-    {
-        //�ٶȸ���
-        case CANSpeedCmd:
-          //�ٶ�������
-          curGivenSpeed = CAN1_RecData[5];
-          curGivenSpeed <<= 8;
-          curGivenSpeed |= CAN1_RecData[6];
-        
-          if((curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && (curGivenSpeed >= MIN_ALLOWED_SPEED_RPM))
-          {	
-            tempGivenVol =  RPM2Vol_CONVERSE_COFF *curGivenSpeed + spdDownLimitVol ;
-          
-         
-            HAL_DAC8563_cmd_Write(3, 0, tempGivenVol);
-            printf("UTC: %d ms CAS: %d, frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
-                                                                                  gTime.l_time_ms,
-                                                                                  tempFrameCnt,
-                                                                                  curGivenSpeed);
-          }
-        break;
-        
-				// Speed Mode 
-        case CANSpeedPreCmd:
-          curGivenSpeed = CAN1_RecData[5];
-          curGivenSpeed <<= 8;
-          curGivenSpeed |= CAN1_RecData[6];
-        
-          if (((short)curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && ((short)curGivenSpeed >= MIN_ALLOWED_SPEED_RPM)) {	
-              tempGivenVol = RPM2Vol_CONVERSE_COFF *curGivenSpeed + spdDownLimitVol ;
-                      
-              HAL_DAC8563_cmd_Write(3, 0, tempGivenVol);
-              printf("UTC: %d ms CAS: %d, update Speed :%d rpm, t\n\r",  gTime.g_time_ms,
-                                                                        gTime.l_time_ms,
-                                                                        curGivenSpeed);
-          }
-        break;
-          
-        //ʱ��ͬ��ָ��
-        case CANTimeSyncCmd:
-            //update global timeStamp
-            gTime.g_time_ms = CAN1_RecData[2];
-            gTime.g_time_ms <<= 8;
-            gTime.g_time_ms |= CAN1_RecData[3];
-            gTime.g_time_ms <<= 8;
-            gTime.g_time_ms |= CAN1_RecData[4];	
-            gTime.g_time_ms = gTime.g_time_ms;
-            memcpy(snddata, CAN1_RecData, 8);		
-
-            ext_ID.CAN_Frame_Union.CTRCode = CANTimeSyncCmd; // position acquire pack type
-            ext_ID.CAN_Frame_Union.MasterOrSlave = 0x00; // reply pack slave
-            ext_ID.CAN_Frame_Union.NodeOrGroupID = PCNODEID;  // Send to PC Node
-            HAL_CAN_Ext_Transmit(phcan, (void *)snddata, 4, ext_ID.Value);
-
-        break;
-      
-        //SEC λ�Ʋ�ѯ
-        case CANPisiAcquireCmd:
-            //֡�� + ʱ������ٶ��޻�·ʱ�ӣ�?????
-            memcpy(snddata, CAN1_RecData, 8);
-            //������ڻ�·ʱ�ӣ���???���ظ���ʱ�������???;��������ڣ�������λ������ʱ�����ȡ
-            
-            //����������
-            snddata[5] = (motionStatus.g_Distance & 0x00FF0000) >> 16;
-            snddata[6] = (motionStatus.g_Distance & 0x0000FF00) >> 8;
-            snddata[7] = (motionStatus.g_Distance & 0x000000FF);
-
-            ext_ID.CAN_Frame_Union.CTRCode = CANPisiAcquireCmd; // position acquire pack type
-            ext_ID.CAN_Frame_Union.MasterOrSlave = 0x00; // reply pack
-            ext_ID.CAN_Frame_Union.NodeOrGroupID = PCNODEID;  // Send to PC Node
-
-            HAL_CAN_Ext_Transmit(phcan, (void *)snddata, 8, ext_ID.Value);
-            printf("UTC:%d ms CAS: %d CurPosi is %d \n\r", gTime.g_time_ms, gTime.l_time_ms, motionStatus.g_Distance);
-        break;
-
-        // SEC ƽ��ͬ�����ʵʱ����?????: ʱ���?????+ƽ�����????? (�������ڵ��???����λ���ڵ㲻�·�??)
-        case CANTimeSyncErrorCalCmd: 
-            tempRecvPosi = CAN1_RecData[5];
-            tempRecvPosi <<= 8;
-            tempRecvPosi |= CAN1_RecData[6];
-
-            avgErrCollect(ext_ID.CAN_Frame_Union.NodeOrGroupID, tempRecvPosi);
-            if (flagStatus == 7) {
-                tempPosiErr = avgErrUpdate(avgPosiErr);
-                flagStatus = 0;	
-
-              // 1�Žڵ����ϸ���ƽ��ͬ�����?????
-              if (can_var.NodeID == 0x01) {
-                  // ʱ���?????(ȫ��ʱ����?�����????)
-                  snddata[2] = 0;
-                  snddata[3] = 0;
-                  snddata[4] = 0;
-                  // ƽ��ͬ�����?????
-                  snddata[5] = (tempPosiErr & 0x00FF0000) >> 16;
-                  snddata[6] = (tempPosiErr & 0x0000FF00) >> 8;
-                  snddata[7] = (tempPosiErr & 0x000000FF);
-
-                  ext_ID.CAN_Frame_Union.CTRCode = CANTimeSyncErrorCalCmd; // position acquire pack type
-                  ext_ID.CAN_Frame_Union.MasterOrSlave = 0x00; // reply pack
-                  ext_ID.CAN_Frame_Union.NodeOrGroupID = PCNODEID;  // Send to PC Node
-								  HAL_CAN_Ext_Transmit(phcan, (void *)snddata, 8, ext_ID.Value);
-              }
-          }
-        break;
-          
-        // ����PIλ�û�����
-        case CANLocalPITestCmd:
-          if (CAN1_RecData[0] == 1) {
-            PIDController_Reset(&pid);
-            gStatus.workmode = PIPOSIMODE;
-            givenExecPosiVal += 20600;
-          }
-          else if (CAN1_RecData[0] == 2) {
-            gStatus.workmode = PREPOSIMODE;
-          }
-          else {
-            gStatus.workmode = RECVSPEEDMODE;
-          }
-          printf("UTC:%d ms CAS: %d Start PI Position Control, Initial posi is %d, givenPosiVal is %d\n\r", gTime.g_time_ms, 
-                                                            gTime.l_time_ms,
-                                                            recvPosiInitVal,
-                                                            givenExecPosiVal);
-        break;
-
-        default:
-          printf("UTC:%d ms CAS: %d Recv Error Context Pack\n\r", gTime.g_time_ms, gTime.l_time_ms);
-        break;
+    if (gStatus.l_time_heartbeat == 1) {
+      printf("%d ms HeartBeat Msg \n\r", gTime.l_time_ms);
+      gStatus.l_time_heartbeat = 0;
     }
+
+// BiSS-C
+#if HAL_BISSC_ENABLE
+   if (gStatus.l_bissc_sensor_acquire == 1) {
+     HAL_SG_SenSorAcquire(SG_Data);
+     for (cnt=0; cnt<5; cnt++) {
+       sensor38bit |= SG_Data[cnt];
+       sensor38bit <<= 8;
+     }
+     printf(" %d ms Acquire SG_Data %d \n\r", gTime.g_time_ms, sensor38bit);
+     gStatus.l_bissc_sensor_acquire = 0;
+   }
+
+#else
+  // deal with AMG2000 RS485 MSG
+  if(modbusPosi.g_RTU_RcvFinishedflag == 1) {
+    g_RS485_recvDataDeal();
+    printf("%d ms RS485: cur abs posi %d us", modbusPosi.l_recv_abs_posi_time, modbusPosi.latest_abs_posi_um);
+    modbusPosi.g_RTU_RcvFinishedflag = 0;
+  }  
+  UART_Byte_Receive(&huart6);
+  // Send packet to AMG2000 to Acquire abs Posi data
+  if (gStatus.l_rs485_getposiEnable == 1) {
+    g_RS485_sendPacket(&huart6, 1, rs485_posi_acquire_data);
+    gStatus.l_rs485_getposiEnable = 0;
+  }
+#endif
+
+// CAN1 Protocol
+  if (gStatus.l_can1_recv_flag == 1) {
+      CANRecvMsgDeal(&hcan1, CAN1RecvFrame.CAN_Frame_Union.CTRCode);
+      gStatus.l_can1_recv_flag = 0;
+  }
+
+#if CAN2_SENDTEST_ON
+		HAL_CAN_Std_Transmit(&hcan2, (void *)snddata, 8, ext_ID.Value);
+		HAL_Delay(500);
+#endif
+
+#if HAL_W5500_ENABLE
+    switch (getSn_SR(0)) {
+			case SOCK_UDP:																							    
+					HAL_Delay(100); 
+					if(getSn_IR(0) & Sn_IR_RECV) {
+						setSn_IR(0, Sn_IR_RECV);															   
+					}
+					
+					if((ret = getSn_RX_RSR(0)) > 0) { 
+						memset(gDATABUF, 0, ret+1);
+						recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &w5500_udp_var.DstHostPort);			
+						printf(" %d ms %s\r\n", gTime.l_time_ms, gDATABUF);															  
+						sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  	
+					}
+			break;
+			case SOCK_CLOSED:																						   
+					socket(0, Sn_MR_UDP, w5500_udp_var.SrcRecvPort, 0x00);			
+			break;
+		}
+#endif
+
 }
-
-int32_t avgErrUpdate(int32_t *sampleData) 
-{
-	int32_t duss_result =0;
-	
-	
-	return duss_result;
-}
-
-//SDRAM内存测试	    
-void fsmc_sdram_test()
-{  
-	u32 i=0;  	  
-	u32 temp=0;	   
-	u32 sval=0;	//在地址0读到的数据	  				   
-	//每隔16K字节,写入一个数据,总共写入2048个数据,刚好是32M字节
-	for(i=0;i<32*1024*1024;i+=16*1024) {
-		*(vu32*)(Bank5_SDRAM_ADDR+i)=temp; 
-		temp++;
-	}
-	//依次读出之前写入的数据,进行校验		  
- 	for(i=0;i<32*1024*1024;i+=16*1024) 
-	{	
-  		temp=*(vu32*)(Bank5_SDRAM_ADDR+i);
-		if (i==0) {
-      sval=temp;
-    } else if (temp<=sval) {
-      break;
-    }//后面读出的数据一定要比第一次读到的数据大.	   		   
-		printf("SDRAM Capacity:%dKB\r\n",(u16)(temp-sval+1)*16);//打印SDRAM容量
- 	}					 
-}	
-/* USER CODE END 1 */
-
-
-
 /* USER CODE END 4 */
 
 /**
