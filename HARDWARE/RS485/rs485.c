@@ -84,6 +84,8 @@ u32 g_RS485_recvDataDeal(void)
 		if (g_RS485_CRC16Test(waitDealArray, modbusPosi.comRecvCnt-2) == testCRC16) {
 			switch(waitDealArray[1]) {
 				case 0x03:
+					
+			#ifdef BIGLITTLE
 				returnPosi |= waitDealArray[5];
 				returnPosi <<= 8;
 				returnPosi |= waitDealArray[6];
@@ -91,6 +93,16 @@ u32 g_RS485_recvDataDeal(void)
 				returnPosi |= waitDealArray[3];
 				returnPosi <<= 8;
 				returnPosi |= waitDealArray[4];
+				
+			#else // AMG2000
+				returnPosi |= waitDealArray[3];
+				returnPosi <<= 8;
+				returnPosi |= waitDealArray[4];
+				returnPosi <<= 8;
+				returnPosi |= waitDealArray[5];
+				returnPosi <<= 8;
+				returnPosi |= waitDealArray[6];
+			#endif
 				
 				modbusPosi.l_recv_abs_posi_time = gTime.l_time_ms;
 				modbusPosi.latest_abs_posi_um = returnPosi;

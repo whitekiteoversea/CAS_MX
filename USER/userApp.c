@@ -10,7 +10,7 @@ GLOBAL_CAN_VAR can_var;
 MODBUSVARS modbusPosi;
 SDRAM_STO_VAR sdram_var;
 
-#ifdef HAL_W5500_ENABLE
+#if HAL_W5500_ENABLE
 
 uint8_t gDATABUF[DATA_BUF_SIZE];  
 wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
@@ -25,7 +25,7 @@ uint8_t flagStatus = 0;
 int32_t avgPosiErr[2] = {0}; 		
 
 // Function
-#ifdef HAL_W5500_ENABLE
+#if HAL_W5500_ENABLE
 // ETH initial
 void network_init(void)
 {
@@ -341,6 +341,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				if (gStatus.l_rs485_getposi_cnt >= 20) {
 					gStatus.l_rs485_getposiEnable = 1;
 					gStatus.l_rs485_getposi_cnt = 0;
+
 				}
 				// 新RTU帧接收已经使�? 10us�?�?
 				if (modbusPosi.g_RTU_Startflag == 1) {
