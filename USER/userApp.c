@@ -14,11 +14,15 @@ SDRAM_STO_VAR sdram_var;
 
 uint8_t gDATABUF[DATA_BUF_SIZE];  
 wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
-                            .ip = {192, 168, 1, 10},
+                            .ip = {192, 168, 20, 11},
                             .sn = {255,255,255,0},
-                            .gw = {192, 168, 1, 1},
+                            .gw = {192, 168, 20, 1},
                             .dns = {8,8,8,8},
                             .dhcp = NETINFO_STATIC };
+
+volatile uint32_t last_timeMS = 0;
+volatile uint32_t tim3_timeBaseCnt_10US = 0;
+
 #endif
 
 uint8_t flagStatus = 0; 																	
@@ -96,13 +100,13 @@ void systemParaInit(void)
 
     w5500_udp_var.DstHostIP[0] = 192;
     w5500_udp_var.DstHostIP[1] = 168;
-    w5500_udp_var.DstHostIP[2] = 1;
-    w5500_udp_var.DstHostIP[3] = 10;
+    w5500_udp_var.DstHostIP[2] = 20;
+    w5500_udp_var.DstHostIP[3] = 33;
     w5500_udp_var.DstHostPort = 8888;
 
     w5500_udp_var.SrcRecvIP[0] = 192;
     w5500_udp_var.SrcRecvIP[1] = 168;
-    w5500_udp_var.SrcRecvIP[2] = 1;
+    w5500_udp_var.SrcRecvIP[2] = 20;
     w5500_udp_var.SrcRecvIP[3] = 11;
     w5500_udp_var.SrcRecvPort = 8001;
 
@@ -326,6 +330,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
    static unsigned int heartbeatChangedMs = 0; 
    unsigned int cmpVal = POSI_CHECK_PERIOD_1MS;
 	 if (htim == &htim3) {
+      tim3_timeBaseCnt_10US++;
+
       // 10us timecnt
       if (gTime.l_time_cnt_10us < 360000000 ) { // 60min reset local timing
         gTime.l_time_cnt_10us++;
@@ -420,4 +426,48 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *phcan)
 			} else {
         printf("%d recv error can frame \n\r", gTime.l_time_ms);
     }
+}
+
+uint32_t tim3_getCurrentTimeCnt(void)
+{
+    return tim3_timeBaseCnt_10US;
+}
+
+// MS level nonblocking delay
+uint8_t tim3_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt)
+{
+    // avoid initial problem
+    if (*lastTimeMS == 0) {
+        *lastTimeMS = tim3_getCurrentTimeCnt();
+    }
+    if ((tim3_timeBaseCnt_10US - *lastTimeMS)/100 >= delay1MS_cnt) {
+        *lastTimeMS = 0;
+        return 1;
+    }
+    return 0;
+}
+
+void w5500_stateMachineTask(void)
+{
+    uint8_t ret = 0;
+    switch (getSn_SR(0)) {
+			case SOCK_UDP:																							    
+					if (1 == tim3_noblocked_1MS_delay(&last_timeMS, 1)) {
+              if (getSn_IR(0) & Sn_IR_RECV) {
+                setSn_IR(0, Sn_IR_RECV);															   
+              }
+              
+              if ((ret = getSn_RX_RSR(0)) > 0) { 
+                  memset(gDATABUF, 0, ret+1);
+                  recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &w5500_udp_var.DstHostPort);			
+                  printf(" %d ms %s\r\n", gTime.l_time_ms, gDATABUF);															  
+                  sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  	
+              }
+          }
+			break;
+			case SOCK_CLOSED:																						   
+					socket(0, Sn_MR_UDP, w5500_udp_var.SrcRecvPort, 0x00);			
+			break;
+		}
+
 }

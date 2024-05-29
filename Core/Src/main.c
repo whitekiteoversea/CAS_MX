@@ -1280,7 +1280,7 @@ void userAppLoop(void)
   UART_Byte_Receive(&huart6);
   // Send packet to AMG2000 to Acquire abs Posi data
   if (gStatus.l_rs485_getposiEnable == 1) {
-    //g_RS485_sendPacket(&huart6, 1, rs485_posi_acquire_data);
+    g_RS485_sendPacket(&huart6, 1, rs485_posi_acquire_data);
     gStatus.l_rs485_getposiEnable = 0;
   }
 #endif
@@ -1297,24 +1297,7 @@ void userAppLoop(void)
 #endif
 
 #if HAL_W5500_ENABLE
-    switch (getSn_SR(0)) {
-			case SOCK_UDP:																							    
-					HAL_Delay(100); 
-					if(getSn_IR(0) & Sn_IR_RECV) {
-						setSn_IR(0, Sn_IR_RECV);															   
-					}
-					
-					if((ret = getSn_RX_RSR(0)) > 0) { 
-						memset(gDATABUF, 0, ret+1);
-						recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &w5500_udp_var.DstHostPort);			
-						printf(" %d ms %s\r\n", gTime.l_time_ms, gDATABUF);															  
-						sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  	
-					}
-			break;
-			case SOCK_CLOSED:																						   
-					socket(0, Sn_MR_UDP, w5500_udp_var.SrcRecvPort, 0x00);			
-			break;
-		}
+  w5500_stateMachineTask();
 #endif
 
 }
