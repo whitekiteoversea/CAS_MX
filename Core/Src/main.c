@@ -1041,7 +1041,7 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3|SPI4_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_3|SPI4_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(SPI5_CS_GPIO_Port, SPI5_CS_Pin, GPIO_PIN_RESET);
@@ -1213,6 +1213,7 @@ void bspInit(void)
 
   // 3. ETH Initial
 #if HAL_W5500_ENABLE
+	HAL_Delay(300);  // wait for W5500 initial 
 	network_register();
 	network_init();
 #endif
@@ -1230,7 +1231,7 @@ void bspInit(void)
   // HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);   
   // HAL_Delay(500);
 
-  // CANOpen NMI Init
+  // 6. CANOpen NMI Init
 	/*
   setNodeId(&masterObjdict_Data, 0x00);
   setState(&masterObjdict_Data, Initialisation);
@@ -1248,6 +1249,7 @@ void bspInit(void)
 
 void userAppLoop(void) 
 {
+		uint8_t ret = 0;
     // RS485 MODBUS RTU Request Code
     uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
 

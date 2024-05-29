@@ -37,7 +37,7 @@
 #define RPM2Vol_CONVERSE_COFF   (10.922)
 
 // function Switch
-#define HAL_W5500_ENABLE         (0)
+#define HAL_W5500_ENABLE         (1)
 #define CAN2_SENDTEST_ON         (0)
 #define HAL_SDRAM_SELFTEST       (0)
 

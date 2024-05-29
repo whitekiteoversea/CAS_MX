@@ -51,10 +51,10 @@ void network_register(void)
 	int16_t ret = 0;
   uint8_t memsize[2][8] = {{2,2,2,2,2,2,2,2},{2,2,2,2,2,2,2,2}};
 		
-  reg_wizchip_cris_cbfunc(SPI_CrisEnter, SPI_CrisExit);	//ע���ٽ�����???
+  reg_wizchip_cris_cbfunc(SPI_CrisEnter, SPI_CrisExit);	
   /* Chip selection call back */
   #if   _WIZCHIP_IO_MODE_ == _WIZCHIP_IO_MODE_SPI_VDM_
-    reg_wizchip_cs_cbfunc(SPI4_CS_Select, SPI4_CS_Deselect);//ע��SPIƬ???�źź�???
+    reg_wizchip_cs_cbfunc(SPI4_CS_Select, SPI4_CS_Deselect);
   #elif _WIZCHIP_IO_MODE_ == _WIZCHIP_IO_MODE_SPI_FDM_
     reg_wizchip_cs_cbfunc(SPI_CS_Select, SPI_CS_Deselect);  // CS must be tried with LOW.
   #else
@@ -68,17 +68,17 @@ void network_register(void)
     reg_wizchip_spi_cbfunc(HAL_SPI4_ReadByte, HAL_SPI4_WriteByte);	//ע���д����?????
 
     /* WIZCHIP SOCKET Buffer initialize */
-    if(ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1){
+    if (ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1){
       printf("%d ms WIZCHIP Initialized fail.\r\n", gTime.l_time_ms);
       while(1);
     }
 
     /* PHY link status check */
-    do{
+    while (tmp == PHY_LINK_OFF) {
       if(ctlwizchip(CW_GET_PHYLINK, (void*)&tmp) == -1){
-          printf("Unknown PHY Link stauts.\r\n");
+          printf("W5500: Unknown PHY Link stauts.\r\n");
       }
-    }while(tmp == PHY_LINK_OFF);
+    }
 }
 
 #endif
@@ -97,7 +97,7 @@ void systemParaInit(void)
     w5500_udp_var.DstHostIP[0] = 192;
     w5500_udp_var.DstHostIP[1] = 168;
     w5500_udp_var.DstHostIP[2] = 1;
-    w5500_udp_var.DstHostIP[3] = 20;
+    w5500_udp_var.DstHostIP[3] = 10;
     w5500_udp_var.DstHostPort = 8888;
 
     w5500_udp_var.SrcRecvIP[0] = 192;
@@ -109,10 +109,10 @@ void systemParaInit(void)
     AT24CXX_Init();
     //EEPROM self_test
     ret = AT24CXX_ReadOneByte(0xFF);
-    printf("ret is : %d \n\r", ret);
+    printf("EEPROM: ret is : %d \n\r", ret);
         
     if (0x28 != ret) {
-        printf("%d ms Fisrt Time EEPROM Initialized!\r\n", gTime.l_time_ms);
+        printf("EEPROM: %d ms Fisrt Time EEPROM Initialized!\r\n", gTime.l_time_ms);
 
         HAL_Delay(10);
         AT24CXX_WriteOneByte(0xFF, 0x28);
@@ -121,13 +121,13 @@ void systemParaInit(void)
         ret = AT24CXX_ReadOneByte(0xFF);
 
         if (0x28 != ret) {
-            printf("%d ms Second EEPROM Initialize Failed Plz check link!\r\n", gTime.l_time_ms);
+            printf("EEPROM: %d ms Second EEPROM Initialize Failed Plz check link!\r\n", gTime.l_time_ms);
         } else {
             AT24CXX_WriteOneByte(0x01, 0x44); // first initial CAN ID = 0x01
         }
     } else {
         can_var.NodeID = AT24CXX_ReadOneByte(0x01);
-                printf("can_var.NodeID is : %d \n\r", can_var.NodeID);
+        printf("EEPROM: can_var.NodeID is : 0x%x \n\r", can_var.NodeID);
     } 
 }
 
