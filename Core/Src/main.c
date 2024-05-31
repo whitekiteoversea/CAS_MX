@@ -187,19 +187,19 @@ void SystemClock_Config(void)
 static void MX_NVIC_Init(void)
 {
   /* CAN1_RX0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 1, 1);
   HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
   /* TIM3_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(TIM3_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(TIM3_IRQn);
   /* TIM4_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(TIM4_IRQn, 1, 0);
+  HAL_NVIC_SetPriority(TIM4_IRQn, 1, 2);
   HAL_NVIC_EnableIRQ(TIM4_IRQn);
   /* USART6_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(USART6_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(USART6_IRQn, 2, 0);
   HAL_NVIC_EnableIRQ(USART6_IRQn);
   /* CAN2_RX0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(CAN2_RX0_IRQn, 0, 0);
+  HAL_NVIC_SetPriority(CAN2_RX0_IRQn, 1, 2);
   HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
 }
 
@@ -1156,17 +1156,6 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void bspInit(void)
 {
-  unsigned short startupCheckRes = 0x00;
-  uint8_t ret =0;
-	uint8_t snddata[8] = {0};
-	CAN_ID_Union ext_ID;
-  unsigned char sensorData = 0;
-  uint8_t cnt = 0;
-	uint8_t prx = 0;
-	
-  uint8_t SG_Data[8] = {0}; 
-  uint64_t sensor38bit = 0;
-
   HAL_Init();
 
   /* USER CODE BEGIN Init */
@@ -1183,7 +1172,7 @@ void bspInit(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_CAN1_Init();
-  // MX_CAN2_Init();
+  MX_CAN2_Init();
   // MX_I2C2_Init();
   MX_SPI1_Init();
   MX_SPI2_Init();
@@ -1209,7 +1198,7 @@ void bspInit(void)
 	
   // 1. local timebase
   HAL_TIM_Base_Start_IT(&htim3);   // (pass)
-// HAL_TIM_Base_Start_IT(&htim4);   //CANOpen Timer
+  HAL_TIM_Base_Start_IT(&htim4);   //CANOpen Timer
 
   // 3. ETH Initial
 #if HAL_W5500_ENABLE
@@ -1221,25 +1210,25 @@ void bspInit(void)
   // 4. BISS-C Sensor Data Acquire (pass)
 	//HAL_Delay(500);  // wait for sensor initial 350ms
 
-// #ifdef HAL_BISSC_ENABLE
-// 	HAL_BISSC_Setup();
-// #endif
+#if HAL_BISSC_ENABLE
+	HAL_BISSC_Setup();
+#endif
 
   // 5. Motor Torque Controller (pass)
-  // HAL_SPI1_DAC8563_Init();   
-  // HAL_Delay(500);
-  // HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);   
-  // HAL_Delay(500);
+#if HAL_DAC_ENABLE
+  HAL_SPI1_DAC8563_Init();   
+  HAL_Delay(500);
+  HAL_DAC8563_cmd_Write(3, 0, spdDownLimitVol);   
+  HAL_Delay(500);
+#endif
 
   // 6. CANOpen NMI Init
-	/*
   setNodeId(&masterObjdict_Data, 0x00);
   setState(&masterObjdict_Data, Initialisation);
   setState(&masterObjdict_Data, Pre_operational);
   setState(&masterObjdict_Data, Operational);
   masterSendNMTstateChange(&masterObjdict_Data, 0x01, NMT_Start_Node);
-	*/
-
+	
   #if HAL_SDRAM_SELFTEST
     fsmc_sdram_test();
   #endif
@@ -1249,7 +1238,17 @@ void bspInit(void)
 
 void userAppLoop(void) 
 {
-		uint8_t ret = 0;
+    unsigned short startupCheckRes = 0x00;
+    uint8_t ret =0;
+    uint8_t snddata[8] = {0};
+    CAN_ID_Union ext_ID;
+    unsigned char sensorData = 0;
+    uint8_t cnt = 0;
+    uint8_t prx = 0;
+    
+    uint8_t SG_Data[8] = {0}; 
+    uint64_t sensor38bit = 0;
+
     // RS485 MODBUS RTU Request Code
     uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
 
@@ -1292,8 +1291,10 @@ void userAppLoop(void)
   }
 
 #if CAN2_SENDTEST_ON
+	if (gStatus.l_can2_send_flag == 1) {
 		HAL_CAN_Std_Transmit(&hcan2, (void *)snddata, 8, ext_ID.Value);
-		HAL_Delay(500);
+    gStatus.l_can2_send_flag = 0;
+	}
 #endif
 
 #if HAL_W5500_ENABLE

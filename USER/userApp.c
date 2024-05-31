@@ -343,13 +343,18 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       // 1ms timecnt
       if (gTime.l_time_cnt_10us % 100 == 0) {
         gTime.l_time_ms++;
-				// 20ms 触发位置�?�?
+				// 20ms  posi acquire
 				if (gStatus.l_rs485_getposi_cnt >= 20) {
 					gStatus.l_rs485_getposiEnable = 1;
 					gStatus.l_rs485_getposi_cnt = 0;
 
+          // CAN2 Send TEST
+          #if CAN2_SENDTEST_ON
+            gStatus.l_can2_send_flag = 1;
+          #endif 
+
 				}
-				// 新RTU帧接收已经使�? 10us�?�?
+				// NEW RTU Frame recv Start
 				if (modbusPosi.g_RTU_Startflag == 1) {
 					modbusPosi.g_10ms_Cnt++;
 					cmpVal = MODBUS_INTERNAL_1MS;
@@ -391,7 +396,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *phcan)
     unsigned char cnt = 0;
     static unsigned int consectiveCnt = 0;
 
-	printf("%d ms CAS: recv New Frame \n\r", gTime.l_time_ms);
+	  // printf("CAN: %d ms recv New Frame \n\r", gTime.l_time_ms);
 		
     if (phcan == &hcan1) {
         HAL_CAN_GetRxMessage(phcan, CAN_RX_FIFO0, &RxMessage, rxbuf);
@@ -408,21 +413,24 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *phcan)
     } else if (phcan == &hcan2) {
         HAL_CAN_GetRxMessage(phcan, CAN_RX_FIFO0, &RxMessage, rxbuf);
 
-        RMessage.cob_id = RxMessage.StdId;						                  /* ������ͽڵ�ID */
-//        if (RxMessage.RTR == CAN_RTR_DATA) {
-//						RMessage.rtr = 0;
-//				} else {
-//						RMessage.rtr = 1;
-//				}
+        RMessage.cob_id = RxMessage.StdId;				// driver canid		               
+        if (RxMessage.RTR == CAN_RTR_DATA) {
+						RMessage.rtr = 0;
+				} else {
+						RMessage.rtr = 1;
+				}
 				
-        RMessage.len = RxMessage.DLC;							                      /* ���ݰ����� */
-        memcpy(RMessage.data, rxbuf, RxMessage.DLC);		                /* ���� */
+        RMessage.len = RxMessage.DLC;							                      
+        memcpy(RMessage.data, rxbuf, RxMessage.DLC);		               
 
 				/*CANOpen Timer*/
         canDispatch(&masterObjdict_Data, &RMessage);
         
 				consectiveCnt++;
-        printf("%d CAN2 Recv New Frame! \n\r", consectiveCnt); 
+        
+        #if TEST_CAN_STABLITY
+          printf("%d CAN2 Recv New Frame! \n\r", consectiveCnt); 
+        #endif
 			} else {
         printf("%d recv error can frame \n\r", gTime.l_time_ms);
     }

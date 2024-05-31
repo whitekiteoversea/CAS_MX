@@ -10,6 +10,7 @@
 #include "spi.h"
 #include "socket.h"	
 #include "string.h"
+#undef RTR
 #include "can.h"
 #include "pid.h"
 //#include "oled.h"
@@ -40,6 +41,7 @@
 #define HAL_W5500_ENABLE         (1)
 #define CAN2_SENDTEST_ON         (0)
 #define HAL_SDRAM_SELFTEST       (0)
+#define HAL_DAC_ENABLE           (0)
 
 extern uint8_t gDATABUF[DATA_BUF_SIZE];  
 

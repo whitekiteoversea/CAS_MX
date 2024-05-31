@@ -3,13 +3,15 @@
 #include "sys.h"	    
 #include "stm32f4xx_hal.h"
 
+// PC CAN Node ID
+#define PCNODEID                        (0)
+
 #define REG_CAN_ENABLE             		(0)
+#define TEST_CAN_STABLITY               (0)
 
 #define CAN1_FILTER_MODE_MASK_ENABLE    (1)
 #define CAN2_FILTER_MODE_MASK_ENABLE    (1)
                  
-#define PCNODEID                        (0)
-
 /* CAN Frame Type 0x00-0x1F total 32 Type*/
 
 #define CANSpeedCmd                     (1)

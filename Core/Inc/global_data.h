@@ -65,6 +65,8 @@ typedef struct {
 	enum WORKMODE workmode;                   // Algorithm WorkMode: Speed/Torque/Position
 
   volatile unsigned char l_can1_recv_flag; 
+  volatile unsigned char l_can2_send_flag; 
+
   volatile unsigned int  l_bissc_sensor_acquire; // 获取BISS-C 数据
 
   // Modbus RTU
