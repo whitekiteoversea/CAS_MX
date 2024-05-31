@@ -477,5 +477,22 @@ void w5500_stateMachineTask(void)
 					socket(0, Sn_MR_UDP, w5500_udp_var.SrcRecvPort, 0x00);			
 			break;
 		}
+}
+
+void canOpen_Init(void)
+{
+    setNodeId(&masterObjdict_Data, 0x00);
+    setState(&masterObjdict_Data, Initialisation);
+    setState(&masterObjdict_Data, Pre_operational);
+    setState(&masterObjdict_Data, Operational);
+    masterSendNMTstateChange(&masterObjdict_Data, 0x01, NMT_Start_Node);
+}
+
+// SDO config PDO
+uint8_t canOpenSDOConfig(void)
+{
+
+
+
 
 }

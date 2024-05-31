@@ -54,6 +54,8 @@ void network_init(void);			// Initialize Network information and display it
 
 void systemParaInit(void);
 void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode); // can recv info distribute
+void canOpen_Init(void);
+uint8_t canOpenSDOConfig(void);
 
 int32_t avgErrCollect(uint8_t node, int32_t sampleData);  
 int32_t avgErrUpdate(int32_t *sampleData);

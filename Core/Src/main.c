@@ -1223,17 +1223,13 @@ void bspInit(void)
 #endif
 
   // 6. CANOpen NMI Init
-  setNodeId(&masterObjdict_Data, 0x00);
-  setState(&masterObjdict_Data, Initialisation);
-  setState(&masterObjdict_Data, Pre_operational);
-  setState(&masterObjdict_Data, Operational);
-  masterSendNMTstateChange(&masterObjdict_Data, 0x01, NMT_Start_Node);
+  canOpen_Init();
 	
   #if HAL_SDRAM_SELFTEST
     fsmc_sdram_test();
   #endif
 
-  printf("%d ms All Function Initial Finished! \n\r", gTime.l_time_ms);
+  printf("CAS: %d ms All Function Initial Finished! \n\r", gTime.l_time_ms);
 }
 
 void userAppLoop(void) 
