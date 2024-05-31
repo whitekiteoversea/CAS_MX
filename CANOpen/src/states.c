@@ -252,7 +252,7 @@ void setNodeId(CO_Data* d, UNS8 nodeId)
 	  return;
   }
 
-  if(offset){
+  if (offset){
     /* Adjust COB-ID Client->Server (rx) only id already set to default value or id not valid (id==0xFF)*/
     if((*(UNS32*)d->objdict[offset].pSubindex[1].pObject == 0x600 + *d->bDeviceNodeId)||(*d->bDeviceNodeId==0xFF)){
       /* cob_id_client = 0x600 + nodeId; */

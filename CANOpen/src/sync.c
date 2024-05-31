@@ -93,8 +93,7 @@ void startSYNC(CO_Data* d)
 	RegisterSetODentryCallBack(d, 0x1005, 0, &OnCOB_ID_SyncUpdate);
 	RegisterSetODentryCallBack(d, 0x1006, 0, &OnCOB_ID_SyncUpdate);
 
-	if(*d->COB_ID_Sync & 0x40000000ul && *d->Sync_Cycle_Period)
-	{
+	if(*d->COB_ID_Sync & 0x40000000ul && *d->Sync_Cycle_Period)	{
 		d->syncTimer = SetAlarm(
 				d,
 				0 /*No id needed*/,

@@ -82,17 +82,10 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1006 :   Communication / Cycle Period. */
-                    UNS32 Master_obj1006 = 200;	/* 1000000 */
+                    UNS32 Master_obj1006 = 1000;	// Synchro Cycle Period = 1ms
                     subindex Master_Index1006[] =
                      {
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1006  }
-                     };
-
-/* index 0x1007 :   Synchronous Window Length. */
-                    UNS32 Master_obj1007 = 200;	/* 1000000 */
-                    subindex Master_Index1007[] =
-                     {
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1007  }
                      };
 
 /* index 0x100C :   Guard Time */
@@ -341,11 +334,13 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1800 :   Transmit PDO 1 Parameter. */
                     UNS8 Master_highestSubIndex_obj1800 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1800_COB_ID_used_by_PDO =0x201; //0x80000201;	/* 513 */
-                    UNS8 Master_obj1800_Transmission_Type = Transmission_Type;	/* 255 */
+                    UNS32 Master_obj1800_COB_ID_used_by_PDO =0x184; //0x80000184;	/*  */
+                    //UNS8 Master_obj1800_Transmission_Type = Transmission_Type;	/* 255 */
+                    UNS8 Master_obj1800_Transmission_Type = 0xff;	/* 255 */
                     UNS16 Master_obj1800_Inhibit_Time = 0;	/* 0 */
                     UNS8 Master_obj1800_Compatibility_Entry = 0x0;	/* 0 */
-                    UNS16 Master_obj1800_Event_Timer = 0;	/* 5 */
+                    //UNS16 Master_obj1800_Event_Timer = 0;	/* 5 */
+                    UNS16 Master_obj1800_Event_Timer = 1000; // 1s  
                     UNS8 Master_obj1800_SYNC_start_value = 0x11;	/* 0 */
                     subindex Master_Index1800[] =
                      {
@@ -457,10 +452,10 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 Master_highestSubIndex_obj1A00 = 1; /* number of subindex - 1*/
                     UNS32 Master_obj1A00[] =
                     {
-                      0x60FF0020	/* 1627324448 */
+                      0x60FF0020	/* 1627324448 */  // 给定速度 0x20 = 32rpm
                     };
                     subindex Master_Index1A00[] =
-                     {
+                    {
                        { RW, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1A00  },
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A00[0]  }
                      };
@@ -565,7 +560,6 @@ const indextable Master_objdict[] =
   { (subindex*)Master_Index1001,sizeof(Master_Index1001)/sizeof(Master_Index1001[0]), 0x1001},
   { (subindex*)Master_Index1005,sizeof(Master_Index1005)/sizeof(Master_Index1005[0]), 0x1005},
   { (subindex*)Master_Index1006,sizeof(Master_Index1006)/sizeof(Master_Index1006[0]), 0x1006},
-  { (subindex*)Master_Index1007,sizeof(Master_Index1007)/sizeof(Master_Index1007[0]), 0x1007},
   { (subindex*)Master_Index1014,sizeof(Master_Index1014)/sizeof(Master_Index1014[0]), 0x1014},
   { (subindex*)Master_Index1018,sizeof(Master_Index1018)/sizeof(Master_Index1018[0]), 0x1018},
   { (subindex*)Master_Index1019,sizeof(Master_Index1019)/sizeof(Master_Index1019[0]), 0x1019},

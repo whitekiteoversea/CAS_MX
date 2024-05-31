@@ -269,9 +269,9 @@ const indextable * scanIndexOD (CO_Data* d, UNS16 wIndex, UNS32 *errorCode, ODCa
 
 UNS32 RegisterSetODentryCallBack(CO_Data* d, UNS16 wIndex, UNS8 bSubindex, ODCallback_t Callback)
 {
-UNS32 errorCode;
-ODCallback_t *CallbackList;
-const indextable *odentry;
+  UNS32 errorCode;
+  ODCallback_t *CallbackList;
+  const indextable *odentry;
 
   odentry = scanIndexOD (d, wIndex, &errorCode, &CallbackList);
   if(errorCode == OD_SUCCESSFUL  &&  CallbackList  &&  bSubindex < odentry->bSubCount) 

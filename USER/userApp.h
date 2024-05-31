@@ -55,6 +55,7 @@ void network_init(void);			// Initialize Network information and display it
 void systemParaInit(void);
 void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode); // can recv info distribute
 void canOpen_Init(void);
+void canopen_send_sdo(uint16_t message_sdo[];
 uint8_t canOpenSDOConfig(void);
 
 int32_t avgErrCollect(uint8_t node, int32_t sampleData);  
@@ -66,6 +67,11 @@ uint32_t tim3_getCurrentTimeCnt(void);
 // MS level nonblocking delay
 uint8_t tim3_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt);
 void w5500_stateMachineTask(void);
+
+uint32_t tim4_getCurrentTimeCnt(void);
+uint8_t tim4_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt);
+
+extern uint16_t message_sdo[MAX_PRESET_SDO_NUM][9];
 
 #endif
 

@@ -22,11 +22,23 @@ wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
 
 volatile uint32_t last_timeMS = 0;
 volatile uint32_t tim3_timeBaseCnt_10US = 0;
+volatile uint32_t tim4_timeBaseCnt_1MS = 0;
 
 #endif
 
 uint8_t flagStatus = 0; 																	
 int32_t avgPosiErr[2] = {0}; 		
+
+// rpdo1 mapping to speedGiven (2Byte) 
+uint16_t message_sdo[MAX_PRESET_SDO_NUM][9] = {
+  {0x608,0x23,0x00,0x14,0x01,0x01,0x02,0x00,0x80},  // 失能rpdo1： 发送sdo 608,23 00 14 01 01 02 00 80  4Byte
+  {0x608,0x2f,0x00,0x16,0x00,0x01,0x00,0x00,0x00},  // rpdo1映射个数: 发送sdo 608,23 00 16 00 01 00 00 00  1Byte
+  {0x608,0x23,0x00,0x16,0x01,0x20,0x00,0xff,0x60},  // 写入速度设定值: 发送sdo 608,23 00 16 01 20 00 ff 60 4Byte
+  {0x608,0x23,0x00,0x14,0x01,0x01,0x02,0x00,0x00},  // 使能rpdo1:  发送sdo 608,23 00 14 01 01 02 00 00 4Byte
+
+  {0x608,0x2f,0x60,0x60,0x00,0x03,0x00,0x00,0x00},  // 切换从机工作模式为速度模式 1Byte
+  {0x608,0x2b,0x40,0x60,0x01,0x01,0x00,0x00,0x80},  // 主回路供电启动 2Byte
+};
 
 // Function
 #if HAL_W5500_ENABLE
@@ -97,6 +109,7 @@ void systemParaInit(void)
     motionStatus.g_Speed = 0;
 
     can_var.NodeID = 0x01; // local node ID
+    can_var.slaveCANID = SLAVECANID; // driver can ID
 
     w5500_udp_var.DstHostIP[0] = 192;
     w5500_udp_var.DstHostIP[1] = 168;
@@ -324,7 +337,7 @@ void fsmc_sdram_test()
  	}					 
 }	
 
-// 10us TIMER3
+// TIMER3/TIMER4
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) 
 {
    static unsigned int heartbeatChangedMs = 0; 
@@ -341,7 +354,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         gStatus.l_time_overflow++;
       }
       // 1ms timecnt
-      if (gTime.l_time_cnt_10us % 100 == 0) {
+      if (gTime.l_time_cnt_10us % 100 == 0 && (gTime.l_time_cnt_10us > 0)) {
         gTime.l_time_ms++;
 				// 20ms  posi acquire
 				if (gStatus.l_rs485_getposi_cnt >= 20) {
@@ -371,7 +384,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       }
 
       // 1s update local time and Sensor
-      if ((gTime.l_time_ms % 1000 == 0) && (0 != gTime.l_time_ms-heartbeatChangedMs)) {
+      if ((gTime.l_time_ms % 1000 == 0) && ((gTime.l_time_ms > 0)) && (0 != gTime.l_time_ms-heartbeatChangedMs)) {
         gStatus.l_time_heartbeat = 1;
         heartbeatChangedMs = gTime.l_time_ms;
       }
@@ -381,7 +394,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         gStatus.l_bissc_sensor_acquire = 1;
       }
     } else if (htim == &htim4) {
-      TimeDispatch(); // canfestival software timer
+         tim4_timeBaseCnt_1MS++;
+      TimeDispatch(); // canfestival software timer 
     } else {
       printf("%d ms Unknown TIMER Interupt! \r\n", gTime.l_time_ms);
     }
@@ -441,6 +455,11 @@ uint32_t tim3_getCurrentTimeCnt(void)
     return tim3_timeBaseCnt_10US;
 }
 
+uint32_t tim4_getCurrentTimeCnt(void)
+{
+    return tim4_timeBaseCnt_1MS;
+}
+
 // MS level nonblocking delay
 uint8_t tim3_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt)
 {
@@ -449,6 +468,20 @@ uint8_t tim3_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt)
         *lastTimeMS = tim3_getCurrentTimeCnt();
     }
     if ((tim3_timeBaseCnt_10US - *lastTimeMS)/100 >= delay1MS_cnt) {
+        *lastTimeMS = 0;
+        return 1;
+    }
+    return 0;
+}
+
+// MS level nonblocking delay
+uint8_t tim4_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt)
+{
+    // avoid initial problem
+    if (*lastTimeMS == 0) {
+        *lastTimeMS = tim3_getCurrentTimeCnt();
+    }
+    if ((tim3_timeBaseCnt_10US - *lastTimeMS) >= delay1MS_cnt) {
         *lastTimeMS = 0;
         return 1;
     }
@@ -481,18 +514,49 @@ void w5500_stateMachineTask(void)
 
 void canOpen_Init(void)
 {
-    setNodeId(&masterObjdict_Data, 0x00);
+    setNodeId(&masterObjdict_Data, can_var.slaveCANID);
     setState(&masterObjdict_Data, Initialisation);
     setState(&masterObjdict_Data, Pre_operational);
     setState(&masterObjdict_Data, Operational);
-    masterSendNMTstateChange(&masterObjdict_Data, 0x01, NMT_Start_Node);
+    masterSendNMTstateChange(&masterObjdict_Data, can_var.slaveCANID, NMT_Start_Node);
+}
+
+// SDO Transmit
+void canopen_send_sdo(uint16_t message_sdo[])
+{
+	  unsigned long abortCode=0;
+    uint8_t      nodeID=0;          /* ID      */
+    uint16_t    index=0;           /* 索引    */
+    uint8_t     subIndex=0;        /* 子索引   */
+    uint8_t     dataType=uint8;    /* 数据类型 */
+    uint32_t    count=4;           /* 数据长度 */
+    uint8_t     data[4];    
+    uint8_t i=0;
+    
+    nodeID=(int8_t)(message_sdo[0] & 0x7f);  // get low 7 bit (0-255)  
+    index=(uint16_t)((message_sdo[3]<<16)+message_sdo[2]);
+    subIndex=(uint8_t)(message_sdo[4]);
+
+    for (i=0; i<4; i++) {
+        data[0+i]=(uint8_t)message_sdo[5+i];
+    }
+
+    //d; nodeId; index; subIndex; count; dataType; data[4]; useBlockMode;
+    writeNetworkDict(&masterObjdict_Data, nodeID, index, subIndex, count, dataType, &data, 0);
+    while (getWriteResultNetworkDict(&masterObjdict_Data, nodeID, &abortCode) != SDO_FINISHED) {
+        break;
+    }
 }
 
 // SDO config PDO
 uint8_t canOpenSDOConfig(void)
 {
-
-
-
-
+    uint8_t cnt = 0;
+    stopSYNC(&masterObjdict_Data);  
+		for (cnt=0; cnt<MAX_PRESET_SDO_NUM; cnt++) {
+        if (tim4_noblocked_1MS_delay(&(can_var.canDelayTime_MS[cnt]), 20) == 1) {
+            canopen_send_sdo(message_sdo[cnt]);
+        }
+		}
+    startSYNC(&masterObjdict_Data);
 }

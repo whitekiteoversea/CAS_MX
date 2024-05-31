@@ -5,6 +5,7 @@
 
 // PC CAN Node ID
 #define PCNODEID                        (0)
+#define SLAVECANID                      (8)
 
 #define REG_CAN_ENABLE             		(0)
 #define TEST_CAN_STABLITY               (0)

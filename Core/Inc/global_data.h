@@ -36,6 +36,9 @@ enum WORKMODE {
 		PREPOSIMODE
 };
 
+// CANOpen SDO NUM
+#define MAX_PRESET_SDO_NUM       (6)
+
 // 全局时间记录
 typedef struct {
   volatile unsigned int l_time_cnt_10us;
@@ -97,6 +100,8 @@ typedef struct {
 
 typedef struct {
   unsigned char NodeID;
+  unsigned char slaveCANID;
+  volatile unsigned int canDelayTime_MS[MAX_PRESET_SDO_NUM];
 
 } GLOBAL_CAN_VAR;
 
