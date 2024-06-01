@@ -209,27 +209,19 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1400 :   Receive PDO 1 Parameter. */
-                    UNS8 Master_highestSubIndex_obj1400 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1400_COB_ID_used_by_PDO = 0x200;	/* 512 */
-                    UNS8 Master_obj1400_Transmission_Type = 0x00;	/* 0 */
-                    UNS16 Master_obj1400_Inhibit_Time = 0x0;	/* 0 */
-                    UNS8 Master_obj1400_Compatibility_Entry = 0x0;	/* 0 */
-                    UNS16 Master_obj1400_Event_Timer = 0x0;	/* 0 */
-                    UNS8 Master_obj1400_SYNC_start_value = 0x0;	/* 0 */
+                    UNS8 Master_highestSubIndex_obj1400 = 2; /* number of subindex - 1*/
+                    UNS32 Master_obj1400_COB_ID_used_by_PDO = 0x208;	/* 512 */
+                    UNS8 Master_obj1400_Transmission_Type = 0x01;	/* 1 */
                     subindex Master_Index1400[] =
                      {
                        { RO, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1400  },
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1400_COB_ID_used_by_PDO  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1400_Transmission_Type  },
-                       { RW, uint16, sizeof (UNS16), (void*)&Master_obj1400_Inhibit_Time  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1400_Compatibility_Entry  },
-                       { RW, uint16, sizeof (UNS16), (void*)&Master_obj1400_Event_Timer  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1400_SYNC_start_value  }
+                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1400_Transmission_Type  }
                      };
 
 /* index 0x1401 :   Receive PDO 2 Parameter. */
                     UNS8 Master_highestSubIndex_obj1401 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1401_COB_ID_used_by_PDO = 0x300;	/* 768 */
+                    UNS32 Master_obj1401_COB_ID_used_by_PDO = 0x308;	/* 768 */
                     UNS8 Master_obj1401_Transmission_Type = 0x00;	/* 0 */
                     UNS16 Master_obj1401_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 Master_obj1401_Compatibility_Entry = 0x0;	/* 0 */
@@ -248,7 +240,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1402 :   Receive PDO 3 Parameter. */
                     UNS8 Master_highestSubIndex_obj1402 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1402_COB_ID_used_by_PDO = 0x400;	/* 1024 */
+                    UNS32 Master_obj1402_COB_ID_used_by_PDO = 0x80000408;	/* 1024 */
                     UNS8 Master_obj1402_Transmission_Type = 0x00;	/* 0 */
                     UNS16 Master_obj1402_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 Master_obj1402_Compatibility_Entry = 0x0;	/* 0 */
@@ -267,7 +259,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1403 :   Receive PDO 4 Parameter. */
                     UNS8 Master_highestSubIndex_obj1403 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1403_COB_ID_used_by_PDO = 0x481;	/* 1153 */
+                    UNS32 Master_obj1403_COB_ID_used_by_PDO = 0x80000508;	/* 1153 */
                     UNS8 Master_obj1403_Transmission_Type = 0x00;	/* 0 */
                     UNS16 Master_obj1403_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 Master_obj1403_Compatibility_Entry = 0x0;	/* 0 */
@@ -288,7 +280,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 Master_highestSubIndex_obj1600 = 1; /* number of subindex - 1*/
                     UNS32 Master_obj1600[] =
                     {
-                      0x20000020	/* 536870944 */
+                      0x60FF0020	/* 536870944 */
                     };
                     subindex Master_Index1600[] =
                      {
@@ -327,39 +319,33 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                       0x60780010	/* 1618477072 */
                     };
                     subindex Master_Index1603[] =
-                     {
+                    {
                        { RW, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1603  },
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1603[0]  }
-                     };
+                    };
 
 /* index 0x1800 :   Transmit PDO 1 Parameter. */
-                    UNS8 Master_highestSubIndex_obj1800 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1800_COB_ID_used_by_PDO =0x184; //0x80000184;	/*  */
-                    //UNS8 Master_obj1800_Transmission_Type = Transmission_Type;	/* 255 */
-                    UNS8 Master_obj1800_Transmission_Type = 0xff;	/* 255 */
+                    UNS8 Master_highestSubIndex_obj1800 = 4; /* number of subindex - 1*/
+                    UNS32 Master_obj1800_COB_ID_used_by_PDO =0x188; //0x80000188;	/*  */
+                    UNS8 Master_obj1800_Transmission_Type = 0x1;	/* SYNC Send */
                     UNS16 Master_obj1800_Inhibit_Time = 0;	/* 0 */
-                    UNS8 Master_obj1800_Compatibility_Entry = 0x0;	/* 0 */
-                    //UNS16 Master_obj1800_Event_Timer = 0;	/* 5 */
                     UNS16 Master_obj1800_Event_Timer = 1000; // 1s  
-                    UNS8 Master_obj1800_SYNC_start_value = 0x11;	/* 0 */
                     subindex Master_Index1800[] =
                      {
                        { RO, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1800  },
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1800_COB_ID_used_by_PDO  },
                        { RW, uint8, sizeof (UNS8), (void*)&Master_obj1800_Transmission_Type  },
                        { RW, uint16, sizeof (UNS16), (void*)&Master_obj1800_Inhibit_Time  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1800_Compatibility_Entry  },
                        { RW, uint16, sizeof (UNS16), (void*)&Master_obj1800_Event_Timer  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1800_SYNC_start_value  }
                      };
 
 /* index 0x1801 :   Transmit PDO 2 Parameter. */
                     UNS8 Master_highestSubIndex_obj1801 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1801_COB_ID_used_by_PDO = 0x202;//0x80000202;	/* 514 */
+                    UNS32 Master_obj1801_COB_ID_used_by_PDO = 0x80000288;//0x80000202;	/* 514 */
                     UNS8 Master_obj1801_Transmission_Type = Transmission_Type;	/* 255 */
                     UNS16 Master_obj1801_Inhibit_Time = 0;	/* 0 */
                     UNS8 Master_obj1801_Compatibility_Entry = 0x0;	/* 0 */
-                    UNS16 Master_obj1801_Event_Timer = 0;	/* 11 */
+                    UNS16 Master_obj1801_Event_Timer = 1000;	/* 1rps */
                     UNS8 Master_obj1801_SYNC_start_value = 0x12;	/* 0 */
                     subindex Master_Index1801[] =
                      {
@@ -374,7 +360,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1802 :   Transmit PDO 3 Parameter. */
                     UNS8 Master_highestSubIndex_obj1802 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1802_COB_ID_used_by_PDO = 0x0000203;	/* 515 */
+                    UNS32 Master_obj1802_COB_ID_used_by_PDO = 0x80000388;	/* 515 */
                     UNS8 Master_obj1802_Transmission_Type = Transmission_Type;	/* 255 */
                     UNS16 Master_obj1802_Inhibit_Time = 0;	/* 1 */
                     UNS8 Master_obj1802_Compatibility_Entry = 0x0;	/* 0 */
@@ -393,7 +379,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1803 :   Transmit PDO 4 Parameter. */
                     UNS8 Master_highestSubIndex_obj1803 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1803_COB_ID_used_by_PDO = 0x00000204;	/* 516 */
+                    UNS32 Master_obj1803_COB_ID_used_by_PDO = 0x80000488;	/* 516 */
                     UNS8 Master_obj1803_Transmission_Type = Transmission_Type;	/* 255 */
                     UNS16 Master_obj1803_Inhibit_Time = 0;	/* 1 */
                     UNS8 Master_obj1803_Compatibility_Entry = 0x0;	/* 0 */
@@ -452,7 +438,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 Master_highestSubIndex_obj1A00 = 1; /* number of subindex - 1*/
                     UNS32 Master_obj1A00[] =
                     {
-                      0x60FF0020	/* 1627324448 */  // 给定速度 0x20 = 32rpm
+                      	0x200B1910  // 相电流有效值 0.01A
                     };
                     subindex Master_Index1A00[] =
                     {
@@ -462,14 +448,12 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1A01 :   Transmit PDO 2 Mapping. */
                     UNS8 Master_highestSubIndex_obj1A01 = 1; /* number of subindex - 1*/
-                    UNS32 Master_obj1A01[] =
-                    {
-                      0x60FF0020	/* 1627324448 */
-                    };
+                    UNS32 Master_obj1A01[] = {0x60FF0020, 0x606c0020};
                     subindex Master_Index1A01[] =
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1A01  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A01[0]  }
+                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A01[0]  },
+                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A01[1]  }
                      };
 
 /* index 0x1A02 :   Transmit PDO 3 Mapping. */

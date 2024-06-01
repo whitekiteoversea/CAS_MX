@@ -29,12 +29,17 @@ volatile uint32_t tim4_timeBaseCnt_1MS = 0;
 uint8_t flagStatus = 0; 																	
 int32_t avgPosiErr[2] = {0}; 		
 
-// rpdo1 mapping to speedGiven (2Byte) 
 uint16_t message_sdo[MAX_PRESET_SDO_NUM][9] = {
-  {0x608,0x23,0x00,0x14,0x01,0x01,0x02,0x00,0x80},  // 失能rpdo1： 发送sdo 608,23 00 14 01 01 02 00 80  4Byte
-  {0x608,0x2f,0x00,0x16,0x00,0x01,0x00,0x00,0x00},  // rpdo1映射个数: 发送sdo 608,23 00 16 00 01 00 00 00  1Byte
-  {0x608,0x23,0x00,0x16,0x01,0x20,0x00,0xff,0x60},  // 写入速度设定值: 发送sdo 608,23 00 16 01 20 00 ff 60 4Byte
-  {0x608,0x23,0x00,0x14,0x01,0x01,0x02,0x00,0x00},  // 使能rpdo1:  发送sdo 608,23 00 14 01 01 02 00 00 4Byte
+  {0x608,0x23,0x00,0x18,0x01,0x88,0x01,0x00,0x80},  // 失能tpdo1, 改写COD-ID：608,23 00 14 01 01 00 00 80
+  {0x608,0x2f,0x00,0x1A,0x00,0x02,0x00,0x00,0x00},  // rpdo1映射个数设置: 608,23 00 16 00 00 00 00 00 
+  {0x608,0x23,0x00,0x1A,0x01,0x20,0x19,0x0B,0x20},  // 映射相电流有效值到tdpo1: 4Byte 0.01A
+  {0x608,0x23,0x00,0x1A,0x01,0x20,0x00,0x6C,0x60},  // 映射速度实际值到tpdo1: 4Byte rpm
+  {0x608,0x23,0x00,0x18,0x01,0x88,0x01,0x00,0x00},  // 使能tpdo1:  608,23 00 14 01 01 02 00 00 
+
+  {0x608,0x23,0x00,0x14,0x01,0x08,0x02,0x00,0x80},  // 失能rpdo1：
+  {0x608,0x2f,0x00,0x16,0x00,0x01,0x00,0x00,0x00},  // rpdo1映射个数设置: 1
+  {0x608,0x23,0x00,0x16,0x01,0x20,0x00,0xff,0x60},  // 映射速度设定值到rdpo1:
+  {0x608,0x23,0x00,0x14,0x01,0x08,0x02,0x00,0x00},  // 使能rpdo1: 
 
   {0x608,0x2f,0x60,0x60,0x00,0x03,0x00,0x00,0x00},  // 切换从机工作模式为速度模式 1Byte
   {0x608,0x2b,0x40,0x60,0x01,0x01,0x00,0x00,0x80},  // 主回路供电启动 2Byte
@@ -123,6 +128,7 @@ void systemParaInit(void)
     w5500_udp_var.SrcRecvIP[3] = 11;
     w5500_udp_var.SrcRecvPort = 8001;
 
+#if HAL_EEPROM_ENABLE
     AT24CXX_Init();
     //EEPROM self_test
     ret = AT24CXX_ReadOneByte(0xFF);
@@ -146,6 +152,7 @@ void systemParaInit(void)
         can_var.NodeID = AT24CXX_ReadOneByte(0x01);
         printf("EEPROM: can_var.NodeID is : 0x%x \n\r", can_var.NodeID);
     } 
+ #endif   
 }
 
 int32_t avgErrCollect(uint8_t node, int32_t sampleData) 
@@ -174,6 +181,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
     u32 tempGivenVol = 0;    //mV
     u32 sendCnt = 0;
     u16 tempFrameCnt = 0;
+		UNS32 writeinCnt = 0;
     int32_t tempPosiErr = 0;
     int32_t tempRecvPosi = 0;
 
@@ -192,21 +200,34 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
           curGivenSpeed = CAN1_RecData[5];
           curGivenSpeed <<= 8;
           curGivenSpeed |= CAN1_RecData[6];
-        
+
+        #if HAL_DAC_ENABLE 
           if((curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && (curGivenSpeed >= MIN_ALLOWED_SPEED_RPM))
           {	
             tempGivenVol =  RPM2Vol_CONVERSE_COFF *curGivenSpeed + spdDownLimitVol ;
           
-         
             HAL_DAC8563_cmd_Write(3, 0, tempGivenVol);
             printf("UTC: %d ms CAS: %d, frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
                                                                                   gTime.l_time_ms,
                                                                                   tempFrameCnt,
-                                                                                  curGivenSpeed);
-          }
+                                                                                   (short)curGivenSpeed);
+        #else // CANOpen
+            if (((short)curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && ((short)curGivenSpeed >= MIN_ALLOWED_SPEED_RPM)) {
+								writeinCnt = sizeof(curGivenSpeed);
+                writeLocalDict(&masterObjdict_Data, SPEEDGIVEN_INDEX, 0x00, &curGivenSpeed, &writeinCnt, RW);
+
+                sendPDOrequest(&masterObjdict_Data, 0x1400); // request to update remote dictionary RPDO1
+                printf("UTC: %d ms CAS: %d, frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
+                                                                                      gTime.l_time_ms,
+                                                                                      tempFrameCnt,
+                                                                                      (short)curGivenSpeed);
+            } else {
+                printf("CAS:  %d ms SpeedGiven OverFlow \n\r!", gTime.l_time_ms);
+            }
+        #endif
         break;
         
-				// Speed Mode 
+				// PreDictive Speed Mode 
         case CANSpeedPreCmd:
           curGivenSpeed = CAN1_RecData[5];
           curGivenSpeed <<= 8;

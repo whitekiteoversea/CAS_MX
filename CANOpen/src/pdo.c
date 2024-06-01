@@ -133,26 +133,25 @@ sendPDOrequest (CO_Data * d, UNS16 RPDOIndex)
      receive */
   /* part dictionary */
 
-  MSG_WAR (0x3930, "sendPDOrequest RPDO Index : ", RPDOIndex);
+  MSG_WAR (0x3930, "CANOpen: sendPDOrequest RPDO Index : ", RPDOIndex);
 
-  if (offset && RPDOIndex >= 0x1400)
-    {
-      offset += RPDOIndex - 0x1400;
-      if (offset <= lastIndex)
+  if (offset && RPDOIndex >= 0x1400) {
+    offset += RPDOIndex - 0x1400;
+    if (offset <= lastIndex)
+      {
+        /* get the CobId */
+        pwCobId = d->objdict[offset].pSubindex[1].pObject;
+
+        MSG_WAR (0x3930, "CANOpen: sendPDOrequest cobId is : ", *pwCobId);
         {
-          /* get the CobId */
-          pwCobId = d->objdict[offset].pSubindex[1].pObject;
-
-          MSG_WAR (0x3930, "sendPDOrequest cobId is : ", *pwCobId);
-          {
-            Message pdo;
-            pdo.cob_id = UNS16_LE(*pwCobId);
-            pdo.rtr = REQUEST;
-            pdo.len = 0;
-            return canSend (d->canHandle, &pdo);
-          }
+          Message pdo;
+          pdo.cob_id = UNS16_LE(*pwCobId);
+          pdo.rtr = REQUEST;
+          pdo.len = 0;
+          return canSend (d->canHandle, &pdo);
         }
-    }
+      }
+  }
   MSG_ERR (0x1931, "sendPDOrequest : RPDO Index not found : ", RPDOIndex);
   return 0xFF;
 }

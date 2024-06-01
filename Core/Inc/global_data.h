@@ -37,7 +37,7 @@ enum WORKMODE {
 };
 
 // CANOpen SDO NUM
-#define MAX_PRESET_SDO_NUM       (6)
+#define MAX_PRESET_SDO_NUM       (11)
 
 // 全局时间记录
 typedef struct {
