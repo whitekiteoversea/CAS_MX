@@ -49,3 +49,5 @@ UNS8 init_consise_dcf(CO_Data* d, UNS8 nodeId);
 */
 UNS8 check_and_start_node(CO_Data* d, UNS8 nodeId);
 
+void canopen_start_node(CO_Data* d, UNS8 nodeId);
+

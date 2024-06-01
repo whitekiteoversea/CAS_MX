@@ -232,7 +232,7 @@ proceedPDO (CO_Data * d, Message * m)
                             numPdo)->pSubindex[0].pObject;
                 numMap = 0;
                 while (numMap < *pMappingCount)
-                  {
+                {
                     UNS8 tmp[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
                     UNS32 ByteSize;
                     pMappingParameter =

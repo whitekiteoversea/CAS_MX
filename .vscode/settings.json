@@ -35,5 +35,6 @@
         "bmp.h": "c",
         "objacces.h": "c",
         "pdo.h": "c"
+
     }
 }

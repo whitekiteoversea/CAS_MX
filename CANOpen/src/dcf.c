@@ -56,7 +56,7 @@ UNS8 init_consise_dcf(CO_Data* d,UNS8 nodeId);
 #endif  /* _MSC_VER */
 
 
-void start_node(CO_Data* d, UNS8 nodeId){
+void canopen_start_node(CO_Data* d, UNS8 nodeId){
     /* Ask slave node to go in operational mode */
     masterSendNMTstateChange (d, nodeId, NMT_Start_Node);
     d->NMTable[nodeId] = Operational;
@@ -73,7 +73,7 @@ UNS8 check_and_start_node(CO_Data* d, UNS8 nodeId)
     if(d->dcf_status != DCF_STATUS_INIT)
         return 0;
     if((init_consise_dcf(d, nodeId) == 0) || (read_consise_dcf_next_entry(d, nodeId) == 0)){
-        start_node(d, nodeId);
+        canopen_start_node(d, nodeId);
         return 1;
     }
     d->dcf_status = DCF_STATUS_READ_CHECK;
@@ -82,7 +82,7 @@ UNS8 check_and_start_node(CO_Data* d, UNS8 nodeId)
 
 void start_and_seek_node(CO_Data* d, UNS8 nodeId){
    UNS8 node;
-   start_node(d,nodeId);
+   canopen_start_node(d,nodeId);
    /* Look for other nodes waiting to be started */
    for(node = 0 ; node<NMT_MAX_NODE_ID ; node++){
        if(d->NMTable[node] != Initialisation)

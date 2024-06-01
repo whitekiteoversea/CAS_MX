@@ -22,9 +22,9 @@ wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
 
 volatile uint32_t last_timeMS = 0;
 volatile uint32_t tim3_timeBaseCnt_10US = 0;
-volatile uint32_t tim4_timeBaseCnt_1MS = 0;
-
 #endif
+
+volatile uint32_t tim4_timeBaseCnt_1MS = 0;
 
 uint8_t flagStatus = 0; 																	
 int32_t avgPosiErr[2] = {0}; 		
@@ -197,9 +197,9 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
     switch(CTRCode)
     {
         case CANSpeedCmd:
-          curGivenSpeed = CAN1_RecData[5];
+          curGivenSpeed = CAN1_RecData[4];
           curGivenSpeed <<= 8;
-          curGivenSpeed |= CAN1_RecData[6];
+          curGivenSpeed |= CAN1_RecData[5];
 
         #if HAL_DAC_ENABLE 
           if((curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && (curGivenSpeed >= MIN_ALLOWED_SPEED_RPM))
@@ -217,7 +217,8 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
                 writeLocalDict(&masterObjdict_Data, SPEEDGIVEN_INDEX, 0x00, &curGivenSpeed, &writeinCnt, RW);
 
                 sendPDOrequest(&masterObjdict_Data, 0x1400); // request to update remote dictionary RPDO1
-                printf("UTC: %d ms CAS: %d, frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
+
+                printf("UTC: %d ms CAS: %d ms, frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
                                                                                       gTime.l_time_ms,
                                                                                       tempFrameCnt,
                                                                                       (short)curGivenSpeed);
@@ -364,8 +365,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
    static unsigned int heartbeatChangedMs = 0; 
    unsigned int cmpVal = POSI_CHECK_PERIOD_1MS;
 	 if (htim == &htim3) {
-      tim3_timeBaseCnt_10US++;
-
+		 #if HAL_W5500_ENABLE
+				tim3_timeBaseCnt_10US++;
+		 #endif
       // 10us timecnt
       if (gTime.l_time_cnt_10us < 360000000 ) { // 60min reset local timing
         gTime.l_time_cnt_10us++;
@@ -415,7 +417,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         gStatus.l_bissc_sensor_acquire = 1;
       }
     } else if (htim == &htim4) {
-         tim4_timeBaseCnt_1MS++;
+      tim4_timeBaseCnt_1MS++;
       TimeDispatch(); // canfestival software timer 
     } else {
       printf("%d ms Unknown TIMER Interupt! \r\n", gTime.l_time_ms);
@@ -471,14 +473,29 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *phcan)
     }
 }
 
-uint32_t tim3_getCurrentTimeCnt(void)
-{
-    return tim3_timeBaseCnt_10US;
-}
-
 uint32_t tim4_getCurrentTimeCnt(void)
 {
     return tim4_timeBaseCnt_1MS;
+}
+
+// MS level nonblocking delay
+uint8_t tim4_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt)
+{
+    // avoid initial problem
+    if (*lastTimeMS == 0) {
+        *lastTimeMS = tim4_getCurrentTimeCnt();
+    }
+    if ((tim4_timeBaseCnt_1MS - *lastTimeMS) >= delay1MS_cnt) {
+        *lastTimeMS = 0;
+        return 1;
+    }
+    return 0;
+}
+
+#if HAL_W5500_ENABLE
+uint32_t tim3_getCurrentTimeCnt(void)
+{
+    return tim3_timeBaseCnt_10US;
 }
 
 // MS level nonblocking delay
@@ -489,20 +506,6 @@ uint8_t tim3_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt)
         *lastTimeMS = tim3_getCurrentTimeCnt();
     }
     if ((tim3_timeBaseCnt_10US - *lastTimeMS)/100 >= delay1MS_cnt) {
-        *lastTimeMS = 0;
-        return 1;
-    }
-    return 0;
-}
-
-// MS level nonblocking delay
-uint8_t tim4_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt)
-{
-    // avoid initial problem
-    if (*lastTimeMS == 0) {
-        *lastTimeMS = tim3_getCurrentTimeCnt();
-    }
-    if ((tim3_timeBaseCnt_10US - *lastTimeMS) >= delay1MS_cnt) {
         *lastTimeMS = 0;
         return 1;
     }
@@ -532,14 +535,18 @@ void w5500_stateMachineTask(void)
 			break;
 		}
 }
+#endif
 
 void canOpen_Init(void)
 {
     setNodeId(&masterObjdict_Data, can_var.slaveCANID);
-    setState(&masterObjdict_Data, Initialisation);
-    setState(&masterObjdict_Data, Pre_operational);
+    setState(&masterObjdict_Data, Initialisation);  // 000 01 08
+
+    setState(&masterObjdict_Data, Pre_operational); //
     setState(&masterObjdict_Data, Operational);
     masterSendNMTstateChange(&masterObjdict_Data, can_var.slaveCANID, NMT_Start_Node);
+
+    canOpenSDOConfig();
 }
 
 // SDO Transmit
@@ -573,11 +580,18 @@ void canopen_send_sdo(uint16_t message_sdo[])
 uint8_t canOpenSDOConfig(void)
 {
     uint8_t cnt = 0;
-    stopSYNC(&masterObjdict_Data);  
-		for (cnt=0; cnt<MAX_PRESET_SDO_NUM; cnt++) {
-        if (tim4_noblocked_1MS_delay(&(can_var.canDelayTime_MS[cnt]), 20) == 1) {
-            canopen_send_sdo(message_sdo[cnt]);
-        }
-		}
+    stopSYNC(&masterObjdict_Data);    
+    #if CANOPEN_NONBLOACK_DELAY_ENABLE
+      for (cnt=0; cnt<MAX_PRESET_SDO_NUM; cnt++) {
+          if (tim4_noblocked_1MS_delay(&(can_var.canDelayTime_MS[cnt]), 20) == 1) {
+              canopen_send_sdo(message_sdo[cnt]);
+          }
+      }
+    #else
+//      for (cnt=0; cnt<MAX_PRESET_SDO_NUM; cnt++) {
+//          canopen_send_sdo(message_sdo[cnt]);
+//      }
+	canopen_send_sdo(message_sdo[0]);
+    #endif
     startSYNC(&masterObjdict_Data);
 }

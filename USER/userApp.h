@@ -40,11 +40,13 @@
 
 
 // function Switch
-#define HAL_W5500_ENABLE         (1)
-#define CAN2_SENDTEST_ON         (0)
-#define HAL_SDRAM_SELFTEST       (0)
-#define HAL_DAC_ENABLE           (0)
-#define HAL_EEPROM_ENABLE        (0)
+
+#define HAL_W5500_ENABLE         			 (0)
+#define CAN2_SENDTEST_ON         			 (0)
+#define HAL_SDRAM_SELFTEST       			 (0)
+#define HAL_DAC_ENABLE           			 (0)
+#define HAL_EEPROM_ENABLE        			 (0)
+#define CANOPEN_NONBLOACK_DELAY_ENABLE (0)
 
 extern uint8_t gDATABUF[DATA_BUF_SIZE];  
 
@@ -60,6 +62,10 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode); // can recv info
 void canOpen_Init(void);
 void canopen_send_sdo(uint16_t message_sdo[]);
 uint8_t canOpenSDOConfig(void);
+// CANOpen TPDO Callback
+// void tpdoCallback(Co_Data*d, UNS8 NodeID);
+// void registerTPDOCallback(CO_Data* d);  
+
 
 int32_t avgErrCollect(uint8_t node, int32_t sampleData);  
 int32_t avgErrUpdate(int32_t *sampleData);

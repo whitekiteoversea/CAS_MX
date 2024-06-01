@@ -104,8 +104,17 @@ CAN参数  PC:  CANID: 0
 RS485参数: 磁传感器站号0x05
 		
 		
+		
+CANOpen:
+COB-ID+RTR+	Data(cmdByte+NodeID)	
 
 
 
 右侧绝对量程： 9259537 um - 9769376 um
 左侧绝对量程：
+
+
+
+20240601
+
+发送SDO会触发硬件HardFault，原因正在寻找中

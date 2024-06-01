@@ -93,6 +93,7 @@ typedef struct {
   uint8_t g_posi[5];      // unit depends on BISS-C
 	int32_t g_Distance; 	// um
 	int16_t g_Speed; 			// rpm
+  int16_t g_phaseAmp;   // A
 
 	uint32_t g_InitialPosi; //um
 

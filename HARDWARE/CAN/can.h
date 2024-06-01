@@ -7,7 +7,7 @@
 #define PCNODEID                        (0)
 #define SLAVECANID                      (8)
 
-#define REG_CAN_ENABLE             		(0)
+#define REG_CAN_ENABLE             			(0)
 #define TEST_CAN_STABLITY               (0)
 
 #define CAN1_FILTER_MODE_MASK_ENABLE    (1)
@@ -38,7 +38,7 @@ typedef union
 		uint32_t MasterOrSlave : 1; 	//主发1 从回0
 		uint32_t CTRCode : 5; 				
 		uint32_t NodeOrGroupID : 5; 		
-		uint32_t Reserved : 21;        //����
+		uint32_t Reserved : 21;       
 	}CAN_Frame_Union;
 	
 	uint32_t Value;
