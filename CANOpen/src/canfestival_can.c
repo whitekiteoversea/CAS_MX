@@ -176,6 +176,7 @@ uint8_t canSend(CAN_PORT notused, Message *message)
 	uint32_t TransmitMailbox = 0;
 	uint8_t len = message->len;
 	uint8_t offset = 0;
+	uint8_t ret = 0;
 	CAN_TxHeaderTypeDef Header;
 
 	/* 组装CAN数据包 */
@@ -195,6 +196,7 @@ uint8_t canSend(CAN_PORT notused, Message *message)
         offset += Header.DLC;
         len -= Header.DLC;
     }
+		return ret;
 }
 
 

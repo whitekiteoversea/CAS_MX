@@ -1225,7 +1225,7 @@ void bspInit(void)
   // 6. CANOpen NMI Init
   canOpen_Init();
   // Enable Driver Node
-  start_node(&masterObjdict_Data, can_var.slaveCANID);
+  canopen_start_node(&masterObjdict_Data, can_var.slaveCANID);
 	
   #if HAL_SDRAM_SELFTEST
     fsmc_sdram_test();
@@ -1268,6 +1268,7 @@ void userAppLoop(void)
    }
 
 #else
+/*  
   // deal with AMG2000 RS485 MSG
   if(modbusPosi.g_RTU_RcvFinishedflag == 1) {
     g_RS485_recvDataDeal();
@@ -1280,6 +1281,7 @@ void userAppLoop(void)
     g_RS485_sendPacket(&huart6, 1, rs485_posi_acquire_data);
     gStatus.l_rs485_getposiEnable = 0;
   }
+  */
 #endif
 
 // CAN1 Protocol

@@ -88,11 +88,16 @@ void NMI_Handler(void)
 void HardFault_Handler(void)
 {
   /* USER CODE BEGIN HardFault_IRQn 0 */
+	static unsigned int cnt = 0;
 
   /* USER CODE END HardFault_IRQn 0 */
   while (1)
   {
     /* USER CODE BEGIN W1_HardFault_IRQn 0 */
+		if (cnt == 0) {
+			printf(" CAS: %d ms HardFault Occur! \n\r", gTime.l_time_ms);
+		}
+		cnt++;
     /* USER CODE END W1_HardFault_IRQn 0 */
   }
 }

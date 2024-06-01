@@ -31,6 +31,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include "data.h"
 #include "sysdep.h"
+#include "global_data.h"
+#include "usart.h"
 
 /** Prototypes for internals functions */
 /*!                                                                                                
@@ -63,7 +65,11 @@ e_nodeState getState(CO_Data* d)
 void canDispatch(CO_Data* d, Message *m)
 {
 	UNS16 cob_id = UNS16_LE(m->cob_id);
-	 switch(cob_id >> 7)
+	
+  UNS32 expectedNum = 0; // wish to read byte cnt
+	UNS8 pdataType =0;
+
+	switch(cob_id >> 7)
 	{
 		case SYNC:		/* can be a SYNC or a EMCY message */
 			if(cob_id == 0x080)	/* SYNC */
@@ -85,6 +91,18 @@ void canDispatch(CO_Data* d, Message *m)
 		case PDO4rx:
 			if (d->CurrentCommunicationState.csPDO)
 				proceedPDO(d,m);
+
+				// acquire newest TPDO1
+				expectedNum = sizeof(motionStatus.g_Speed);
+				pdataType = 0x04; // int32
+				readLocalDict(d, 0x606C, 0x00, &(motionStatus.g_Speed), &expectedNum, &pdataType, 0);
+				printf("TPDO1: motionStatus.g_Speed Feedback is : %d rpm \n\r", motionStatus.g_Speed);
+
+				expectedNum = sizeof(motionStatus.g_phaseAmp);
+				pdataType = 0x03;		// int16
+				readLocalDict(d, 0x200B, 0x19, &(motionStatus.g_phaseAmp), &expectedNum, &pdataType, 0);
+				printf("TPDO1: motionStatus.g_phaseAmp Feedback is : %f A \n\r", (float)(motionStatus.g_phaseAmp)/100);
+
 			break;
 		case SDOtx:
 		case SDOrx:

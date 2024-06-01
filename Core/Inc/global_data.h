@@ -37,7 +37,7 @@ enum WORKMODE {
 };
 
 // CANOpen SDO NUM
-#define MAX_PRESET_SDO_NUM       (6)
+#define MAX_PRESET_SDO_NUM       (11)
 
 // 全局时间记录
 typedef struct {
@@ -93,6 +93,7 @@ typedef struct {
   uint8_t g_posi[5];      // unit depends on BISS-C
 	int32_t g_Distance; 	// um
 	int16_t g_Speed; 			// rpm
+  int16_t g_phaseAmp;   // A
 
 	uint32_t g_InitialPosi; //um
 

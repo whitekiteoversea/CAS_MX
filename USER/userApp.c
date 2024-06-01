@@ -22,19 +22,24 @@ wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
 
 volatile uint32_t last_timeMS = 0;
 volatile uint32_t tim3_timeBaseCnt_10US = 0;
-volatile uint32_t tim4_timeBaseCnt_1MS = 0;
-
 #endif
+
+volatile uint32_t tim4_timeBaseCnt_1MS = 0;
 
 uint8_t flagStatus = 0; 																	
 int32_t avgPosiErr[2] = {0}; 		
 
-// rpdo1 mapping to speedGiven (2Byte) 
 uint16_t message_sdo[MAX_PRESET_SDO_NUM][9] = {
-  {0x608,0x23,0x00,0x14,0x01,0x01,0x02,0x00,0x80},  // 失能rpdo1： 发送sdo 608,23 00 14 01 01 02 00 80  4Byte
-  {0x608,0x2f,0x00,0x16,0x00,0x01,0x00,0x00,0x00},  // rpdo1映射个数: 发送sdo 608,23 00 16 00 01 00 00 00  1Byte
-  {0x608,0x23,0x00,0x16,0x01,0x20,0x00,0xff,0x60},  // 写入速度设定值: 发送sdo 608,23 00 16 01 20 00 ff 60 4Byte
-  {0x608,0x23,0x00,0x14,0x01,0x01,0x02,0x00,0x00},  // 使能rpdo1:  发送sdo 608,23 00 14 01 01 02 00 00 4Byte
+  {0x608,0x23,0x00,0x18,0x01,0x88,0x01,0x00,0x80},  // 失能tpdo1, 改写COD-ID：608,23 00 14 01 01 00 00 80
+  {0x608,0x2f,0x00,0x1A,0x00,0x02,0x00,0x00,0x00},  // rpdo1映射个数设置: 608,23 00 16 00 00 00 00 00 
+  {0x608,0x23,0x00,0x1A,0x01,0x20,0x19,0x0B,0x20},  // 映射相电流有效值到tdpo1: 4Byte 0.01A
+  {0x608,0x23,0x00,0x1A,0x01,0x20,0x00,0x6C,0x60},  // 映射速度实际值到tpdo1: 4Byte rpm
+  {0x608,0x23,0x00,0x18,0x01,0x88,0x01,0x00,0x00},  // 使能tpdo1:  608,23 00 14 01 01 02 00 00 
+
+  {0x608,0x23,0x00,0x14,0x01,0x08,0x02,0x00,0x80},  // 失能rpdo1：
+  {0x608,0x2f,0x00,0x16,0x00,0x01,0x00,0x00,0x00},  // rpdo1映射个数设置: 1
+  {0x608,0x23,0x00,0x16,0x01,0x20,0x00,0xff,0x60},  // 映射速度设定值到rdpo1:
+  {0x608,0x23,0x00,0x14,0x01,0x08,0x02,0x00,0x00},  // 使能rpdo1: 
 
   {0x608,0x2f,0x60,0x60,0x00,0x03,0x00,0x00,0x00},  // 切换从机工作模式为速度模式 1Byte
   {0x608,0x2b,0x40,0x60,0x01,0x01,0x00,0x00,0x80},  // 主回路供电启动 2Byte
@@ -123,6 +128,7 @@ void systemParaInit(void)
     w5500_udp_var.SrcRecvIP[3] = 11;
     w5500_udp_var.SrcRecvPort = 8001;
 
+#if HAL_EEPROM_ENABLE
     AT24CXX_Init();
     //EEPROM self_test
     ret = AT24CXX_ReadOneByte(0xFF);
@@ -146,6 +152,7 @@ void systemParaInit(void)
         can_var.NodeID = AT24CXX_ReadOneByte(0x01);
         printf("EEPROM: can_var.NodeID is : 0x%x \n\r", can_var.NodeID);
     } 
+ #endif   
 }
 
 int32_t avgErrCollect(uint8_t node, int32_t sampleData) 
@@ -174,6 +181,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
     u32 tempGivenVol = 0;    //mV
     u32 sendCnt = 0;
     u16 tempFrameCnt = 0;
+		UNS32 writeinCnt = 0;
     int32_t tempPosiErr = 0;
     int32_t tempRecvPosi = 0;
 
@@ -189,24 +197,37 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
     switch(CTRCode)
     {
         case CANSpeedCmd:
-          curGivenSpeed = CAN1_RecData[5];
+          curGivenSpeed = CAN1_RecData[4];
           curGivenSpeed <<= 8;
-          curGivenSpeed |= CAN1_RecData[6];
-        
+          curGivenSpeed |= CAN1_RecData[5];
+
+        #if HAL_DAC_ENABLE 
           if((curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && (curGivenSpeed >= MIN_ALLOWED_SPEED_RPM))
           {	
             tempGivenVol =  RPM2Vol_CONVERSE_COFF *curGivenSpeed + spdDownLimitVol ;
           
-         
             HAL_DAC8563_cmd_Write(3, 0, tempGivenVol);
             printf("UTC: %d ms CAS: %d, frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
                                                                                   gTime.l_time_ms,
                                                                                   tempFrameCnt,
-                                                                                  curGivenSpeed);
-          }
+                                                                                   (short)curGivenSpeed);
+        #else // CANOpen
+            if (((short)curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && ((short)curGivenSpeed >= MIN_ALLOWED_SPEED_RPM)) {
+								writeinCnt = sizeof(curGivenSpeed);
+                writeLocalDict(&masterObjdict_Data, SPEEDGIVEN_INDEX, 0x00, &curGivenSpeed, &writeinCnt, RW);
+
+                sendPDOrequest(&masterObjdict_Data, 0x1400); // request to update remote dictionary RPDO1
+                printf("UTC: %d ms CAS: %d ms, frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
+                                                                                      gTime.l_time_ms,
+                                                                                      tempFrameCnt,
+                                                                                      (short)curGivenSpeed);
+            } else {
+                printf("CAS:  %d ms SpeedGiven OverFlow \n\r!", gTime.l_time_ms);
+            }
+        #endif
         break;
         
-				// Speed Mode 
+				// PreDictive Speed Mode 
         case CANSpeedPreCmd:
           curGivenSpeed = CAN1_RecData[5];
           curGivenSpeed <<= 8;
@@ -343,8 +364,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
    static unsigned int heartbeatChangedMs = 0; 
    unsigned int cmpVal = POSI_CHECK_PERIOD_1MS;
 	 if (htim == &htim3) {
-      tim3_timeBaseCnt_10US++;
-
+		 #if HAL_W5500_ENABLE
+				tim3_timeBaseCnt_10US++;
+		 #endif
       // 10us timecnt
       if (gTime.l_time_cnt_10us < 360000000 ) { // 60min reset local timing
         gTime.l_time_cnt_10us++;
@@ -394,7 +416,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         gStatus.l_bissc_sensor_acquire = 1;
       }
     } else if (htim == &htim4) {
-         tim4_timeBaseCnt_1MS++;
+      tim4_timeBaseCnt_1MS++;
       TimeDispatch(); // canfestival software timer 
     } else {
       printf("%d ms Unknown TIMER Interupt! \r\n", gTime.l_time_ms);
@@ -450,14 +472,29 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *phcan)
     }
 }
 
-uint32_t tim3_getCurrentTimeCnt(void)
-{
-    return tim3_timeBaseCnt_10US;
-}
-
 uint32_t tim4_getCurrentTimeCnt(void)
 {
     return tim4_timeBaseCnt_1MS;
+}
+
+// MS level nonblocking delay
+uint8_t tim4_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt)
+{
+    // avoid initial problem
+    if (*lastTimeMS == 0) {
+        *lastTimeMS = tim4_getCurrentTimeCnt();
+    }
+    if ((tim4_timeBaseCnt_1MS - *lastTimeMS) >= delay1MS_cnt) {
+        *lastTimeMS = 0;
+        return 1;
+    }
+    return 0;
+}
+
+#if HAL_W5500_ENABLE
+uint32_t tim3_getCurrentTimeCnt(void)
+{
+    return tim3_timeBaseCnt_10US;
 }
 
 // MS level nonblocking delay
@@ -468,20 +505,6 @@ uint8_t tim3_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt)
         *lastTimeMS = tim3_getCurrentTimeCnt();
     }
     if ((tim3_timeBaseCnt_10US - *lastTimeMS)/100 >= delay1MS_cnt) {
-        *lastTimeMS = 0;
-        return 1;
-    }
-    return 0;
-}
-
-// MS level nonblocking delay
-uint8_t tim4_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt)
-{
-    // avoid initial problem
-    if (*lastTimeMS == 0) {
-        *lastTimeMS = tim3_getCurrentTimeCnt();
-    }
-    if ((tim3_timeBaseCnt_10US - *lastTimeMS) >= delay1MS_cnt) {
         *lastTimeMS = 0;
         return 1;
     }
@@ -511,14 +534,18 @@ void w5500_stateMachineTask(void)
 			break;
 		}
 }
+#endif
 
 void canOpen_Init(void)
 {
     setNodeId(&masterObjdict_Data, can_var.slaveCANID);
-    setState(&masterObjdict_Data, Initialisation);
-    setState(&masterObjdict_Data, Pre_operational);
+    setState(&masterObjdict_Data, Initialisation);  // 000 01 08
+
+    setState(&masterObjdict_Data, Pre_operational); //
     setState(&masterObjdict_Data, Operational);
     masterSendNMTstateChange(&masterObjdict_Data, can_var.slaveCANID, NMT_Start_Node);
+
+    canOpenSDOConfig();
 }
 
 // SDO Transmit
@@ -552,11 +579,20 @@ void canopen_send_sdo(uint16_t message_sdo[])
 uint8_t canOpenSDOConfig(void)
 {
     uint8_t cnt = 0;
-    stopSYNC(&masterObjdict_Data);  
-		for (cnt=0; cnt<MAX_PRESET_SDO_NUM; cnt++) {
-        if (tim4_noblocked_1MS_delay(&(can_var.canDelayTime_MS[cnt]), 20) == 1) {
-            canopen_send_sdo(message_sdo[cnt]);
-        }
-		}
+    stopSYNC(&masterObjdict_Data);    
+    #if CANOPEN_NONBLOACK_DELAY_ENABLE
+      for (cnt=0; cnt<MAX_PRESET_SDO_NUM; cnt++) {
+          if (tim4_noblocked_1MS_delay(&(can_var.canDelayTime_MS[cnt]), 20) == 1) {
+              canopen_send_sdo(message_sdo[cnt]);
+          }
+      }
+    #else
+//      for (cnt=0; cnt<MAX_PRESET_SDO_NUM; cnt++) {
+//          canopen_send_sdo(message_sdo[cnt]);
+//      }
+	canopen_send_sdo(message_sdo[0]);
+    #endif
     startSYNC(&masterObjdict_Data);
 }
+
+

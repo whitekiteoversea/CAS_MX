@@ -79,7 +79,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
           printf(val);		\
           printf('\n');
 #else
-#    define MSG_WAR(num, str, val)
+#define MSG_WAR(num, str, val) 
 #endif
 
 typedef void* CAN_HANDLE;
