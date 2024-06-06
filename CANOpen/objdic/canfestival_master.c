@@ -82,7 +82,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1006 :   Communication / Cycle Period. */
-                    UNS32 Master_obj1006 = 1000;	// Synchro Cycle Period = 1ms
+                    UNS32 Master_obj1006 = 1000000;	// Synchro Cycle Period = 1s
                     subindex Master_Index1006[] =
                      {
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1006  }
@@ -130,10 +130,11 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint8, sizeof (UNS8), (void*)&Master_obj1019  }
                      };
 
+#ifdef HOVA_SDO
 /* index 0x1280 :   Client SDO 1 Parameter. */
                     UNS8 Master_highestSubIndex_obj1280 = 3; /* number of subindex - 1*/
-                    UNS32 Master_obj1280_COB_ID_Client_to_Server_Transmit_SDO = 0x601;	/* 1537 */
-                    UNS32 Master_obj1280_COB_ID_Server_to_Client_Receive_SDO = 0x581;	/* 1409 */
+                    UNS32 Master_obj1280_COB_ID_Client_to_Server_Transmit_SDO = 0x608;	/* 1537 */
+                    UNS32 Master_obj1280_COB_ID_Server_to_Client_Receive_SDO = 0x588;	/* 1409 */
                     UNS8 Master_obj1280_Node_ID_of_the_SDO_Server = 0x1;	/* 1 */
                     subindex Master_Index1280[] =
                      {
@@ -207,7 +208,19 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1285_COB_ID_Server_to_Client_Receive_SDO  },
                        { RW, uint8, sizeof (UNS8), (void*)&Master_obj1285_Node_ID_of_the_SDO_Server  }
                      };
+#else
+/* index 0x1200 :   Client SDO Server Parameter. */
+                    UNS8 Master_highestSubIndex_obj1200 = 2; /* number of subindex - 1*/
+                    UNS32 Master_obj1200_COB_ID_Client_to_Server_Transmit_SDO = 0x608;	
+                    UNS32 Master_obj1200_COB_ID_Server_to_Client_Receive_SDO = 0x588;	
+                    subindex Master_Index1200[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1200  },
+                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1200_COB_ID_Client_to_Server_Transmit_SDO  },
+                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1200_COB_ID_Server_to_Client_Receive_SDO  },
+                     };
 
+#endif
 /* index 0x1400 :   Receive PDO 1 Parameter. */
                     UNS8 Master_highestSubIndex_obj1400 = 2; /* number of subindex - 1*/
                     UNS32 Master_obj1400_COB_ID_used_by_PDO = 0x208;	/* 512 */
@@ -221,7 +234,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1401 :   Receive PDO 2 Parameter. */
                     UNS8 Master_highestSubIndex_obj1401 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1401_COB_ID_used_by_PDO = 0x308;	/* 768 */
+                    UNS32 Master_obj1401_COB_ID_used_by_PDO = 0x80000308;	/* 768 */
                     UNS8 Master_obj1401_Transmission_Type = 0x00;	/* 0 */
                     UNS16 Master_obj1401_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 Master_obj1401_Compatibility_Entry = 0x0;	/* 0 */
@@ -258,22 +271,14 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1403 :   Receive PDO 4 Parameter. */
-                    UNS8 Master_highestSubIndex_obj1403 = 6; /* number of subindex - 1*/
+                    UNS8 Master_highestSubIndex_obj1403 = 2; /* number of subindex - 1*/
                     UNS32 Master_obj1403_COB_ID_used_by_PDO = 0x80000508;	/* 1153 */
                     UNS8 Master_obj1403_Transmission_Type = 0x00;	/* 0 */
-                    UNS16 Master_obj1403_Inhibit_Time = 0x0;	/* 0 */
-                    UNS8 Master_obj1403_Compatibility_Entry = 0x0;	/* 0 */
-                    UNS16 Master_obj1403_Event_Timer = 0x0;	/* 0 */
-                    UNS8 Master_obj1403_SYNC_start_value = 0x0;	/* 0 */
                     subindex Master_Index1403[] =
                      {
                        { RO, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1403  },
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1403_COB_ID_used_by_PDO  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1403_Transmission_Type  },
-                       { RW, uint16, sizeof (UNS16), (void*)&Master_obj1403_Inhibit_Time  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1403_Compatibility_Entry  },
-                       { RW, uint16, sizeof (UNS16), (void*)&Master_obj1403_Event_Timer  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1403_SYNC_start_value  }
+                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1403_Transmission_Type  }
                      };
 
 /* index 0x1600 :   Receive PDO 1 Mapping. */
@@ -283,7 +288,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                       0x60FF0020	/* 536870944 */
                     };
                     subindex Master_Index1600[] =
-                     {
+                    {
                        { RW, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1600  },
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1600[0]  }
                      };
@@ -316,7 +321,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 Master_highestSubIndex_obj1603 = 1; /* number of subindex - 1*/
                     UNS32 Master_obj1603[] =
                     {
-                      0x60780010	/* 1618477072 */
+                      0x60FF0020	
                     };
                     subindex Master_Index1603[] =
                     {
@@ -326,7 +331,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1800 :   Transmit PDO 1 Parameter. */
                     UNS8 Master_highestSubIndex_obj1800 = 4; /* number of subindex - 1*/
-                    UNS32 Master_obj1800_COB_ID_used_by_PDO =0x188; //0x80000188;	/*  */
+                    UNS32 Master_obj1800_COB_ID_used_by_PDO =0x188; //0x188;	/*  */
                     UNS8 Master_obj1800_Transmission_Type = 0x1;	/* SYNC Send */
                     UNS16 Master_obj1800_Inhibit_Time = 0;	/* 0 */
                     UNS16 Master_obj1800_Event_Timer = 1000; // 1s  
@@ -396,44 +401,6 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint8, sizeof (UNS8), (void*)&Master_obj1803_SYNC_start_value  }
                      };
 
-/* index 0x1804 :   Transmit PDO 5 Parameter. */
-                    UNS8 Master_highestSubIndex_obj1804 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1804_COB_ID_used_by_PDO = 0x00000205;	/* 517 */
-                    UNS8 Master_obj1804_Transmission_Type = Transmission_Type;	/* 255 */
-                    UNS16 Master_obj1804_Inhibit_Time = 0;	/* 1 */
-                    UNS8 Master_obj1804_Compatibility_Entry = 0x0;	/* 0 */
-                    UNS16 Master_obj1804_Event_Timer = 0;	/* 5 */
-                    UNS8 Master_obj1804_SYNC_start_value = 0x15;	/* 0 */
-                    subindex Master_Index1804[] =
-                     {
-                       { RO, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1804  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1804_COB_ID_used_by_PDO  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1804_Transmission_Type  },
-                       { RW, uint16, sizeof (UNS16), (void*)&Master_obj1804_Inhibit_Time  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1804_Compatibility_Entry  },
-                       { RW, uint16, sizeof (UNS16), (void*)&Master_obj1804_Event_Timer  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1804_SYNC_start_value  }
-                     };
-
-/* index 0x1805 :   Transmit PDO 6 Parameter. */
-                    UNS8 Master_highestSubIndex_obj1805 = 6; /* number of subindex - 1*/
-                    UNS32 Master_obj1805_COB_ID_used_by_PDO = 0x00000206;	/* 518 */
-                    UNS8 Master_obj1805_Transmission_Type = Transmission_Type;	/* 255 */
-                    UNS16 Master_obj1805_Inhibit_Time = 0;	/* 1 */
-                    UNS8 Master_obj1805_Compatibility_Entry = 0x0;	/* 0 */
-                    UNS16 Master_obj1805_Event_Timer = 0;	/* 5 */
-                    UNS8 Master_obj1805_SYNC_start_value = 0x16;	/* 0 */
-                    subindex Master_Index1805[] =
-                     {
-                       { RO, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1805  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1805_COB_ID_used_by_PDO  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1805_Transmission_Type  },
-                       { RW, uint16, sizeof (UNS16), (void*)&Master_obj1805_Inhibit_Time  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1805_Compatibility_Entry  },
-                       { RW, uint16, sizeof (UNS16), (void*)&Master_obj1805_Event_Timer  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1805_SYNC_start_value  }
-                     };
-
 /* index 0x1A00 :   Transmit PDO 1 Mapping. */
                     UNS8 Master_highestSubIndex_obj1A00 = 1; /* number of subindex - 1*/
                     UNS32 Master_obj1A00[] =
@@ -480,30 +447,6 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A03[0]  }
                      };
 
-/* index 0x1A04 :   Transmit PDO 5 Mapping. */
-                    UNS8 Master_highestSubIndex_obj1A04 = 1; /* number of subindex - 1*/
-                    UNS32 Master_obj1A04[] =
-                    {
-                      0x60FF0020	/* 1627324448 */
-                    };
-                    subindex Master_Index1A04[] =
-                     {
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1A04  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A04[0]  }
-                     };
-
-/* index 0x1A05 :   Transmit PDO 6 Mapping. */
-                    UNS8 Master_highestSubIndex_obj1A05 = 1; /* number of subindex - 1*/
-                    UNS32 Master_obj1A05[] =
-                    {
-                      0x60FF0020	/* 1627324448 */
-                    };
-                    subindex Master_Index1A05[] =
-                     {
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1A05  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1A05[0]  }
-                     };
-
 /* index 0x2000 :   Mapped variable D0 */
                     subindex Master_Index2000[] =
                      {
@@ -547,12 +490,16 @@ const indextable Master_objdict[] =
   { (subindex*)Master_Index1014,sizeof(Master_Index1014)/sizeof(Master_Index1014[0]), 0x1014},
   { (subindex*)Master_Index1018,sizeof(Master_Index1018)/sizeof(Master_Index1018[0]), 0x1018},
   { (subindex*)Master_Index1019,sizeof(Master_Index1019)/sizeof(Master_Index1019[0]), 0x1019},
+  #ifdef HOVA_EBALE
   { (subindex*)Master_Index1280,sizeof(Master_Index1280)/sizeof(Master_Index1280[0]), 0x1280},
   { (subindex*)Master_Index1281,sizeof(Master_Index1281)/sizeof(Master_Index1281[0]), 0x1281},
   { (subindex*)Master_Index1282,sizeof(Master_Index1282)/sizeof(Master_Index1282[0]), 0x1282},
   { (subindex*)Master_Index1283,sizeof(Master_Index1283)/sizeof(Master_Index1283[0]), 0x1283},
   { (subindex*)Master_Index1284,sizeof(Master_Index1284)/sizeof(Master_Index1284[0]), 0x1284},
   { (subindex*)Master_Index1285,sizeof(Master_Index1285)/sizeof(Master_Index1285[0]), 0x1285},
+  #else
+  { (subindex*)Master_Index1200,sizeof(Master_Index1200)/sizeof(Master_Index1200[0]), 0x1285},
+  #endif
   { (subindex*)Master_Index1400,sizeof(Master_Index1400)/sizeof(Master_Index1400[0]), 0x1400},
   { (subindex*)Master_Index1401,sizeof(Master_Index1401)/sizeof(Master_Index1401[0]), 0x1401},
   { (subindex*)Master_Index1402,sizeof(Master_Index1402)/sizeof(Master_Index1402[0]), 0x1402},
@@ -565,14 +512,10 @@ const indextable Master_objdict[] =
   { (subindex*)Master_Index1801,sizeof(Master_Index1801)/sizeof(Master_Index1801[0]), 0x1801},
   { (subindex*)Master_Index1802,sizeof(Master_Index1802)/sizeof(Master_Index1802[0]), 0x1802},
   { (subindex*)Master_Index1803,sizeof(Master_Index1803)/sizeof(Master_Index1803[0]), 0x1803},
-  { (subindex*)Master_Index1804,sizeof(Master_Index1804)/sizeof(Master_Index1804[0]), 0x1804},
-  { (subindex*)Master_Index1805,sizeof(Master_Index1805)/sizeof(Master_Index1805[0]), 0x1805},
   { (subindex*)Master_Index1A00,sizeof(Master_Index1A00)/sizeof(Master_Index1A00[0]), 0x1A00},
   { (subindex*)Master_Index1A01,sizeof(Master_Index1A01)/sizeof(Master_Index1A01[0]), 0x1A01},
   { (subindex*)Master_Index1A02,sizeof(Master_Index1A02)/sizeof(Master_Index1A02[0]), 0x1A02},
   { (subindex*)Master_Index1A03,sizeof(Master_Index1A03)/sizeof(Master_Index1A03[0]), 0x1A03},
-  { (subindex*)Master_Index1A04,sizeof(Master_Index1A04)/sizeof(Master_Index1A04[0]), 0x1A04},
-  { (subindex*)Master_Index1A05,sizeof(Master_Index1A05)/sizeof(Master_Index1A05[0]), 0x1A05},
   { (subindex*)Master_Index2000,sizeof(Master_Index2000)/sizeof(Master_Index2000[0]), 0x2000},
   { (subindex*)Master_Index2001,sizeof(Master_Index2001)/sizeof(Master_Index2001[0]), 0x2001},
   { (subindex*)Master_Index2002,sizeof(Master_Index2002)/sizeof(Master_Index2002[0]), 0x2002},
@@ -593,12 +536,16 @@ const indextable * Master_scanIndexOD (CO_Data *d, UNS16 wIndex, UNS32 * errorCo
 		case 0x1014: i = 5;break;
 		case 0x1018: i = 6;break;
 		case 0x1019: i = 7;break;
+    #ifdef HOVA_ENABLE
 		case 0x1280: i = 8;break;
 		case 0x1281: i = 9;break;
 		case 0x1282: i = 10;break;
 		case 0x1283: i = 11;break;
 		case 0x1284: i = 12;break;
 		case 0x1285: i = 13;break;
+    #else
+    case 0x1200: i = 8;break;
+    #endif
 		case 0x1400: i = 14;break;
 		case 0x1401: i = 15;break;
 		case 0x1402: i = 16;break;
@@ -611,14 +558,10 @@ const indextable * Master_scanIndexOD (CO_Data *d, UNS16 wIndex, UNS32 * errorCo
 		case 0x1801: i = 23;break;
 		case 0x1802: i = 24;break;
 		case 0x1803: i = 25;break;
-		case 0x1804: i = 26;break;
-		case 0x1805: i = 27;break;
 		case 0x1A00: i = 28;break;
 		case 0x1A01: i = 29;break;
 		case 0x1A02: i = 30;break;
 		case 0x1A03: i = 31;break;
-		case 0x1A04: i = 32;break;
-		case 0x1A05: i = 33;break;
 		case 0x2000: i = 34;break;
 		case 0x2001: i = 35;break;
 		case 0x2002: i = 36;break;

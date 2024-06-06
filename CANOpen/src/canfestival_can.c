@@ -186,17 +186,17 @@ uint8_t canSend(CAN_PORT notused, Message *message)
 	Header.ExtId = 0;
 	Header.RTR = (message->rtr == CAN_RTR_DATA) ? 0 : 2;	/* 数据帧 */
 
-    while (len != 0)
-    {
-        Header.DLC = len > 8 ? 8 : len;			// 数据长度
-		if (HAL_CAN_AddTxMessage(&hcan2, &Header, message->data + offset, &TransmitMailbox) != HAL_OK) {
-			printf(" CAN2 Send Failed! \n\r");
-			return 1;
-		}
-        offset += Header.DLC;
-        len -= Header.DLC;
-    }
-		return ret;
+	while (len != 0)
+	{
+			Header.DLC = len > 8 ? 8 : len;			// 数据长度
+			if (HAL_CAN_AddTxMessage(&hcan2, &Header, message->data + offset, &TransmitMailbox) != HAL_OK) {
+				printf(" CAN2 Send Failed! \n\r");
+				return 1;
+			}
+			offset += Header.DLC;
+			len -= Header.DLC;
+	}
+	return ret;
 }
 
 

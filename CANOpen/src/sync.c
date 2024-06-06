@@ -110,9 +110,13 @@ void startSYNC(CO_Data* d)
 **/   
 void stopSYNC(CO_Data* d)
 {
-    RegisterSetODentryCallBack(d, 0x1005, 0, NULL);
-    RegisterSetODentryCallBack(d, 0x1006, 0, NULL);
-	d->syncTimer = DelAlarm(d->syncTimer);
+  unsigned long retCode = 0;
+    retCode = RegisterSetODentryCallBack(d, 0x1005, 0, NULL);
+    if (retCode != OD_SUCCESSFUL) {
+      printf("RegisterFailed! \n\r");
+    }
+    retCode = RegisterSetODentryCallBack(d, 0x1006, 0, NULL);
+	  d->syncTimer = DelAlarm(d->syncTimer);
 }
 
 

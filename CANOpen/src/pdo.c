@@ -188,65 +188,54 @@ proceedPDO (CO_Data * d, Message * m)
 
   status = state2;
 
+  printf("************CANOpen: Into proceedPDO!************\r\n");
+
   MSG_WAR (0x3935, "proceedPDO, cobID : ", (UNS16_LE(m->cob_id) & 0x7ff));
   offset = 0x00;
   numPdo = 0;
   numMap = 0;
-  if ((*m).rtr == NOT_A_REQUEST)
-    { 
+  if ((*m).rtr == NOT_A_REQUEST) { 
       offsetObjdict = d->firstIndex->PDO_RCV;
       lastIndex = d->lastIndex->PDO_RCV;
 
       if (offsetObjdict)
-        while (offsetObjdict <= lastIndex)
-          {
-            switch (status)
-              {
-
+        while (offsetObjdict <= lastIndex) {
+            switch (status) {
               case state2:
                 pwCobId = d->objdict[offsetObjdict].pSubindex[1].pObject;
-                if (*pwCobId == UNS16_LE(m->cob_id))
-                  {
+                if (*pwCobId == UNS16_LE(m->cob_id)) {
                     /* The cobId is recognized */
                     status = state4;
                     MSG_WAR (0x3936, "cobId found at index ",
                              0x1400 + numPdo);
                     break;
-                  }
-                else
-                  {
+                } else {
                     /* received cobId does not match */
                     numPdo++;
                     offsetObjdict++;
                     status = state2;
                     break;
-                  }
-
+                }
               case state4:     /* Get Mapped Objects Number */
                 /* The cobId of the message received has been found in the
                    dictionnary. */
                 offsetObjdict = d->firstIndex->PDO_RCV_MAP;
                 lastIndex = d->lastIndex->PDO_RCV_MAP;
-                pMappingCount =
-                  (UNS8 *) (d->objdict + offsetObjdict +
-                            numPdo)->pSubindex[0].pObject;
+                pMappingCount = (UNS8 *) (d->objdict + offsetObjdict + numPdo)->pSubindex[0].pObject;
                 numMap = 0;
-                while (numMap < *pMappingCount)
-                {
+                while (numMap < *pMappingCount) {
                     UNS8 tmp[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
                     UNS32 ByteSize;
-                    pMappingParameter =
-                      (UNS32 *) (d->objdict + offsetObjdict +
-                                 numPdo)->pSubindex[numMap + 1].pObject;
-                    if (pMappingParameter == NULL)
-                      {
+                    pMappingParameter = (UNS32 *) (d->objdict + offsetObjdict + numPdo)->pSubindex[numMap + 1].pObject;
+                    if (pMappingParameter == NULL) {
                         MSG_ERR (0x1937, "Couldn't get mapping parameter : ",
                                  numMap + 1);
                         return 0xFF;
-                      }
+                    }
+
                     /* Get the addresse of the mapped variable. */
                     /* detail of *pMappingParameter : */
-                    /* The 16 hight bits contains the index, the medium 8 bits
+                    /* The 16 high bits contains the index, the medium 8 bits
                        contains the subindex, */
                     /* and the lower 8 bits contains the size of the mapped
                        variable. */
@@ -255,21 +244,18 @@ proceedPDO (CO_Data * d, Message * m)
 
                     /* set variable only if Size != 0 and 
                      * Size is lower than remaining bits in the PDO */
-                    if (Size && ((offset + Size) <= (m->len << 3)))
-                      {
+                    if (Size && ((offset + Size) <= (m->len << 3))) {
                         /* copy bit per bit in little endian */
                         CopyBits (Size, (UNS8 *) & m->data[offset >> 3],
                                   offset % 8, 0, ((UNS8 *) tmp), 0, 0);
                         /*1->8 => 1 ; 9->16 =>2, ... */
                         ByteSize = (UNS32)(1 + ((Size - 1) >> 3));
 
-                        objDict =
-                          setODentry (d, (UNS16) ((*pMappingParameter) >> 16),
-                                      (UNS8) (((*pMappingParameter) >> 8) &
-                                              0xFF), tmp, &ByteSize, 0);
+                        printf("CANOpen: pMappingParameter is 0x%x \r\n", *pMappingParameter);
+                        objDict = setODentry (d, (UNS16) ((*pMappingParameter) >> 16),
+                                                 (UNS8) (((*pMappingParameter) >> 8) & 0xFF), tmp, &ByteSize, 0);
 
-                        if (objDict != OD_SUCCESSFUL)
-                          {
+                        if (objDict != OD_SUCCESSFUL) {
                             MSG_ERR (0x1938,
                                      "error accessing to the mapped var : ",
                                      numMap + 1);
@@ -278,7 +264,7 @@ proceedPDO (CO_Data * d, Message * m)
                             MSG_WAR (0x2940, "                subindex : ",
                                      ((*pMappingParameter) >> 8) & 0xFF);
                             return 0xFF;
-                          }
+                        }
 
                         MSG_WAR (0x3942,
                                  "Variable updated by PDO cobid : ",
@@ -408,6 +394,9 @@ proceedPDO (CO_Data * d, Message * m)
               }                 /* end switch status */
           }                     /* end while */
     }                           /* end if Requete */
+
+
+  printf("************CANOpen: NormalEND of proceedPDO!************\r\n");
 
   return 0;
 }

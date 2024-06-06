@@ -118,3 +118,5 @@ COB-ID+RTR+	Data(cmdByte+NodeID)
 20240601
 
 发送SDO会触发硬件HardFault，原因正在寻找中
+
+Alt键无响应了，回头重启电脑看看

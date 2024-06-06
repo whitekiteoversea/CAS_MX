@@ -111,6 +111,7 @@ void SPI_CrisEnter(void);
 void SPI_CrisExit(void);
 void SPI4_CS_Select(void);
 void SPI4_CS_Deselect(void);
+uint8_t BISSC_F0Status_Display(uint8_t status);
 
 #ifdef HAL_BISSC_ENABLE
 

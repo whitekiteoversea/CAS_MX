@@ -184,8 +184,10 @@ UNS32 _setODentry( CO_Data* d,
   ODCallback_t *Callback;
 
   ptrTable =(*d->scanIndexOD)(wIndex, &errorCode, &Callback);
-  if (errorCode != OD_SUCCESSFUL)
+  if (errorCode != OD_SUCCESSFUL) {
+    printf("CANOpen: _setOdentry errorCode is 0x%x\r\n", errorCode);
     return errorCode;
+  }
 
   if( ptrTable->bSubCount <= bSubindex ) {
     /* Subindex not found */
@@ -198,15 +200,13 @@ UNS32 _setODentry( CO_Data* d,
     return OD_WRITE_NOT_ALLOWED;
   }
 
-
   dataType = ptrTable->pSubindex[bSubindex].bDataType;
   szData = ptrTable->pSubindex[bSubindex].size;
 
   if( *pExpectedSize == 0 ||
       *pExpectedSize == szData ||
       /* allow to store a shorter string than entry size */
-      (dataType == visible_string && *pExpectedSize < szData))
-    {
+      (dataType == visible_string && *pExpectedSize < szData)) {
 #ifdef CANOPEN_BIG_ENDIAN
       /* re-endianize do not occur for bool, strings time and domains */
       if(endianize && dataType > boolean && !(
@@ -228,6 +228,7 @@ UNS32 _setODentry( CO_Data* d,
       errorCode = (*d->valueRangeTest)(dataType, pSourceData);
       if (errorCode) {
         accessDictionaryError(wIndex, bSubindex, szData, *pExpectedSize, errorCode);
+        printf("CANOpen: _setOdentry AccessDic errorCode is 0x%x\r\n", errorCode);
         return errorCode;
       }
       memcpy(ptrTable->pSubindex[bSubindex].pObject,pSourceData, *pExpectedSize);
@@ -242,10 +243,10 @@ UNS32 _setODentry( CO_Data* d,
       *pExpectedSize = szData;
 
       /* Callbacks */
-      if(Callback && Callback[bSubindex]){
+      if (Callback && Callback[bSubindex]){
         errorCode = (Callback[bSubindex])(d, ptrTable, bSubindex);
-        if(errorCode != OD_SUCCESSFUL)
-        {
+        if(errorCode != OD_SUCCESSFUL) {
+            printf("CANOpen: _setOdentry Callback errorCode is 0x%x\r\n", errorCode);
             return errorCode;
         }
        }
@@ -255,7 +256,7 @@ UNS32 _setODentry( CO_Data* d,
         (*d->storeODSubIndex)(d, wIndex, bSubindex);
       }
       return OD_SUCCESSFUL;
-    }else{
+    } else{
       *pExpectedSize = szData;
       accessDictionaryError(wIndex, bSubindex, szData, *pExpectedSize, OD_LENGTH_DATA_INVALID);
       return OD_LENGTH_DATA_INVALID;

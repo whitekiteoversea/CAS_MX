@@ -1825,12 +1825,12 @@ UNS8 GetSDOClientFromNodeId( CO_Data* d, UNS8 nodeId )
 	CliNbr = 0;
 	while (offset <= lastIndex) {
 		if (d->objdict[offset].bSubCount <= 3) {
-			MSG_ERR(0x1AC8, "Subindex 3  not found at index ", 0x1280 + CliNbr);
+			MSG_ERR(0x1AC8, "Subindex 3  not found at index ", 0x1200 + CliNbr);
 			return 0xFF;
 		}
 		/* looking for the server nodeId */
 		nodeIdServer = *((UNS8*) d->objdict[offset].pSubindex[3].pObject);
-		MSG_WAR(0x1AD2, "index : ", 0x1280 + CliNbr);
+		MSG_WAR(0x1AD2, "index : ", 0x1200 + CliNbr);
 		MSG_WAR(0x1AD3, "nodeIdServer : ", nodeIdServer);
 
 		if(nodeIdServer == nodeId) {
@@ -1882,7 +1882,7 @@ INLINE UNS8 _writeNetworkDict (CO_Data* d, UNS8 nodeId, UNS16 index,
 
 	/* First let's find the corresponding SDO client in our OD  */
 	CliNbr = GetSDOClientFromNodeId( d, nodeId);
-	if(CliNbr >= 0xFE)
+	if (CliNbr >= 0xFE)
 		return CliNbr;
 	/* Verify that there is no SDO communication yet. */
 	err = getSDOlineOnUse(d, CliNbr, SDO_CLIENT, &line);
@@ -1922,8 +1922,8 @@ INLINE UNS8 _writeNetworkDict (CO_Data* d, UNS8 nodeId, UNS16 index,
 		}
 #endif //SDO_DYNAMIC_BUFFER_ALLOCATION
 
-		/* Copy data to transfers structure. */
-		for (j = 0 ; j < count ; j++) {
+	/* Copy data to transfers structure. */
+	for (j = 0 ; j < count ; j++) {
 #ifdef SDO_DYNAMIC_BUFFER_ALLOCATION
 # ifdef CANOPEN_BIG_ENDIAN
 			if (dataType == 0 && endianize)
@@ -1935,22 +1935,21 @@ INLINE UNS8 _writeNetworkDict (CO_Data* d, UNS8 nodeId, UNS16 index,
 #  endif
 		}
 #else //SDO_DYNAMIC_BUFFER_ALLOCATION
-# ifdef CANOPEN_BIG_ENDIAN
+#ifdef CANOPEN_BIG_ENDIAN
 		if (dataType == 0 && endianize)
 			d->transfers[line].data[count - 1 - j] = ((char *)data)[j];
 		else /* String of bytes. */
 			d->transfers[line].data[j] = ((char *)data)[j];
-#  else
+#else
 		d->transfers[line].data[j] = ((char *)data)[j];
-#  endif
+# endif
 #endif //SDO_DYNAMIC_BUFFER_ALLOCATION
 	}
-    if(useBlockMode) {
+    if (useBlockMode) {
 	    buf[0] = (6 << 5) | (1 << 1 );   /* CCS = 6 , CC = 0 , S = 1 , CS = 0 */
  	    for (i = 0 ; i < 4 ; i++)
 		    buf[i+4] = (UNS8)((count >> (i<<3))); /* i*8 */
-    }
-    else {
+    } else {
 	    /* Send the SDO to the server. Initiate download, cs=1. */
 	    if (count <= 4) { /* Expedited transfer */
 		    buf[0] = (UNS8)((1 << 5) | ((4 - count) << 2) | 3);
@@ -1964,12 +1963,12 @@ INLINE UNS8 _writeNetworkDict (CO_Data* d, UNS8 nodeId, UNS16 index,
 			    buf[i+4] = (UNS8)((count >> (i<<3))); /* i*8 */
 	    }
     }
+	
 	buf[1] = index & 0xFF;        /* LSB */
 	buf[2] = (index >> 8) & 0xFF; /* MSB */
 	buf[3] = subIndex;
 
 	d->transfers[line].Callback = Callback;
-
 	err = sendSDO(d, SDO_CLIENT, CliNbr, buf);
 	if (err) {
 		MSG_ERR(0x1AD1, "SDO. Error while sending SDO to node : ", nodeId);
@@ -1977,8 +1976,6 @@ INLINE UNS8 _writeNetworkDict (CO_Data* d, UNS8 nodeId, UNS16 index,
 		resetSDOline(d, line);
 		return 0xFF;
 	}
-
-
 	return 0;
 }
 

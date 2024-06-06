@@ -26,6 +26,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 #include <string.h>
 #include <stdio.h>
+#include "usart.h"
 
 // Integers
 #define INTEGER8 signed char
@@ -55,17 +56,21 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define REAL64 double
 #include "can.h"
 
+#define DEBUG_WAR_CONSOLE_ON   (1)
+#define DEBUG_ERR_CONSOLE_ON   (1)
 // MSG functions
 // not finished, the strings have to be placed to the flash and printed out 
 // using the printf_P function
 /// Definition of MSG_ERR
 // ---------------------
 #ifdef DEBUG_ERR_CONSOLE_ON
-#define MSG_ERR(num, str, val)      \
-          printf(num, ' ');	\
-          printf(str);		\
-          printf(val);		\
-          printf('\n');
+//#define MSG_ERR(num, str, val)      \
+//          printf(num, ' ');	\
+//          printf(str);		\
+//          printf(val);		\
+//          printf('\n');
+
+#define MSG_ERR(num, str, val)     printf("0x%x %s 0x%x\n\r", num, str, val)
 #else
 #    define MSG_ERR(num, str, val)
 #endif
@@ -73,13 +78,14 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /// Definition of MSG_WAR
 // ---------------------
 #ifdef DEBUG_WAR_CONSOLE_ON
-#define MSG_WAR(num, str, val)      \
-          printf(num, ' ');	\
-          printf(str);		\
-          printf(val);		\
-          printf('\n');
-#else
-#define MSG_WAR(num, str, val) 
+//#define MSG_WAR(num, str, val)      \
+//          printf(num, ' ');	\
+//          printf(str);		\
+//          printf(val);		\
+//          printf('\n');
+					
+#define MSG_WAR(num, str, val)       printf("0x%x %s 0x%x\n\r", num, str, val)
+
 #endif
 
 typedef void* CAN_HANDLE;

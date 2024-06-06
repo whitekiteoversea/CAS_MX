@@ -252,7 +252,6 @@ void SPI4_CS_Deselect(void)
 /* SPI2 BISS-C*/
 
 #ifdef HAL_BISSC_ENABLE
-
 // MB4 Wrap_Function
 void mb4_spi_transfer(uint8_t *data_tx, uint8_t *data_rx, uint16_t datasize)
 {
@@ -260,11 +259,10 @@ void mb4_spi_transfer(uint8_t *data_tx, uint8_t *data_rx, uint16_t datasize)
 	HAL_StatusTypeDef retStatus = HAL_OK;
 
 	GPIO_SPI_BISSC_CS_RESET; 
-	
 	for (sendCnt=0; sendCnt < datasize; sendCnt++) {
 		retStatus = HAL_SPI_TransmitReceive(&hspi2, &data_tx[sendCnt], &data_rx[sendCnt], 1, 50);
 		if (retStatus != HAL_OK) {
-			printf("SPI2 Send Failed! \n\r");
+			printf("BISS-C: SPI2 Send Failed! \n\r");
 		}
 	}
 	GPIO_SPI_BISSC_CS_SET;
@@ -278,19 +276,19 @@ void HAL_BISSC_Setup(void)
 	uint8_t rData = 0;
 	uint8_t curStatus = 0x00;
 	
-	HAL_Delay(500);
+	HAL_Delay(500); // wait for sensor initial >350ms
 	mb4_read_status(&curStatus, 1);
-	printf("BISS-C: Before ALL, Status is %x \n\r", curStatus);
+	printf("BISS-C: 0xF0 Status is 0x%x \n\r", curStatus);
 	
 	txData[0] = 0x01;
 	mb4_write_registers(0xED, txData, 1); //CFGCH1=0x01 (BiSS C)
 
-	txData[0] = 0x08; 
-	mb4_write_registers(0xF5, txData, 1); //CFGIF=0x02  (RS422)
+	txData[0] = 0x09; 
+	mb4_write_registers(0xF5, txData, 1); //CFGIF=0x02  (RS422) Internal Clock Enabled
 
 	//Single-Cycle Data: Data channel configuration
-	txData[0] = 0x65;
-	mb4_write_registers(0xC0, txData, 1); //ENSCD1=1, SCDLEN1=0x25 (38 bit)  从机0协议配置
+	txData[0] = 0x61;
+	mb4_write_registers(0xC0, txData, 1); //ENSCD1=1, SCDLEN1=0x21 (26+2+6 bit)  从机0协议配置
 
 	txData[0] = 0x06;
 	mb4_write_registers(0xC1, txData, 1); //SELCRCS1=0x00, SCRCLEN1=0x06 (6-bit CRC polynomial 0x43)
@@ -307,11 +305,9 @@ void HAL_BISSC_Setup(void)
 
 	txData[0] = 0x10;
 	mb4_write_registers(0xF4, txData, 1); // Initial Slave
-	HAL_Delay(500);
 
 	mb4_read_status(&curStatus, 1);
-	printf("BISS-C: After Initial, Status is %x \n\r", curStatus);
-
+	printf("BISS-C: After Initial, 0xF0 Status is 0x%x \n\r", curStatus);
 
 	//Reset SVALID flags
 	txData[0] = 0x00;
@@ -332,18 +328,11 @@ void HAL_SG_SenSorAcquire(uint8_t *SG_Data)
 	uint8_t StatusInformationF0 = 0x00;
 	uint8_t StatusInformationF1 = 0x00;
 
-	// Test AGS
-	// mb4_read_registers(0xF4, &curStatus, 1);
-	// if ((curStatus & 0x01) == 1) {
-	// 	printf(" BISS-C: AGS has Set! \n\r");
-	// }
-
 	curStatus = 0;
 	mb4_read_registers(0xF0, &curStatus, 1);
 	printf("BISS-C: Read 0xF0 Value: %x \n\r", curStatus);
 
 	//Read Status Information register 0xF0, wait for end of transmission EOT=1
-	TxData[0] = 0xF0; 
 	while (( StatusInformationF0 & 0x01) == 0) {
 		mb4_read_registers(0xF0, &StatusInformationF0, 1);
 	}
@@ -365,12 +354,12 @@ void HAL_SG_SenSorAcquire(uint8_t *SG_Data)
 			TxData[0] = 0x01;
 			mb4_write_registers(0xF4, TxData, 1);//Restart AGS
 		} else {  //If Status ok and SVALID flag is set, read single-cycle data
-			mb4_read_registers(0x00, SG_Data, 5);
+			mb4_read_registers(0x00, SG_Data, 4);
 			printf(" BISS-C: bit SVALID1 Set Success! \n\r");
 		}
 	}
 	else {
-		printf("Data Not Ready \n\r");
+		printf("Data Not Ready! 0xF0 Status is 0x%x \n\r", StatusInformationF0);
 	}
 	//If Status not ok, check data channel configuration 
 }
@@ -448,5 +437,21 @@ uint8_t HAL_CTLRegs_Read_Slave0(uint8_t readAddr)
 
 	return SlaveRegValue;
 }
+
+uint8_t BISSC_F0Status_Display(uint8_t status)
+{
+	uint8_t ret = 0;
+	switch(status) {
+
+
+
+		default:
+		break;
+	}
+
+
+	return ret;
+}
+
 
 #endif

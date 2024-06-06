@@ -1144,9 +1144,12 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOB, SPI2_CS_Pin, GPIO_PIN_SET);
   HAL_GPIO_WritePin(GPIOF, SPI5_CS_Pin, GPIO_PIN_SET); 
   HAL_GPIO_WritePin(GPIOA, SPI1_CS_Pin|SPI3_CS_Pin, GPIO_PIN_SET); 
-	  HAL_GPIO_WritePin(GPIOC, RS485_Senser_RE_Pin, GPIO_PIN_RESET); // RS485 RE = 0
-	
-	
+
+  //BISS-C Pin
+	HAL_GPIO_WritePin(GPIOI, NER_Pin, GPIO_PIN_SET); // NER = 1
+  HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1, GPIO_PIN_SET); // NRES = 1
+  HAL_GPIO_WritePin(GPIOI, GPIO_PIN_3, GPIO_PIN_RESET); // GETSENS = 0
+
 	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET); 
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);  
 
@@ -1172,7 +1175,9 @@ void bspInit(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_CAN1_Init();
+#if HAL_CANOPEN_ENABLE
   MX_CAN2_Init();
+#endif
   // MX_I2C2_Init();
   MX_SPI1_Init();
   MX_SPI2_Init();
@@ -1188,7 +1193,9 @@ void bspInit(void)
   // MX_USART2_UART_Init();
   // MX_USART3_UART_Init();
   MX_USART6_UART_Init();
+#if HAL_CANOPEN_ENABLE
   MX_TIM4_Init();
+#endif
   MX_FMC_Init();
 
   /* Initialize interrupts */
@@ -1198,8 +1205,9 @@ void bspInit(void)
 	
   // 1. local timebase
   HAL_TIM_Base_Start_IT(&htim3);   // (pass)
+#if HAL_CANOPEN_ENABLE
   HAL_TIM_Base_Start_IT(&htim4);   //CANOpen Timer
-
+#endif
   // 3. ETH Initial
 #if HAL_W5500_ENABLE
 	HAL_Delay(300);  // wait for W5500 initial 
@@ -1208,7 +1216,6 @@ void bspInit(void)
 #endif
 
   // 4. BISS-C Sensor Data Acquire (pass)
-	//HAL_Delay(500);  // wait for sensor initial 350ms
 
 #if HAL_BISSC_ENABLE
 	HAL_BISSC_Setup();
@@ -1223,14 +1230,18 @@ void bspInit(void)
 #endif
 
   // 6. CANOpen NMI Init
+#if HAL_CANOPEN_ENABLE
   canOpen_Init();
   // Enable Driver Node
   canopen_start_node(&masterObjdict_Data, can_var.slaveCANID);
+#endif
 	
   #if HAL_SDRAM_SELFTEST
     fsmc_sdram_test();
   #endif
-
+	
+	HAL_Delay(500);  
+  printf("************NEW BOOT!******************\n\r");
   printf("CAS: %d ms All Function Initial Finished! \n\r", gTime.l_time_ms);
 }
 
@@ -1245,7 +1256,7 @@ void userAppLoop(void)
     uint8_t prx = 0;
     
     uint8_t SG_Data[8] = {0}; 
-    uint64_t sensor38bit = 0;
+    uint64_t sensor26bit = 0;
 
     // RS485 MODBUS RTU Request Code
     uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
@@ -1259,11 +1270,11 @@ void userAppLoop(void)
 #if HAL_BISSC_ENABLE
    if (gStatus.l_bissc_sensor_acquire == 1) {
      HAL_SG_SenSorAcquire(SG_Data);
-     for (cnt=0; cnt<5; cnt++) {
-       sensor38bit |= SG_Data[cnt];
-       sensor38bit <<= 8;
+     for (cnt=0; cnt<4; cnt++) {
+       sensor26bit |= SG_Data[cnt];
+       sensor26bit <<= 8;
      }
-     printf(" %d ms Acquire SG_Data %d \n\r", gTime.g_time_ms, sensor38bit);
+     printf("BISS-C: %d ms Acquire SG_Data %d \n\r", gTime.g_time_ms, sensor26bit);
      gStatus.l_bissc_sensor_acquire = 0;
    }
 

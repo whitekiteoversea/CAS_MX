@@ -34,7 +34,9 @@
         "canfestival_master.h": "c",
         "bmp.h": "c",
         "objacces.h": "c",
-        "pdo.h": "c"
-
+        "pdo.h": "c",
+        "charconv": "c",
+        "xmemory": "c",
+        "stm32f4xx_it.h": "c"
     }
 }
