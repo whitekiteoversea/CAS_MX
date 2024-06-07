@@ -775,7 +775,7 @@ UNS8 proceedSDO (CO_Data* d, Message *m)
 	j = 0;
 	if(offset) while (offset <= lastIndex) {
 		if (d->objdict[offset].bSubCount <= 1) {
-			MSG_ERR(0x1A61, "Subindex 1  not found at index ", 0x1200 + j);
+			MSG_ERR(0x1A61, "Subindex 1  not found at index ", 0x1280 + j);
 			return 0xFF;
 		}
 		/* Looking for the cobid received. */

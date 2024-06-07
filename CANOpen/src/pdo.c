@@ -62,31 +62,26 @@ UNS8 buildPDO (CO_Data * d, UNS8 numPdo, Message * pdo)
            *(UNS32 *) TPDO_com->pSubindex[1].pObject);
   MSG_WAR (0x300D, "  Number of objects mapped : ", *pMappingCount);
 
-  do
-    {
+  while (prp_j < *pMappingCount) {
       UNS8 dataType;            /* Unused */
       UNS8 tmp[] = { 0, 0, 0, 0, 0, 0, 0, 0 };  /* temporary space to hold bits */
 
       /* pointer fo the var which holds the mapping parameter of an mapping entry  */
-      UNS32 *pMappingParameter =
-        (UNS32 *) TPDO_map->pSubindex[prp_j + 1].pObject;
+      UNS32 *pMappingParameter = (UNS32 *) TPDO_map->pSubindex[prp_j + 1].pObject;
       UNS16 index = (UNS16) ((*pMappingParameter) >> 16);
       UNS32 Size = (UNS32) (*pMappingParameter & (UNS32) 0x000000FF);     /* Size in bits */
 
       /* get variable only if Size != 0 and Size is lower than remaining bits in the PDO */
-      if (Size && ((offset + Size) <= 64))
-        {
+      if (Size && ((offset + Size) <= 64)) {
           UNS32 ByteSize = 1 + ((Size - 1) >> 3);        /*1->8 => 1 ; 9->16 => 2, ... */
-          UNS8 subIndex =
-            (UNS8) (((*pMappingParameter) >> (UNS8) 8) & (UNS32) 0x000000FF);
+          UNS8 subIndex = (UNS8) (((*pMappingParameter) >> (UNS8) 8) & (UNS32) 0x000000FF);
 
           MSG_WAR (0x300F, "  got mapping parameter : ", *pMappingParameter);
           MSG_WAR (0x3050, "    at index : ", TPDO_map->index);
           MSG_WAR (0x3051, "    sub-index : ", prp_j + 1);
 
           if (getODentry (d, index, subIndex, tmp, &ByteSize, &dataType, 0) !=
-              OD_SUCCESSFUL)
-            {
+              OD_SUCCESSFUL) {
               MSG_ERR (0x1013,
                        " Couldn't find mapped variable at index-subindex-size : ",
                        (UNS32) (*pMappingParameter));
@@ -100,7 +95,6 @@ UNS8 buildPDO (CO_Data * d, UNS8 numPdo, Message * pdo)
         }
       prp_j++;
     }
-  while (prp_j < *pMappingCount);
 
   pdo->len = (UNS8)(1 + ((offset - 1) >> 3));
 

@@ -64,7 +64,7 @@ void network_init(void);			// Initialize Network information and display it
 void systemParaInit(void);
 void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode); // can recv info distribute
 void canOpen_Init(void);
-void canopen_send_sdo(uint16_t message_sdo[]);
+void canopen_send_sdo(uint16_t *message_sdo);
 uint8_t canOpenSDOConfig(void);
 // CANOpen TPDO Callback
 // void tpdoCallback(Co_Data*d, UNS8 NodeID);

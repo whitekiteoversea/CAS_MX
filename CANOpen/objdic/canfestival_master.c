@@ -130,12 +130,22 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint8, sizeof (UNS8), (void*)&Master_obj1019  }
                      };
 
-#ifdef HOVA_SDO
+/* index 0x1200 :   Server SDO 1 Parameter. */
+                    UNS8 Master_highestSubIndex_obj1200 = 2; /* number of subindex - 1*/
+                    UNS32 Master_obj1200_COB_ID_Client_to_Server_Transmit_SDO = 0x608;	/* 1537 */
+                    UNS32 Master_obj1200_COB_ID_Server_to_Client_Receive_SDO = 0x588;	/* 1409 */
+                    subindex Master_Index1200[] =
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1200  },
+                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1200_COB_ID_Client_to_Server_Transmit_SDO  },
+                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1200_COB_ID_Server_to_Client_Receive_SDO  },
+                     };
+
 /* index 0x1280 :   Client SDO 1 Parameter. */
                     UNS8 Master_highestSubIndex_obj1280 = 3; /* number of subindex - 1*/
                     UNS32 Master_obj1280_COB_ID_Client_to_Server_Transmit_SDO = 0x608;	/* 1537 */
                     UNS32 Master_obj1280_COB_ID_Server_to_Client_Receive_SDO = 0x588;	/* 1409 */
-                    UNS8 Master_obj1280_Node_ID_of_the_SDO_Server = 0x1;	/* 1 */
+                    UNS8 Master_obj1280_Node_ID_of_the_SDO_Server = 0x8;	/* 8 */
                     subindex Master_Index1280[] =
                      {
                        { RO, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1280  },
@@ -144,83 +154,6 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint8, sizeof (UNS8), (void*)&Master_obj1280_Node_ID_of_the_SDO_Server  }
                      };
 
-/* index 0x1281 :   Client SDO 2 Parameter. */
-                    UNS8 Master_highestSubIndex_obj1281 = 3; /* number of subindex - 1*/
-                    UNS32 Master_obj1281_COB_ID_Client_to_Server_Transmit_SDO = 0x602;	/* 1538 */
-                    UNS32 Master_obj1281_COB_ID_Server_to_Client_Receive_SDO = 0x582;	/* 1410 */
-                    UNS8 Master_obj1281_Node_ID_of_the_SDO_Server = 0x2;	/* 2 */
-                    subindex Master_Index1281[] =
-                     {
-                       { RO, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1281  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1281_COB_ID_Client_to_Server_Transmit_SDO  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1281_COB_ID_Server_to_Client_Receive_SDO  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1281_Node_ID_of_the_SDO_Server  }
-                     };
-
-/* index 0x1282 :   Client SDO 3 Parameter. */
-                    UNS8 Master_highestSubIndex_obj1282 = 3; /* number of subindex - 1*/
-                    UNS32 Master_obj1282_COB_ID_Client_to_Server_Transmit_SDO = 0x603;	/* 1539 */
-                    UNS32 Master_obj1282_COB_ID_Server_to_Client_Receive_SDO = 0x583;	/* 1411 */
-                    UNS8 Master_obj1282_Node_ID_of_the_SDO_Server = 0x3;	/* 3 */
-                    subindex Master_Index1282[] =
-                     {
-                       { RO, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1282  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1282_COB_ID_Client_to_Server_Transmit_SDO  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1282_COB_ID_Server_to_Client_Receive_SDO  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1282_Node_ID_of_the_SDO_Server  }
-                     };
-
-/* index 0x1283 :   Client SDO 4 Parameter. */
-                    UNS8 Master_highestSubIndex_obj1283 = 3; /* number of subindex - 1*/
-                    UNS32 Master_obj1283_COB_ID_Client_to_Server_Transmit_SDO = 0x604;	/* 1540 */
-                    UNS32 Master_obj1283_COB_ID_Server_to_Client_Receive_SDO = 0x584;	/* 1412 */
-                    UNS8 Master_obj1283_Node_ID_of_the_SDO_Server = 0x4;	/* 4 */
-                    subindex Master_Index1283[] =
-                     {
-                       { RO, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1283  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1283_COB_ID_Client_to_Server_Transmit_SDO  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1283_COB_ID_Server_to_Client_Receive_SDO  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1283_Node_ID_of_the_SDO_Server  }
-                     };
-
-/* index 0x1284 :   Client SDO 5 Parameter. */
-                    UNS8 Master_highestSubIndex_obj1284 = 3; /* number of subindex - 1*/
-                    UNS32 Master_obj1284_COB_ID_Client_to_Server_Transmit_SDO = 0x605;	/* 1541 */
-                    UNS32 Master_obj1284_COB_ID_Server_to_Client_Receive_SDO = 0x585;	/* 1413 */
-                    UNS8 Master_obj1284_Node_ID_of_the_SDO_Server = 0x5;	/* 5 */
-                    subindex Master_Index1284[] =
-                     {
-                       { RO, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1284  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1284_COB_ID_Client_to_Server_Transmit_SDO  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1284_COB_ID_Server_to_Client_Receive_SDO  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1284_Node_ID_of_the_SDO_Server  }
-                     };
-
-/* index 0x1285 :   Client SDO 6 Parameter. */
-                    UNS8 Master_highestSubIndex_obj1285 = 3; /* number of subindex - 1*/
-                    UNS32 Master_obj1285_COB_ID_Client_to_Server_Transmit_SDO = 0x606;	/* 1542 */
-                    UNS32 Master_obj1285_COB_ID_Server_to_Client_Receive_SDO = 0x586;	/* 1414 */
-                    UNS8 Master_obj1285_Node_ID_of_the_SDO_Server = 0x6;	/* 6 */
-                    subindex Master_Index1285[] =
-                     {
-                       { RO, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1285  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1285_COB_ID_Client_to_Server_Transmit_SDO  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1285_COB_ID_Server_to_Client_Receive_SDO  },
-                       { RW, uint8, sizeof (UNS8), (void*)&Master_obj1285_Node_ID_of_the_SDO_Server  }
-                     };
-#else
-/* index 0x1200 :   Client SDO Server Parameter. */
-                    UNS8 Master_highestSubIndex_obj1200 = 2; /* number of subindex - 1*/
-                    UNS32 Master_obj1200_COB_ID_Client_to_Server_Transmit_SDO = 0x608;	
-                    UNS32 Master_obj1200_COB_ID_Server_to_Client_Receive_SDO = 0x588;	
-                    subindex Master_Index1200[] =
-                     {
-                       { RO, uint8, sizeof (UNS8), (void*)&Master_highestSubIndex_obj1200  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1200_COB_ID_Client_to_Server_Transmit_SDO  },
-                       { RW, uint32, sizeof (UNS32), (void*)&Master_obj1200_COB_ID_Server_to_Client_Receive_SDO  },
-                     };
-
-#endif
 /* index 0x1400 :   Receive PDO 1 Parameter. */
                     UNS8 Master_highestSubIndex_obj1400 = 2; /* number of subindex - 1*/
                     UNS32 Master_obj1400_COB_ID_used_by_PDO = 0x208;	/* 512 */
@@ -490,16 +423,8 @@ const indextable Master_objdict[] =
   { (subindex*)Master_Index1014,sizeof(Master_Index1014)/sizeof(Master_Index1014[0]), 0x1014},
   { (subindex*)Master_Index1018,sizeof(Master_Index1018)/sizeof(Master_Index1018[0]), 0x1018},
   { (subindex*)Master_Index1019,sizeof(Master_Index1019)/sizeof(Master_Index1019[0]), 0x1019},
-  #ifdef HOVA_EBALE
+  { (subindex*)Master_Index1200,sizeof(Master_Index1200)/sizeof(Master_Index1200[0]), 0x1200},
   { (subindex*)Master_Index1280,sizeof(Master_Index1280)/sizeof(Master_Index1280[0]), 0x1280},
-  { (subindex*)Master_Index1281,sizeof(Master_Index1281)/sizeof(Master_Index1281[0]), 0x1281},
-  { (subindex*)Master_Index1282,sizeof(Master_Index1282)/sizeof(Master_Index1282[0]), 0x1282},
-  { (subindex*)Master_Index1283,sizeof(Master_Index1283)/sizeof(Master_Index1283[0]), 0x1283},
-  { (subindex*)Master_Index1284,sizeof(Master_Index1284)/sizeof(Master_Index1284[0]), 0x1284},
-  { (subindex*)Master_Index1285,sizeof(Master_Index1285)/sizeof(Master_Index1285[0]), 0x1285},
-  #else
-  { (subindex*)Master_Index1200,sizeof(Master_Index1200)/sizeof(Master_Index1200[0]), 0x1285},
-  #endif
   { (subindex*)Master_Index1400,sizeof(Master_Index1400)/sizeof(Master_Index1400[0]), 0x1400},
   { (subindex*)Master_Index1401,sizeof(Master_Index1401)/sizeof(Master_Index1401[0]), 0x1401},
   { (subindex*)Master_Index1402,sizeof(Master_Index1402)/sizeof(Master_Index1402[0]), 0x1402},
@@ -536,16 +461,8 @@ const indextable * Master_scanIndexOD (CO_Data *d, UNS16 wIndex, UNS32 * errorCo
 		case 0x1014: i = 5;break;
 		case 0x1018: i = 6;break;
 		case 0x1019: i = 7;break;
-    #ifdef HOVA_ENABLE
-		case 0x1280: i = 8;break;
-		case 0x1281: i = 9;break;
-		case 0x1282: i = 10;break;
-		case 0x1283: i = 11;break;
-		case 0x1284: i = 12;break;
-		case 0x1285: i = 13;break;
-    #else
-    case 0x1200: i = 8;break;
-    #endif
+		case 0x1200: i = 8;break;
+		case 0x1280: i = 9;break;
 		case 0x1400: i = 14;break;
 		case 0x1401: i = 15;break;
 		case 0x1402: i = 16;break;
