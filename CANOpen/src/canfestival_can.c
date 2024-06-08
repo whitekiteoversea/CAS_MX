@@ -199,5 +199,11 @@ uint8_t canSend(CAN_PORT notused, Message *message)
 	return ret;
 }
 
-
+unsigned char isValidAddress(void *ptr) {
+		uint32_t address = (uint32_t)ptr;
+    if ((address >= SRAMADDR_START && address <= SRAMADDR_END) || (address >= FLASHADDR_START && address <= FLASHADDR_END)) {
+        return 1; // 有效地址
+    }
+    return 0; // 无效地址
+}
 

@@ -616,6 +616,8 @@ uint8_t canOpenSDOConfig(void)
     printf ("CANOpen: SDO Send Start! \n\r");
 		for(cnt=0;cnt<16 ;cnt++){
 			canopen_send_sdo(msg_allpdoDisable[cnt]);
+      // pair to WriteNetworkDic to close current sdo line
+      closeSDOtransfer(&masterObjdict_Data, SLAVECANID, SDO_CLIENT); 
 			HAL_Delay(20);
 		}
     printf ("CANOpen: SDO Send END! \n\r");

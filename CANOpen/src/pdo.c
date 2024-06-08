@@ -48,59 +48,51 @@
 
 UNS8 buildPDO (CO_Data * d, UNS8 numPdo, Message * pdo)
 {
-  const indextable *TPDO_com = d->objdict + d->firstIndex->PDO_TRS + numPdo;
-  const indextable *TPDO_map = d->objdict + d->firstIndex->PDO_TRS_MAP + numPdo;
+    const indextable *TPDO_com = d->objdict + d->firstIndex->PDO_TRS + numPdo;
+    const indextable *TPDO_map = d->objdict + d->firstIndex->PDO_TRS_MAP + numPdo;
 
-  UNS8 prp_j = 0x00;
-  UNS32 offset = 0x00000000;
-  const UNS8 *pMappingCount = (UNS8 *) TPDO_map->pSubindex[0].pObject;
+    UNS8 prp_j = 0x00;
+    UNS32 offset = 0x00000000;
+    const UNS8 *pMappingCount = (UNS8 *) TPDO_map->pSubindex[0].pObject;
 
-  pdo->cob_id = (UNS16) UNS16_LE(*(UNS32*)TPDO_com->pSubindex[1].pObject & 0x7FF);
-  pdo->rtr = NOT_A_REQUEST;
+    pdo->cob_id = (UNS16) UNS16_LE(*(UNS32*)TPDO_com->pSubindex[1].pObject & 0x7FF);
+    pdo->rtr = NOT_A_REQUEST;
 
-  MSG_WAR (0x3009, "  PDO CobId is : ",
-           *(UNS32 *) TPDO_com->pSubindex[1].pObject);
-  MSG_WAR (0x300D, "  Number of objects mapped : ", *pMappingCount);
+    MSG_WAR (0x3009, "  PDO CobId is : ", *(UNS32 *) TPDO_com->pSubindex[1].pObject);
+    MSG_WAR (0x300D, "  Number of objects mapped : ", *pMappingCount);
 
-  while (prp_j < *pMappingCount) {
-      UNS8 dataType;            /* Unused */
-      UNS8 tmp[] = { 0, 0, 0, 0, 0, 0, 0, 0 };  /* temporary space to hold bits */
+    while (prp_j < *pMappingCount) {
+        UNS8 dataType;            /* Unused */
+        UNS8 tmp[] = { 0, 0, 0, 0, 0, 0, 0, 0 };  /* temporary space to hold bits */
 
-      /* pointer fo the var which holds the mapping parameter of an mapping entry  */
-      UNS32 *pMappingParameter = (UNS32 *) TPDO_map->pSubindex[prp_j + 1].pObject;
-      UNS16 index = (UNS16) ((*pMappingParameter) >> 16);
-      UNS32 Size = (UNS32) (*pMappingParameter & (UNS32) 0x000000FF);     /* Size in bits */
+        /* pointer fo the var which holds the mapping parameter of an mapping entry  */
+        UNS32 *pMappingParameter = (UNS32 *) TPDO_map->pSubindex[prp_j + 1].pObject;
+        UNS16 index = (UNS16) ((*pMappingParameter) >> 16);
+        UNS32 Size = (UNS32) (*pMappingParameter & (UNS32) 0x000000FF);     /* Size in bits */
+ 
 
-      /* get variable only if Size != 0 and Size is lower than remaining bits in the PDO */
-      if (Size && ((offset + Size) <= 64)) {
-          UNS32 ByteSize = 1 + ((Size - 1) >> 3);        /*1->8 => 1 ; 9->16 => 2, ... */
-          UNS8 subIndex = (UNS8) (((*pMappingParameter) >> (UNS8) 8) & (UNS32) 0x000000FF);
+        /* get variable only if Size != 0 and Size is lower than remaining bits in the PDO */
+        if (Size && ((offset + Size) <= 64)) {
+            UNS32 ByteSize = 1 + ((Size - 1) >> 3);        /*1->8 => 1 ; 9->16 => 2, ... */
+            UNS8 subIndex = (UNS8) (((*pMappingParameter) >> (UNS8) 8) & (UNS32) 0x000000FF);
 
-          MSG_WAR (0x300F, "  got mapping parameter : ", *pMappingParameter);
-          MSG_WAR (0x3050, "    at index : ", TPDO_map->index);
-          MSG_WAR (0x3051, "    sub-index : ", prp_j + 1);
+            MSG_WAR (0x300F, "    got mapping parameter : ", *pMappingParameter);
+            MSG_WAR (0x3050, "    at index : ", TPDO_map->index);
+            MSG_WAR (0x3051, "    sub-index : ", prp_j + 1);
 
-          if (getODentry (d, index, subIndex, tmp, &ByteSize, &dataType, 0) !=
-              OD_SUCCESSFUL) {
-              MSG_ERR (0x1013,
-                       " Couldn't find mapped variable at index-subindex-size : ",
-                       (UNS32) (*pMappingParameter));
-              return 0xFF;
+            if (getODentry (d, index, subIndex, tmp, &ByteSize, &dataType, 0) != OD_SUCCESSFUL) {
+                MSG_ERR (0x1013," Couldn't find mapped variable at index-subindex-size : ", (UNS32) (*pMappingParameter));
+                return 0xFF;
             }
-          /* copy bit per bit in little endian */
-          CopyBits ((UNS8) Size, ((UNS8 *) tmp), 0, 0,
-                    (UNS8 *) & pdo->data[offset >> 3], (UNS8)(offset % 8), 0);
-
-          offset += Size;
+            /* copy bit per bit in little endian */
+            CopyBits ((UNS8) Size, ((UNS8 *) tmp), 0, 0, (UNS8 *) & pdo->data[offset >> 3], (UNS8)(offset % 8), 0);
+            offset += Size;
         }
-      prp_j++;
+        prp_j++;
     }
-
-  pdo->len = (UNS8)(1 + ((offset - 1) >> 3));
-
-  MSG_WAR (0x3015, "  End scan mapped variable", 0);
-
-  return 0;
+    pdo->len = (UNS8)(1 + ((offset - 1) >> 3));
+    MSG_WAR (0x3015, "  End scan mapped variable", 0);
+    return 0;
 }
 
 /*!

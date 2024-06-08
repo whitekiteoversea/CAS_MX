@@ -28,9 +28,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #include "applicfg.h"
 #include "data.h"
 
+// ���� STM32F4 �� SRAM �� Flash �ĵ�ַ��Χ
+#define SRAMADDR_START       0x20000000
+#define SRAMADDR_END         0x2002FFFF
+#define FLASHADDR_START      0x08000000
+#define FLASHADDR_END        0x080FFFFF
+
 // ---------  to be called by user app ---------
 void initTimer(void);
 UNS8 canSend(CAN_PORT notused, Message *m);
 UNS8 canChangeBaudRate(CAN_PORT port, char* baud);
+
+unsigned char isValidAddress(void *ptr);
 
 #endif

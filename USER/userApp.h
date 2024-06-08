@@ -66,10 +66,6 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode); // can recv info
 void canOpen_Init(void);
 void canopen_send_sdo(uint16_t *message_sdo);
 uint8_t canOpenSDOConfig(void);
-// CANOpen TPDO Callback
-// void tpdoCallback(Co_Data*d, UNS8 NodeID);
-// void registerTPDOCallback(CO_Data* d);  
-
 
 int32_t avgErrCollect(uint8_t node, int32_t sampleData);  
 int32_t avgErrUpdate(int32_t *sampleData);
