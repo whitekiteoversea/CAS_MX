@@ -7,9 +7,8 @@
 /* Declaration of mapped variables                                        */
 /**************************************************************************/
 UNS16 Servo_Motor_Parameters_Motor_SN = 0x36B0;		/* Mapped at index 0x2000, subindex 0x01 */
-UNS8 Servo_Motor_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2000, subindex 0x02 */
+UNS8 Servo_Motor_Parameters_Compatibility_Entry[2] = {0x0};		/* Mapped at index 0x2000, subindex 0x02 */
 UNS32 Servo_Motor_Parameters_Customized_motor_SN = 0x0;		/* Mapped at index 0x2000, subindex 0x03 */
-UNS8 Servo_Motor_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2000, subindex 0x04 */
 UNS16 Servo_Motor_Parameters_Encoder_Version = 0x0;		/* Mapped at index 0x2000, subindex 0x05 */
 UNS16 Servo_Motor_Parameters_Bus_motor_SN = 0x0;		/* Mapped at index 0x2000, subindex 0x06 */
 
@@ -21,7 +20,7 @@ UNS16 Basic_Control_Parameters_Control_mode = 0x8;		/* Mapped at index 0x2002, s
 UNS16 Basic_Control_Parameters_BP_AbsPosDetectionSel = 0x0;		/* Mapped at index 0x2002, subindex 0x02 */
 UNS16 Basic_Control_Parameters_Rotating_direction = 0x0;		/* Mapped at index 0x2002, subindex 0x03 */
 UNS16 Basic_Control_Parameters_Direction_of_output_pulse = 0x0;		/* Mapped at index 0x2002, subindex 0x04 */
-UNS8 Basic_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2002, subindex 0x05 */
+UNS8 Basic_Control_Parameters_Compatibility_Entry[14] = {0x0};		/* Mapped at index 0x2002, subindex 0x05 */
 UNS16 Basic_Control_Parameters_Stop_mode_at_servo_drive_disabled = 0x0;		/* Mapped at index 0x2002, subindex 0x06 */
 UNS16 Basic_Control_Parameters_Stop_mode_at_fault_2 = 0x0;		/* Mapped at index 0x2002, subindex 0x07 */
 UNS16 Basic_Control_Parameters_Stop_mode_at_overtravel = 0x1;		/* Mapped at index 0x2002, subindex 0x08 */
@@ -30,14 +29,9 @@ UNS16 Basic_Control_Parameters_Brake_release_command_delay_at_servo_drive_enable
 UNS16 Basic_Control_Parameters_Servo_drive_disable_delay_at_brake_apply_command = 0x96;		/* Mapped at index 0x2002, subindex 0x0B */
 UNS16 Basic_Control_Parameters_Output_speed_limit_of_brake_reference = 0x1E;		/* Mapped at index 0x2002, subindex 0x0C */
 UNS16 Basic_Control_Parameters_Waiting_time_from_servo_disable_signal_to_brake_apply_command = 0x1F4;		/* Mapped at index 0x2002, subindex 0x0D */
-UNS8 Basic_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2002, subindex 0x0E */
 UNS16 Basic_Control_Parameters_Switch_speed_of_stop_mode_and_stop_speed = 0x64;		/* Mapped at index 0x2002, subindex 0x0F */
 UNS16 Basic_Control_Parameters_Display_of_keypad_warning = 0x0;		/* Mapped at index 0x2002, subindex 0x10 */
-UNS8 Basic_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2002, subindex 0x11 */
-UNS8 Basic_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2002, subindex 0x12 */
 UNS16 Basic_Control_Parameters_Filter_time_of_servo_ON_signal = 0x0;		/* Mapped at index 0x2002, subindex 0x13 */
-UNS8 Basic_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2002, subindex 0x14 */
-UNS8 Basic_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2002, subindex 0x15 */
 UNS16 Basic_Control_Parameters_Allowed_minimum_braking_resistance = 0x0;		/* Mapped at index 0x2002, subindex 0x16 */
 UNS16 Basic_Control_Parameters_Power_of_built_in_braking_resistor = 0x0;		/* Mapped at index 0x2002, subindex 0x17 */
 UNS16 Basic_Control_Parameters_Resistance_of_built_in_braking_resistor = 0x0;		/* Mapped at index 0x2002, subindex 0x18 */
@@ -45,18 +39,10 @@ UNS16 Basic_Control_Parameters_Resistor_heat_dissipation_coefficient = 0x1E;		/*
 UNS16 Basic_Control_Parameters_braking_resistor_type = 0x0;		/* Mapped at index 0x2002, subindex 0x1A */
 UNS16 Basic_Control_Parameters_Power_of_external_dynamic_resistor = 0x0;		/* Mapped at index 0x2002, subindex 0x1B */
 UNS16 Basic_Control_Parameters_Resistance_of_external_braking_resistor = 0x0;		/* Mapped at index 0x2002, subindex 0x1C */
-UNS8 Basic_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2002, subindex 0x1D */
-UNS8 Basic_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2002, subindex 0x1E */
-UNS8 Basic_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2002, subindex 0x1F */
 UNS16 Basic_Control_Parameters_Parameter_initialization = 0x0;		/* Mapped at index 0x2002, subindex 0x20 */
 UNS16 Basic_Control_Parameters_Default_keypad_display = 0x32;		/* Mapped at index 0x2002, subindex 0x21 */
-UNS8 Basic_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2002, subindex 0x22 */
 UNS16 Basic_Control_Parameters_CAN_software_version = 0x0;		/* Mapped at index 0x2002, subindex 0x23 */
 UNS16 Basic_Control_Parameters_Display_frequency_of_keypad = 0x0;		/* Mapped at index 0x2002, subindex 0x24 */
-UNS8 Basic_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2002, subindex 0x25 */
-UNS8 Basic_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2002, subindex 0x26 */
-UNS8 Basic_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2002, subindex 0x27 */
-UNS8 Basic_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2002, subindex 0x28 */
 UNS16 Basic_Control_Parameters_Motor_Parameter_Enable = 0x0;		/* Mapped at index 0x2002, subindex 0x29 */
 UNS16 Basic_Control_Parameters_OEM_Password = 0x0;		/* Mapped at index 0x2002, subindex 0x2A */
 
@@ -80,36 +66,9 @@ UNS16 Input_Terminal_Parameters_DI8_function_selection = 0x1F;		/* Mapped at ind
 UNS16 Input_Terminal_Parameters_DI8_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x12 */
 UNS16 Input_Terminal_Parameters_DI9_function_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x13 */
 UNS16 Input_Terminal_Parameters_DI9_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x14 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x15 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x16 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x17 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x18 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x19 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x1A */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x1B */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x1C */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x1D */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x1E */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x1F */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x20 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x21 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x22 */
+UNS8 Input_Terminal_Parameters_Compatibility_Entry[48] = {0x0};		/* Mapped at index 0x2003, subindex 0x15 */
 UNS16 Input_Terminal_Parameters_States_of_functions_not_allocatedamong_FunIN_33_48_HEX = 0x0;		/* Mapped at index 0x2003, subindex 0x23 */
 UNS16 Input_Terminal_Parameters_States_of_functions_not_allocatedamong_FunIN_49_64_HEX = 0x0;		/* Mapped at index 0x2003, subindex 0x24 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x25 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x26 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x27 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x28 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x29 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x2A */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x2B */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x2C */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x2D */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x2E */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x2F */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x30 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x31 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x32 */
 INTEGER16 Input_Terminal_Parameters_AI1_offset = 0x0;		/* Mapped at index 0x2003, subindex 0x33 */
 UNS16 Input_Terminal_Parameters_AI1_filter_time_constant = 0xC8;		/* Mapped at index 0x2003, subindex 0x34 */
 UNS16 Input_Terminal_Parameters_AI1_Filter_Enable = 0x1;		/* Mapped at index 0x2003, subindex 0x35 */
@@ -120,26 +79,6 @@ UNS16 Input_Terminal_Parameters_AI2_filter_time_constant = 0xC8;		/* Mapped at i
 UNS16 Input_Terminal_Parameters_AI2_Filter_Enable = 0x1;		/* Mapped at index 0x2003, subindex 0x3A */
 UNS16 Input_Terminal_Parameters_AI2_dead_zone = 0x64;		/* Mapped at index 0x2003, subindex 0x3B */
 INTEGER16 Input_Terminal_Parameters_AI2_zero_drift = 0x0;		/* Mapped at index 0x2003, subindex 0x3C */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x3D */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x3E */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x3F */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x40 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x41 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x42 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x43 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x44 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x45 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x46 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x47 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x48 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x49 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x4A */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x4B */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x4C */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x4D */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x4E */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x4F */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2003, subindex 0x50 */
 UNS16 Input_Terminal_Parameters_Speed_corresponding_to_10_V = 0xBB8;		/* Mapped at index 0x2003, subindex 0x51 */
 UNS16 Input_Terminal_Parameters_Torque_corresponding_to_10_V = 0x64;		/* Mapped at index 0x2003, subindex 0x52 */
 
@@ -153,46 +92,8 @@ UNS16 Output_terminal_Parameters_DO4_function_selection = 0xB;		/* Mapped at ind
 UNS16 Output_terminal_Parameters_DO4_logic_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x08 */
 UNS16 Output_terminal_Parameters_DO5_function_selection = 0x10;		/* Mapped at index 0x2004, subindex 0x09 */
 UNS16 Output_terminal_Parameters_DO5_logic_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x0A */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x0B */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x0C */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x0D */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x0E */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x0F */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x10 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x11 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x12 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x13 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x14 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x15 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x16 */
+UNS8 Output_terminal_Parameters_Compatibility_Entry[39] = {0x00};		/* Mapped at index 0x2004*/
 UNS16 Output_terminal_Parameters_DO_source = 0x0;		/* Mapped at index 0x2004, subindex 0x17 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x18 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x19 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x1A */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x1B */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x1C */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x1D */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x1E */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x1F */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x20 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x21 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x22 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x23 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x24 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x25 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x26 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x27 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x28 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x29 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x2A */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x2B */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x2C */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x2D */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x2E */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x2F */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x30 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x31 */
-UNS8 Output_terminal_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2004, subindex 0x32 */
 UNS16 Output_terminal_Parameters_AO1_signal_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x33 */
 INTEGER16 Output_terminal_Parameters_AO1_offset_voltage = 0x1388;		/* Mapped at index 0x2004, subindex 0x34 */
 INTEGER16 Output_terminal_Parameters_AO1_multiplying_factor = 0x64;		/* Mapped at index 0x2004, subindex 0x35 */
@@ -203,33 +104,21 @@ INTEGER16 Output_terminal_Parameters_AO2_multiplying_factor = 0x64;		/* Mapped a
 UNS16 Position_Control_Parameters_Position_reference_source = 0x0;		/* Mapped at index 0x2005, subindex 0x01 */
 UNS16 Position_Control_Parameters_Pulse_reference_input_terminal_selection = 0x0;		/* Mapped at index 0x2005, subindex 0x02 */
 UNS32 Position_Control_Parameters_Pulses_for_one_motor_revolution = 0x0;		/* Mapped at index 0x2005, subindex 0x03 */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x04 */
+UNS8 Position_Control_Parameters_Compatibility_Entry[26] = {0x0};		/* Mapped at index 0x2005, subindex 0x04 */
 UNS16 Position_Control_Parameters_First_order_lowpass_filter_time = 0x0;		/* Mapped at index 0x2005, subindex 0x05 */
 INTEGER16 Position_Control_Parameters_Step_size = 0x32;		/* Mapped at index 0x2005, subindex 0x06 */
 UNS16 Position_Control_Parameters_Filter_time_constant_of_of_average_value_of_position_reference = 0x0;		/* Mapped at index 0x2005, subindex 0x07 */
 UNS32 Position_Control_Parameters_Electronicgear_ratio_1_numerator = 0x4;		/* Mapped at index 0x2005, subindex 0x08 */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x09 */
 UNS32 Position_Control_Parameters_Electronic_gear_ratio_1_denominator = 0x1;		/* Mapped at index 0x2005, subindex 0x0A */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x0B */
 UNS32 Position_Control_Parameters_Electronicgear_ratio_2_numerator = 0x4;		/* Mapped at index 0x2005, subindex 0x0C */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x0D */
 UNS32 Position_Control_Parameters_Electronic_gear_ratio_2_denominator = 0x1;		/* Mapped at index 0x2005, subindex 0x0E */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x0F */
 UNS16 Position_Control_Parameters_Reference_pulse_form = 0x0;		/* Mapped at index 0x2005, subindex 0x10 */
 UNS16 Position_Control_Parameters_Clear_action = 0x0;		/* Mapped at index 0x2005, subindex 0x11 */
 UNS16 Position_Control_Parameters_Encoder_frequency_division_pulses = 0x9C4;		/* Mapped at index 0x2005, subindex 0x12 */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x13 */
 UNS16 Position_Control_Parameters_Speed_feedforward_control_selection = 0x1;		/* Mapped at index 0x2005, subindex 0x14 */
 UNS16 Position_Control_Parameters_Output_condition_of_positioning_completed_signal_COIN = 0x0;		/* Mapped at index 0x2005, subindex 0x15 */
 UNS16 Position_Control_Parameters_Amplitude_for_positioning_completed = 0x7;		/* Mapped at index 0x2005, subindex 0x16 */
 UNS16 Position_Control_Parameters_Amplitude_of_positioning_almost_completed = 0xFFFF;		/* Mapped at index 0x2005, subindex 0x17 */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x18 */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x19 */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x1A */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x1B */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x1C */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x1D */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x1E */
 UNS16 Position_Control_Parameters_Control_of_home_return = 0x0;		/* Mapped at index 0x2005, subindex 0x1F */
 UNS16 Position_Control_Parameters_Mode_of_home_return = 0x0;		/* Mapped at index 0x2005, subindex 0x20 */
 UNS16 Position_Control_Parameters_HM_high_speed_searching = 0x64;		/* Mapped at index 0x2005, subindex 0x21 */
@@ -237,31 +126,19 @@ UNS16 Position_Control_Parameters_HM_low_speed_searching = 0xA;		/* Mapped at in
 UNS16 Position_Control_Parameters_HM_Acceleration_Deceleration_time = 0x3E8;		/* Mapped at index 0x2005, subindex 0x23 */
 UNS16 Position_Control_Parameters_Time_of_home_searching = 0xC350;		/* Mapped at index 0x2005, subindex 0x24 */
 INTEGER32 Position_Control_Parameters_H0536 = 0x0;		/* Mapped at index 0x2005, subindex 0x25 */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x26 */
 UNS16 Position_Control_Parameters_Servo_pulse_output_source = 0x0;		/* Mapped at index 0x2005, subindex 0x27 */
 UNS16 Position_Control_Parameters_Electronic_gear_ratio_switchover_condition = 0x0;		/* Mapped at index 0x2005, subindex 0x28 */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x29 */
 UNS16 Position_Control_Parameters_Output_polarity_of_Z_pulse = 0x1;		/* Mapped at index 0x2005, subindex 0x2A */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x2B */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x2C */
 UNS16 Position_Control_Parameters_Absolute_encode_multi_turns_offset = 0x0;		/* Mapped at index 0x2005, subindex 0x2D */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x2E */
 INTEGER32 Position_Control_Parameters_Absolute_position_offset_of_absolute_encode_Low = 0x0;		/* Mapped at index 0x2005, subindex 0x2F */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x30 */
 INTEGER32 Position_Control_Parameters_Absolute_position_offset_of_absolute_encode_High = 0x0;		/* Mapped at index 0x2005, subindex 0x31 */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x32 */
 UNS16 Position_Control_Parameters_Mechanical_Gear_ratio_numerator_of_absolute_encode_mode_2 = 0x1;		/* Mapped at index 0x2005, subindex 0x33 */
 UNS16 Position_Control_Parameters_Mechanical_Gear_ratio_denominator_of_absolute_encode_mode_2 = 0x1;		/* Mapped at index 0x2005, subindex 0x34 */
 UNS32 Position_Control_Parameters_Max_value_of_mechanical_absolute_position_inc_of_absolute_encode_mode_2_Low = 0x0;		/* Mapped at index 0x2005, subindex 0x35 */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x36 */
 UNS32 Position_Control_Parameters_Max_value_of_mechanical_absolute_position_inc_of_absolute_encode_mode_2_High = 0x0;		/* Mapped at index 0x2005, subindex 0x37 */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x38 */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x39 */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x3A */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x3B */
-UNS8 Position_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2005, subindex 0x3C */
 UNS16 Position_Control_Parameters_Positon_reach_hold_time = 0x0;		/* Mapped at index 0x2005, subindex 0x3D */
 UNS32 Position_Control_Parameters_Position_window_unit_set = 0x0;		/* Mapped at index 0x2005, subindex 0x3E */
+
 UNS16 Speed_Control_Parameters_Main_speed_reference_A_source = 0x0;		/* Mapped at index 0x2006, subindex 0x01 */
 UNS16 Speed_Control_Parameters_Auxiliary_speed_reference_B_source = 0x1;		/* Mapped at index 0x2006, subindex 0x02 */
 UNS16 Speed_Control_Parameters_Speed_reference_selection = 0x0;		/* Mapped at index 0x2006, subindex 0x03 */
@@ -272,21 +149,19 @@ UNS16 Speed_Control_Parameters_Deceleration_ramp_time_constant_of_speed_referenc
 UNS16 Speed_Control_Parameters_Maximum_speed_threshold = 0x1770;		/* Mapped at index 0x2006, subindex 0x08 */
 UNS16 Speed_Control_Parameters_Forward_speed_threshold = 0x1770;		/* Mapped at index 0x2006, subindex 0x09 */
 UNS16 Speed_Control_Parameters_Reverse_speed_threshold = 0x1770;		/* Mapped at index 0x2006, subindex 0x0A */
-UNS8 Speed_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2006, subindex 0x0B */
+UNS8 Speed_Control_Parameters_Compatibility_Entry[4] = {0x0};		/* Mapped at index 0x2006, subindex 0x0B */
 UNS16 Speed_Control_Parameters_Torque_feedforward_selection = 0x1;		/* Mapped at index 0x2006, subindex 0x0C */
-UNS8 Speed_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2006, subindex 0x0D */
-UNS8 Speed_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2006, subindex 0x0E */
-UNS8 Speed_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2006, subindex 0x0F */
 UNS16 Speed_Control_Parameters_Speed_limit_for_zero_clamp = 0xA;		/* Mapped at index 0x2006, subindex 0x10 */
 UNS16 Speed_Control_Parameters_Motor_speed_threshold = 0x14;		/* Mapped at index 0x2006, subindex 0x11 */
 UNS16 Speed_Control_Parameters_Threshold_of_speed_consistent_signal = 0xA;		/* Mapped at index 0x2006, subindex 0x12 */
 UNS16 Speed_Control_Parameters_Threshold_of_speed_reached_signal = 0x3E8;		/* Mapped at index 0x2006, subindex 0x13 */
 UNS16 Speed_Control_Parameters_Threshold_of_zero_speed_output_signal = 0xA;		/* Mapped at index 0x2006, subindex 0x14 */
+
 UNS16 Torque_Control_Parameters_Main_torque_reference_A_source = 0x0;		/* Mapped at index 0x2007, subindex 0x01 */
 UNS16 Torque_Control_Parameters_Auxiliary_torque_reference_B_source = 0x1;		/* Mapped at index 0x2007, subindex 0x02 */
 UNS16 Torque_Control_Parameters_Torque_reference_source = 0x0;		/* Mapped at index 0x2007, subindex 0x03 */
 INTEGER16 Torque_Control_Parameters_Keypad_setting_value_of_torque_reference = 0x0;		/* Mapped at index 0x2007, subindex 0x04 */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x05 */
+UNS8 Torque_Control_Parameters_Compatibility_Entry[20] = {0x0};		/* Mapped at index 0x2007, subindex 0x05 */
 UNS16 Torque_Control_Parameters_Torque_reference_filter_time = 0x4F;		/* Mapped at index 0x2007, subindex 0x06 */
 UNS16 Torque_Control_Parameters_The_second_torque_reference_filter_time = 0x4F;		/* Mapped at index 0x2007, subindex 0x07 */
 UNS16 Torque_Control_Parameters_Torque_limit_source = 0x0;		/* Mapped at index 0x2007, subindex 0x08 */
@@ -295,10 +170,7 @@ UNS16 Torque_Control_Parameters_Internal_forward_torque_limit = 0xBB8;		/* Mappe
 UNS16 Torque_Control_Parameters_Internal_reverse_torque_limit = 0xBB8;		/* Mapped at index 0x2007, subindex 0x0B */
 UNS16 Torque_Control_Parameters_External_forward_torque_limit = 0xBB8;		/* Mapped at index 0x2007, subindex 0x0C */
 UNS16 Torque_Control_Parameters_External_reverse_torque_limit = 0xBB8;		/* Mapped at index 0x2007, subindex 0x0D */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x0E */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x0F */
 UNS16 Torque_Control_Parameters_Emergency_stop_torque = 0x3E8;		/* Mapped at index 0x2007, subindex 0x10 */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x11 */
 UNS16 Torque_Control_Parameters_Speed_limit_source = 0x0;		/* Mapped at index 0x2007, subindex 0x12 */
 UNS16 Torque_Control_Parameters_V_LMT_selection = 0x1;		/* Mapped at index 0x2007, subindex 0x13 */
 UNS16 Torque_Control_Parameters_Forward_speed_limit_Speed_limit_1_in_torque_control = 0xBB8;		/* Mapped at index 0x2007, subindex 0x14 */
@@ -306,41 +178,22 @@ UNS16 Torque_Control_Parameters_Reverse_speed_limit_Speed_limit_2_in_torque_cont
 UNS16 Torque_Control_Parameters_Base_value_for_torque_reached = 0x0;		/* Mapped at index 0x2007, subindex 0x16 */
 UNS16 Torque_Control_Parameters_Threshold_of_torque_reached_valid = 0xC8;		/* Mapped at index 0x2007, subindex 0x17 */
 UNS16 Torque_Control_Parameters_Threshold_of_torque_reached_invalid = 0x64;		/* Mapped at index 0x2007, subindex 0x18 */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x19 */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x1A */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x1B */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x1C */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x1D */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x1E */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x1F */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x20 */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x21 */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x22 */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x23 */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x24 */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x25 */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x26 */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x27 */
-UNS8 Torque_Control_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2007, subindex 0x28 */
 UNS16 Torque_Control_Parameters_Detection_time_of_speed_limit_exceeded = 0xA;		/* Mapped at index 0x2007, subindex 0x29 */
+
 UNS16 Gain_Parameters_Speed_loop_gain = 0xFA;		/* Mapped at index 0x2008, subindex 0x01 */
 UNS16 Gain_Parameters_Speed_loop_integral_time_constant = 0xC6F;		/* Mapped at index 0x2008, subindex 0x02 */
 UNS16 Gain_Parameters_Position_loop_gain = 0x190;		/* Mapped at index 0x2008, subindex 0x03 */
 UNS16 Gain_Parameters_The_second_speed_loop_gain = 0x190;		/* Mapped at index 0x2008, subindex 0x04 */
 UNS16 Gain_Parameters_The_second_speed_loop_integral_time_constant = 0x7D0;		/* Mapped at index 0x2008, subindex 0x05 */
 UNS16 Gain_Parameters_The_second_position_loop_gain = 0x280;		/* Mapped at index 0x2008, subindex 0x06 */
-UNS8 Gain_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2008, subindex 0x07 */
-UNS8 Gain_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2008, subindex 0x08 */
+UNS8 Gain_Parameters_Compatibility_Entry[5] = {0x0};		/* Mapped at index 0x2008, subindex 0x07 */
 UNS16 Gain_Parameters_Second_gain_mode_setting = 0x1;		/* Mapped at index 0x2008, subindex 0x09 */
 UNS16 Gain_Parameters_Gain_switchover_condition = 0x0;		/* Mapped at index 0x2008, subindex 0x0A */
 UNS16 Gain_Parameters_Gain_switchover_delay = 0x32;		/* Mapped at index 0x2008, subindex 0x0B */
 UNS16 Gain_Parameters_Gain_switchover_level = 0x32;		/* Mapped at index 0x2008, subindex 0x0C */
 UNS16 Gain_Parameters_Gain_switchover_hysteresis = 0x1E;		/* Mapped at index 0x2008, subindex 0x0D */
 UNS16 Gain_Parameters_Position_gain_switchover_time = 0x1E;		/* Mapped at index 0x2008, subindex 0x0E */
-UNS8 Gain_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2008, subindex 0x0F */
 UNS16 Gain_Parameters_Average_value_of_load_inertia_ratio = 0x64;		/* Mapped at index 0x2008, subindex 0x10 */
-UNS8 Gain_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2008, subindex 0x11 */
-UNS8 Gain_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2008, subindex 0x12 */
 UNS16 Gain_Parameters_Speed_feedforward_filter_time_constant = 0x32;		/* Mapped at index 0x2008, subindex 0x13 */
 UNS16 Gain_Parameters_Speed_feedforward_gain = 0x0;		/* Mapped at index 0x2008, subindex 0x14 */
 UNS16 Gain_Parameters_Torque_feedforward_filter_time_constant = 0x32;		/* Mapped at index 0x2008, subindex 0x15 */
@@ -348,6 +201,7 @@ UNS16 Gain_Parameters_Torque_feedforward_gain = 0x0;		/* Mapped at index 0x2008,
 UNS16 Gain_Parameters_Speed_feedback_filter = 0x0;		/* Mapped at index 0x2008, subindex 0x17 */
 UNS16 Gain_Parameters_Cutoff_frequency_of_speed_feedback_lowpass_filter = 0xFA0;		/* Mapped at index 0x2008, subindex 0x18 */
 UNS16 Gain_Parameters_Pseudo_differential_forward_feedback_control_coefficient = 0x3E8;		/* Mapped at index 0x2008, subindex 0x19 */
+
 UNS16 Auto_adjusting_Parameters_Auto_adjusting_mode = 0x0;		/* Mapped at index 0x2009, subindex 0x01 */
 UNS16 Auto_adjusting_Parameters_Rigidity_level_selection = 0xC;		/* Mapped at index 0x2009, subindex 0x02 */
 UNS16 Auto_adjusting_Parameters_Working_mode_of_self_adaptive_notch = 0x0;		/* Mapped at index 0x2009, subindex 0x03 */
@@ -358,8 +212,7 @@ UNS16 Auto_adjusting_Parameters_Maximum_speed_for_inertia_autotuning = 0x1F4;		/
 UNS16 Auto_adjusting_Parameters_Acceleration_Deceleration_time_for_inertia_autotuning = 0x7D;		/* Mapped at index 0x2009, subindex 0x08 */
 UNS16 Auto_adjusting_Parameters_Interval_after_an_inertia_autotuning = 0x320;		/* Mapped at index 0x2009, subindex 0x09 */
 UNS16 Auto_adjusting_Parameters_Motor_revolutions_for_an_inertia_auto_tuning = 0x0;		/* Mapped at index 0x2009, subindex 0x0A */
-UNS8 Auto_adjusting_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2009, subindex 0x0B */
-UNS8 Auto_adjusting_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2009, subindex 0x0C */
+UNS8 Auto_adjusting_Parameters_Compatibility_Entry[13] = {0x0};		/* Mapped at index 0x2009, subindex 0x0B */
 UNS16 Auto_adjusting_Parameters_1st_notch_frequency = 0xFA0;		/* Mapped at index 0x2009, subindex 0x0D */
 UNS16 Auto_adjusting_Parameters_1st_notch_width_level = 0x2;		/* Mapped at index 0x2009, subindex 0x0E */
 UNS16 Auto_adjusting_Parameters_1st_notch_attenuation_level = 0x0;		/* Mapped at index 0x2009, subindex 0x0F */
@@ -373,43 +226,23 @@ UNS16 Auto_adjusting_Parameters_4th_notch_frequency = 0xFA0;		/* Mapped at index
 UNS16 Auto_adjusting_Parameters_4th_notch_width_level = 0x2;		/* Mapped at index 0x2009, subindex 0x17 */
 UNS16 Auto_adjusting_Parameters_4th_notch_attenuation_level = 0x0;		/* Mapped at index 0x2009, subindex 0x18 */
 UNS16 Auto_adjusting_Parameters_Obtained_resonance_frequency = 0x0;		/* Mapped at index 0x2009, subindex 0x19 */
-UNS8 Auto_adjusting_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2009, subindex 0x1A */
-UNS8 Auto_adjusting_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2009, subindex 0x1B */
-UNS8 Auto_adjusting_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2009, subindex 0x1C */
-UNS8 Auto_adjusting_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2009, subindex 0x1D */
-UNS8 Auto_adjusting_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2009, subindex 0x1E */
-INTEGER16 Auto_adjusting_Parameters_Disturbance_torque_compensation_gain = 0x0;		/* Mapped at index 0x2009, subindex 0x1F */
+INTEGER16 Auto_adjusting_Parameters_Disturbance_torque_compensation_gain = 0x0;		/* Mapped at index 0x009, subindex 0x1F */
 UNS16 Auto_adjusting_Parameters_Disturbance_observer_filter_time_constant = 0x32;		/* Mapped at index 0x2009, subindex 0x20 */
-UNS8 Auto_adjusting_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2009, subindex 0x21 */
-UNS8 Auto_adjusting_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2009, subindex 0x22 */
-UNS8 Auto_adjusting_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2009, subindex 0x23 */
-UNS8 Auto_adjusting_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2009, subindex 0x24 */
-UNS8 Auto_adjusting_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2009, subindex 0x25 */
-UNS8 Auto_adjusting_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2009, subindex 0x26 */
 UNS16 Auto_adjusting_Parameters_Low_frequency_vibration_frequency = 0x3E8;		/* Mapped at index 0x2009, subindex 0x27 */
 UNS16 Auto_adjusting_Parameters_Filter_of_low_frequency_vibration_frequency = 0x2;		/* Mapped at index 0x2009, subindex 0x28 */
+
 UNS16 Fault_and_Protection_Power_input_phase_loss_protection = 0x0;		/* Mapped at index 0x200A, subindex 0x01 */
 UNS16 Fault_and_Protection_Absolute_position_limit_set = 0x0;		/* Mapped at index 0x200A, subindex 0x02 */
-UNS8 Fault_and_Protection_Compatibility_Entry = 0x0;		/* Mapped at index 0x200A, subindex 0x03 */
+UNS8 Fault_and_Protection_Compatibility_Entry[12] = {0x0};		/* Mapped at index 0x200A, subindex 0x03 */
 UNS16 Fault_and_Protection_Retentive_at_power_failure = 0x0;		/* Mapped at index 0x200A, subindex 0x04 */
 UNS16 Fault_and_Protection_Motor_overload_protection_gain = 0x64;		/* Mapped at index 0x200A, subindex 0x05 */
-UNS8 Fault_and_Protection_Compatibility_Entry = 0x0;		/* Mapped at index 0x200A, subindex 0x06 */
-UNS8 Fault_and_Protection_Compatibility_Entry = 0x0;		/* Mapped at index 0x200A, subindex 0x07 */
-UNS8 Fault_and_Protection_Compatibility_Entry = 0x0;		/* Mapped at index 0x200A, subindex 0x08 */
 UNS16 Fault_and_Protection_Overspeed_threshold = 0x0;		/* Mapped at index 0x200A, subindex 0x09 */
 UNS16 Fault_and_Protection_Maximum_position_pulse_frequency = 0xFA0;		/* Mapped at index 0x200A, subindex 0x0A */
 UNS32 Fault_and_Protection_Threshold_of_position_deviation_fault = 0x0;		/* Mapped at index 0x200A, subindex 0x0B */
-UNS8 Fault_and_Protection_Compatibility_Entry = 0x0;		/* Mapped at index 0x200A, subindex 0x0C */
 UNS16 Fault_and_Protection_Run_away_protection = 0x1;		/* Mapped at index 0x200A, subindex 0x0D */
-UNS8 Fault_and_Protection_Compatibility_Entry = 0x0;		/* Mapped at index 0x200A, subindex 0x0E */
-UNS8 Fault_and_Protection_Compatibility_Entry = 0x0;		/* Mapped at index 0x200A, subindex 0x0F */
-UNS8 Fault_and_Protection_Compatibility_Entry = 0x0;		/* Mapped at index 0x200A, subindex 0x10 */
 UNS16 Fault_and_Protection_Position_deviation_threshold_in_low_frequency_vibration = 0x5;		/* Mapped at index 0x200A, subindex 0x11 */
-UNS8 Fault_and_Protection_Compatibility_Entry = 0x0;		/* Mapped at index 0x200A, subindex 0x12 */
-UNS8 Fault_and_Protection_Compatibility_Entry = 0x0;		/* Mapped at index 0x200A, subindex 0x13 */
 UNS16 Fault_and_Protection_DI8_filter_time = 0x50;		/* Mapped at index 0x200A, subindex 0x14 */
 UNS16 Fault_and_Protection_DI9_filter_time = 0x50;		/* Mapped at index 0x200A, subindex 0x15 */
-UNS8 Fault_and_Protection_Compatibility_Entry = 0x0;		/* Mapped at index 0x200A, subindex 0x16 */
 UNS16 Fault_and_Protection_Sigma_delta_filter_time = 0x1;		/* Mapped at index 0x200A, subindex 0x17 */
 UNS16 Fault_and_Protection_Tz_signal_filter_time = 0xF;		/* Mapped at index 0x200A, subindex 0x18 */
 UNS16 Fault_and_Protection_Filter_time_of_low_speed_pulse_input_pin = 0x1E;		/* Mapped at index 0x200A, subindex 0x19 */
@@ -419,46 +252,33 @@ UNS16 Fault_and_Protection_Speed_DO_Filter_time_constant = 0xA;		/* Mapped at in
 UNS16 Fault_and_Protection_Quadrature_encoder_filter_time = 0x1E;		/* Mapped at index 0x200A, subindex 0x1D */
 UNS16 Fault_and_Protection_Line_encoder_filter_time = 0xF;		/* Mapped at index 0x200A, subindex 0x1E */
 UNS16 Fault_and_Protection_Filter_time_constant_of_high_speed_pulse_input_pin = 0x3;		/* Mapped at index 0x200A, subindex 0x1F */
-UNS8 Fault_and_Protection_Compatibility_Entry = 0x0;		/* Mapped at index 0x200A, subindex 0x20 */
 UNS16 Fault_and_Protection_Overheat_protection_time_duration_for_locked_rotor = 0xC8;		/* Mapped at index 0x200A, subindex 0x21 */
 UNS16 Fault_and_Protection_Overheat_protection_for_locked_rotor = 0x1;		/* Mapped at index 0x200A, subindex 0x22 */
-INTEGER16 Display_Parameters_Actual_motor_rotational_speed = 0x0;		/* Mapped at index 0x200B, subindex 0x01 */
+
+INTEGER16 Display_Parameters_Actual_motor_rotational_speed_200B01 = 0x0;		/* Mapped at index 0x200B, subindex 0x01 */
 INTEGER16 Display_Parameters_Speed_reference = 0x0;		/* Mapped at index 0x200B, subindex 0x02 */
 INTEGER16 Display_Parameters_Internal_torque_reference = 0x0;		/* Mapped at index 0x200B, subindex 0x03 */
 UNS16 Display_Parameters_Monitored_DI_states = 0x0;		/* Mapped at index 0x200B, subindex 0x04 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x05 */
+UNS8 Display_Parameters_Compatibility_Entry[35] = {0x0};		/* Mapped at index 0x200B, subindex 0x05 */
 UNS16 Display_Parameters_Monitored_DO_states = 0x0;		/* Mapped at index 0x200B, subindex 0x06 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x07 */
 INTEGER32 Display_Parameters_Absolute_position_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x08 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x09 */
+
 UNS16 Display_Parameters_Mechanical_angle = 0x0;		/* Mapped at index 0x200B, subindex 0x0A */
 UNS16 Display_Parameters_Electrical_angle = 0x0;		/* Mapped at index 0x200B, subindex 0x0B */
 INTEGER16 Display_Parameters_Speed_corresponding_to_input_position_reference = 0x0;		/* Mapped at index 0x200B, subindex 0x0C */
 UNS16 Display_Parameters_Average_load_rate = 0x0;		/* Mapped at index 0x200B, subindex 0x0D */
 INTEGER32 Display_Parameters_Input_reference_pulse_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x0E */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x0F */
 INTEGER32 Display_Parameters_Encoder_position_deviation_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x10 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x11 */
 INTEGER32 Display_Parameters_Feedback_pulse_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x12 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x13 */
 UNS32 Display_Parameters_Total_power_on_time = 0x0;		/* Mapped at index 0x200B, subindex 0x14 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x15 */
 INTEGER16 Display_Parameters_AI1_sampling_voltage = 0x0;		/* Mapped at index 0x200B, subindex 0x16 */
 INTEGER16 Display_Parameters_AI2_sampling_voltage = 0x0;		/* Mapped at index 0x200B, subindex 0x17 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x18 */
 UNS16 Display_Parameters_Phase_current_valid_value = 0x0;		/* Mapped at index 0x200B, subindex 0x19 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x1A */
 UNS16 Display_Parameters_Bus_voltage = 0x0;		/* Mapped at index 0x200B, subindex 0x1B */
 UNS16 Display_Parameters_Module_temperature = 0x0;		/* Mapped at index 0x200B, subindex 0x1C */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x1D */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x1E */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x1F */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x20 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x21 */
 UNS16 Display_Parameters_Displayed_fault_record = 0x0;		/* Mapped at index 0x200B, subindex 0x22 */
 UNS16 Display_Parameters_Fault_code = 0x0;		/* Mapped at index 0x200B, subindex 0x23 */
 UNS32 Display_Parameters_Time_stamp_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x24 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x25 */
 INTEGER16 Display_Parameters_Current_rotational_speed_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x26 */
 INTEGER16 Display_Parameters_Current_U_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x27 */
 INTEGER16 Display_Parameters_Current_V_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x28 */
@@ -472,50 +292,26 @@ UNS16 Display_Parameters_Fault_message_of_absolute_encode_from_Fpga_upon_display
 UNS16 Display_Parameters_System_state_from_Fpga_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x30 */
 UNS16 Display_Parameters_System_fault_message_from_Fpga_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x31 */
 UNS16 Display_Parameters_Encode_state_1_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x32 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x33 */
 UNS16 Display_Parameters_Inner_error_code_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x34 */
 UNS16 Display_Parameters_Fpga_overtime_state_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x35 */
 INTEGER32 Display_Parameters_Reference_position_deviation = 0x0;		/* Mapped at index 0x200B, subindex 0x36 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x37 */
-INTEGER32 Display_Parameters_Actual_motor_rotational_speed = 0x0;		/* Mapped at index 0x200B, subindex 0x38 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x39 */
+INTEGER32 Display_Parameters_Actual_motor_rotational_speed_200B38= 0x0;		/* Mapped at index 0x200B, subindex 0x38 */
 UNS16 Display_Parameters_Control_bus_voltage = 0x0;		/* Mapped at index 0x200B, subindex 0x3A */
 INTEGER32 Display_Parameters_Mechanical_absolute_position_inc_Low = 0x0;		/* Mapped at index 0x200B, subindex 0x3B */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x3C */
 INTEGER32 Display_Parameters_Mechanical_absolute_position_inc_High = 0x0;		/* Mapped at index 0x200B, subindex 0x3D */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x3E */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x3F */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x40 */
 INTEGER32 Display_Parameters_Real_Time_Input_reference_pulse_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x41 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x42 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x43 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x44 */
 UNS16 Display_Parameters_Fpga_over_time_state = 0x0;		/* Mapped at index 0x200B, subindex 0x45 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x46 */
 UNS16 Display_Parameters_Number_of_turns_of_absolute_encode = 0x0;		/* Mapped at index 0x200B, subindex 0x47 */
 INTEGER32 Display_Parameters_Single_feedback_postion_of_absolute_encode = 0x0;		/* Mapped at index 0x200B, subindex 0x48 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x49 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x4A */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x4B */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x4C */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x4D */
 INTEGER32 Display_Parameters_feedback_postion_of_absolute_encode_Low = 0x0;		/* Mapped at index 0x200B, subindex 0x4E */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x4F */
 INTEGER32 Display_Parameters_feedback_postion_of_absolute_encode_High = 0x0;		/* Mapped at index 0x200B, subindex 0x50 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x51 */
 UNS32 Display_Parameters_feedback_postion_inc_of_rotating_load_Low = 0x0;		/* Mapped at index 0x200B, subindex 0x52 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x53 */
 UNS32 Display_Parameters_feedback_postion_inc_of_rotating_load_High = 0x0;		/* Mapped at index 0x200B, subindex 0x54 */
-UNS8 Display_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200B, subindex 0x55 */
 UNS32 Display_Parameters_Single_feedback_postion_of_rotating_load = 0x0;		/* Mapped at index 0x200B, subindex 0x56 */
 UNS16 Communication_Parameters_Servo_shaft_address = 0x1;		/* Mapped at index 0x200C, subindex 0x01 */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x02 */
+UNS8 Communication_Parameters_Compatibility_Entry[20] = {0x0};		/* Mapped at index 0x200C, subindex 0x02 */
 UNS16 Communication_Parameters_Serial_port_baud_rate = 0x5;		/* Mapped at index 0x200C, subindex 0x03 */
 UNS16 Communication_Parameters_Modbus_data_format = 0x0;		/* Mapped at index 0x200C, subindex 0x04 */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x05 */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x06 */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x07 */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x08 */
 UNS16 Communication_Parameters_CAN_communication_rate = 0x5;		/* Mapped at index 0x200C, subindex 0x09 */
 UNS16 Communication_Parameters_Communication_virtual_DI = 0x0;		/* Mapped at index 0x200C, subindex 0x0A */
 UNS16 Communication_Parameters_Default_virtual_level_of_VDI_at_power_on = 0x0;		/* Mapped at index 0x200C, subindex 0x0B */
@@ -523,161 +319,108 @@ UNS16 Communication_Parameters_Communication_virtual_DO = 0x0;		/* Mapped at ind
 UNS16 Communication_Parameters_Default_virtual_level_of_VDO_allocated_with_function_0 = 0x0;		/* Mapped at index 0x200C, subindex 0x0D */
 UNS16 Communication_Parameters_Update_function_code_values_written_via_communication_to_EEPROM = 0x0;		/* Mapped at index 0x200C, subindex 0x0E */
 UNS16 Communication_Parameters_Modbus_Error_code = 0x0;		/* Mapped at index 0x200C, subindex 0x0F */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x10 */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x11 */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x12 */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x13 */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x14 */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x15 */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x16 */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x17 */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x18 */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x19 */
 UNS16 Communication_Parameters_Modbus_send_delay_time = 0x1;		/* Mapped at index 0x200C, subindex 0x1A */
 UNS16 Communication_Parameters_Modbus_32_bit_function_code_transmission_sequence = 0x1;		/* Mapped at index 0x200C, subindex 0x1B */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x1C */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x1D */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x1E */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x1F */
-UNS8 Communication_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200C, subindex 0x20 */
 UNS16 Communication_Parameters_CAN_Receive_Frame_Counter_Per_Second = 0x0;		/* Mapped at index 0x200C, subindex 0x21 */
 UNS16 Communication_Parameters_CAN_Max_Receive_Frame_Error_Counter_Per_Second = 0x0;		/* Mapped at index 0x200C, subindex 0x22 */
 UNS16 Communication_Parameters_CAN_Max_Transmit_Frame_Error_Counter_Per_Second = 0x0;		/* Mapped at index 0x200C, subindex 0x23 */
+
 UNS16 Communication_Parameters_CAN_Bus_Off_Counter_Per_Second = 0x0;		/* Mapped at index 0x200C, subindex 0x24 */
 UNS16 Auxiliary_Function_Parameters_Software_reset = 0x0;		/* Mapped at index 0x200D, subindex 0x01 */
 UNS16 Auxiliary_Function_Parameters_Fault_reset = 0x0;		/* Mapped at index 0x200D, subindex 0x02 */
 UNS16 Auxiliary_Function_Parameters_Load_inertia_autotuning = 0x0;		/* Mapped at index 0x200D, subindex 0x03 */
-UNS8 Auxiliary_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200D, subindex 0x04 */
-UNS8 Auxiliary_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200D, subindex 0x05 */
+UNS8 Auxiliary_Function_Parameters_Compatibility_Entry[11] = {0x0};		/* Mapped at index 0x200D, subindex 0x04 */
 UNS16 Auxiliary_Function_Parameters_Emergency_stop = 0x0;		/* Mapped at index 0x200D, subindex 0x06 */
-UNS8 Auxiliary_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200D, subindex 0x07 */
-UNS8 Auxiliary_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200D, subindex 0x08 */
-UNS8 Auxiliary_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200D, subindex 0x09 */
-UNS8 Auxiliary_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200D, subindex 0x0A */
 UNS16 Auxiliary_Function_Parameters_Analog_automatic_adjustment = 0x0;		/* Mapped at index 0x200D, subindex 0x0B */
 UNS16 Auxiliary_Function_Parameters_Jog_function = 0x0;		/* Mapped at index 0x200D, subindex 0x0C */
-UNS8 Auxiliary_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200D, subindex 0x0D */
-UNS8 Auxiliary_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200D, subindex 0x0E */
-UNS8 Auxiliary_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200D, subindex 0x0F */
-UNS8 Auxiliary_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200D, subindex 0x10 */
-UNS8 Auxiliary_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200D, subindex 0x11 */
 UNS16 Auxiliary_Function_Parameters_Forced_input_and_output_mode_of_DI_DO = 0x0;		/* Mapped at index 0x200D, subindex 0x12 */
 UNS16 Auxiliary_Function_Parameters_Forced_input_setting_of_DI = 0x1FF;		/* Mapped at index 0x200D, subindex 0x13 */
 UNS16 Auxiliary_Function_Parameters_Forced_output_setting_of_DO = 0x0;		/* Mapped at index 0x200D, subindex 0x14 */
 UNS16 Auxiliary_Function_Parameters_Absolute_encoder_alarm_reset = 0x0;		/* Mapped at index 0x200D, subindex 0x15 */
+
 UNS16 Full_Closed_loop_Parameters_Encoder_feedback_mode = 0x0;		/* Mapped at index 0x200F, subindex 0x01 */
 UNS16 Full_Closed_loop_Parameters_Running_mode_of_external_encoder = 0x0;		/* Mapped at index 0x200F, subindex 0x02 */
-UNS8 Full_Closed_loop_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200F, subindex 0x03 */
-UNS8 Full_Closed_loop_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200F, subindex 0x04 */
+UNS8 Full_Closed_loop_Parameters_Compatibility_Entry[12] = {0x0};		/* Mapped at index 0x200F, subindex 0x03 */
 UNS32 Full_Closed_loop_Parameters_External_encoder_pulses_per_motor_revolution = 0x2710;		/* Mapped at index 0x200F, subindex 0x05 */
-UNS8 Full_Closed_loop_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200F, subindex 0x06 */
-UNS8 Full_Closed_loop_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200F, subindex 0x07 */
-UNS8 Full_Closed_loop_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200F, subindex 0x08 */
 UNS32 Full_Closed_loop_Parameters_Hybrid_deviation_excess_setting = 0x3E8;		/* Mapped at index 0x200F, subindex 0x09 */
-UNS8 Full_Closed_loop_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200F, subindex 0x0A */
 UNS16 Full_Closed_loop_Parameters_Hybrid_deviation_clear_setting = 0x1;		/* Mapped at index 0x200F, subindex 0x0B */
-UNS8 Full_Closed_loop_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200F, subindex 0x0C */
-UNS8 Full_Closed_loop_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200F, subindex 0x0D */
 UNS16 Full_Closed_loop_Parameters_First_order_lowpass_filter_time_of_external_internal_deviation = 0x0;		/* Mapped at index 0x200F, subindex 0x0E */
-UNS8 Full_Closed_loop_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200F, subindex 0x0F */
-UNS8 Full_Closed_loop_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200F, subindex 0x10 */
 UNS32 Full_Closed_loop_Parameters_Hybrid_deviation_counter = 0x0;		/* Mapped at index 0x200F, subindex 0x11 */
-UNS8 Full_Closed_loop_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200F, subindex 0x12 */
 UNS32 Full_Closed_loop_Parameters_Pulse_feedback_display_of_internal_encoder = 0x0;		/* Mapped at index 0x200F, subindex 0x13 */
-UNS8 Full_Closed_loop_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x200F, subindex 0x14 */
 UNS32 Full_Closed_loop_Parameters_Pulse_feedback_display_of_external_encoder = 0x0;		/* Mapped at index 0x200F, subindex 0x15 */
+
 UNS16 Multi_Position_Function_Parameters_Multi_position_running_mode = 0x1;		/* Mapped at index 0x2011, subindex 0x01 */
 UNS16 Multi_Position_Function_Parameters_Number_of_position_reference_profile = 0x1;		/* Mapped at index 0x2011, subindex 0x02 */
 UNS16 Multi_Position_Function_Parameters_Margin_processing_method = 0x0;		/* Mapped at index 0x2011, subindex 0x03 */
 UNS16 Multi_Position_Function_Parameters_Time_unit = 0x0;		/* Mapped at index 0x2011, subindex 0x04 */
 UNS16 Multi_Position_Function_Parameters_Displacement_reference_type = 0x0;		/* Mapped at index 0x2011, subindex 0x05 */
 UNS16 Multi_Position_Function_Parameters_Start_position_of_sequential_running = 0x0;		/* Mapped at index 0x2011, subindex 0x06 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x07 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x08 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x09 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x0A */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x0B */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x0C */
+UNS8 Multi_Position_Function_Parameters_Compatibility_Entry[22] = {0x0};		/* Mapped at index 0x2011, subindex 0x07 */
 INTEGER32 Multi_Position_Function_Parameters_1st_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x0D */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x0E */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_1st_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x0F */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_1st_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x10 */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_1st_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x11 */
 INTEGER32 Multi_Position_Function_Parameters_2nd_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x12 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x13 */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_2nd_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x14 */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_2nd_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x15 */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_2nd_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x16 */
 INTEGER32 Multi_Position_Function_Parameters_3rd_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x17 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x18 */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_3rd_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x19 */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_3rd_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x1A */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_3rddisplacement = 0xA;		/* Mapped at index 0x2011, subindex 0x1B */
 INTEGER32 Multi_Position_Function_Parameters_4th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x1C */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x1D */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_4th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x1E */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_4th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x1F */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_4th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x20 */
 INTEGER32 Multi_Position_Function_Parameters_5th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x21 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x22 */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_5th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x23 */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_5th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x24 */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_5th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x25 */
 INTEGER32 Multi_Position_Function_Parameters_6th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x26 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x27 */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_6th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x28 */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_6th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x29 */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_6th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x2A */
 INTEGER32 Multi_Position_Function_Parameters_7th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x2B */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x2C */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_7th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x2D */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_7th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x2E */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_7th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x2F */
 INTEGER32 Multi_Position_Function_Parameters_8th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x30 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x31 */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_8th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x32 */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_8th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x33 */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_8th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x34 */
 INTEGER32 Multi_Position_Function_Parameters_9th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x35 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x36 */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_9th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x37 */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_9th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x38 */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_9th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x39 */
 INTEGER32 Multi_Position_Function_Parameters_10th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x3A */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x3B */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_10th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x3C */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_10th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x3D */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_10th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x3E */
 INTEGER32 Multi_Position_Function_Parameters_11th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x3F */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x40 */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_11th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x41 */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_11th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x42 */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_11th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x43 */
 INTEGER32 Multi_Position_Function_Parameters_12th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x44 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x45 */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_12th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x46 */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_12th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x47 */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_12th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x48 */
 INTEGER32 Multi_Position_Function_Parameters_13th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x49 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x4A */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_13th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x4B */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_13th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x4C */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_13th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x4D */
 INTEGER32 Multi_Position_Function_Parameters_14th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x4E */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x4F */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_14th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x50 */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_14th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x51 */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_14th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x52 */
 INTEGER32 Multi_Position_Function_Parameters_15th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x53 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x54 */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_15th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x55 */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_15th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x56 */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_15th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x57 */
 INTEGER32 Multi_Position_Function_Parameters_16th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x58 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry = 0x0;		/* Mapped at index 0x2011, subindex 0x59 */
 UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_16th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x5A */
 UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_16th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x5B */
 UNS16 Multi_Position_Function_Parameters_Waiting_time_after_16th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x5C */
+
 UNS16 VDI_VDO_Parameters_VDI1_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x01 */
 UNS16 VDI_VDO_Parameters_VDI1_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x02 */
 UNS16 VDI_VDO_Parameters_VDI2_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x03 */
@@ -743,21 +486,15 @@ UNS16 VDI_VDO_Parameters_VDO15_function_selection = 0x0;		/* Mapped at index 0x2
 UNS16 VDI_VDO_Parameters_VDO15_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x3F */
 UNS16 VDI_VDO_Parameters_VDO16_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x40 */
 UNS16 VDI_VDO_Parameters_VDO16_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x41 */
+
 UNS16 Servo_Related_Variables_Read_via_Communication_Servo_state_read_via_communication = 0x0;		/* Mapped at index 0x2030, subindex 0x01 */
 UNS16 Servo_Related_Variables_Read_via_Communication_DO_function_state_1_read_via_communication = 0x0;		/* Mapped at index 0x2030, subindex 0x02 */
 UNS16 Servo_Related_Variables_Read_via_Communication_DO_function_state_2_read_via_communication = 0x0;		/* Mapped at index 0x2030, subindex 0x03 */
 UNS16 Servo_Related_Variables_Read_via_Communication_Input_reference_pulse_sampling_read_via_communication = 0x0;		/* Mapped at index 0x2030, subindex 0x04 */
 UNS16 Servo_Related_Variables_Set_via_Communication_VDI_virtuallevel_set_via_communication = 0x0;		/* Mapped at index 0x2031, subindex 0x01 */
-UNS8 Servo_Related_Variables_Set_via_Communication_Compatibility_Entry = 0x0;		/* Mapped at index 0x2031, subindex 0x02 */
-UNS8 Servo_Related_Variables_Set_via_Communication_Compatibility_Entry = 0x0;		/* Mapped at index 0x2031, subindex 0x03 */
-UNS8 Servo_Related_Variables_Set_via_Communication_Compatibility_Entry = 0x0;		/* Mapped at index 0x2031, subindex 0x04 */
+UNS8 Servo_Related_Variables_Set_via_Communication_Compatibility_Entry[8] = {0x0};		/* Mapped at index 0x2031, subindex 0x02 */
 UNS16 Servo_Related_Variables_Set_via_Communication_DO_state_set_via_communication = 0x0;		/* Mapped at index 0x2031, subindex 0x05 */
-UNS8 Servo_Related_Variables_Set_via_Communication_Compatibility_Entry = 0x0;		/* Mapped at index 0x2031, subindex 0x06 */
-UNS8 Servo_Related_Variables_Set_via_Communication_Compatibility_Entry = 0x0;		/* Mapped at index 0x2031, subindex 0x07 */
-UNS8 Servo_Related_Variables_Set_via_Communication_Compatibility_Entry = 0x0;		/* Mapped at index 0x2031, subindex 0x08 */
-UNS8 Servo_Related_Variables_Set_via_Communication_Compatibility_Entry = 0x0;		/* Mapped at index 0x2031, subindex 0x09 */
 INTEGER32 Servo_Related_Variables_Set_via_Communication_Speed_reference_set_via_communication = 0x0;		/* Mapped at index 0x2031, subindex 0x0A */
-UNS8 Servo_Related_Variables_Set_via_Communication_Compatibility_Entry = 0x0;		/* Mapped at index 0x2031, subindex 0x0B */
 INTEGER32 Servo_Related_Variables_Set_via_Communication_Torque_reference_set_via_communication = 0x0;		/* Mapped at index 0x2031, subindex 0x0C */
 UNS32 Inovance_drive_fault_code = 0x0;		/* Mapped at index 0x203F, subindex 0x00 */
 UNS16 Error_code = 0x0;		/* Mapped at index 0x603F, subindex 0x00 */
@@ -769,7 +506,7 @@ INTEGER8 Modes_of_operation = 0x0;		/* Mapped at index 0x6060, subindex 0x00 */
 INTEGER8 Modes_of_operation_display = 0x0;		/* Mapped at index 0x6061, subindex 0x00 */
 INTEGER32 Position_demannd_value = 0x0;		/* Mapped at index 0x6062, subindex 0x00 */
 INTEGER32 Position_actual_value = 0x0;		/* Mapped at index 0x6063, subindex 0x00 */
-INTEGER32 Position_actual_value = 0x0;		/* Mapped at index 0x6064, subindex 0x00 */
+INTEGER32 Position_actual_value_user = 0x0;		/* Mapped at index 0x6064, subindex 0x00 */
 UNS32 Maximal_following_error = 0x300000;		/* Mapped at index 0x6065, subindex 0x00 */
 UNS32 Following_error_timeout = 0x0;		/* Mapped at index 0x6066, subindex 0x00 */
 UNS32 Position_window = 0x2DE;		/* Mapped at index 0x6067, subindex 0x00 */
@@ -786,7 +523,7 @@ INTEGER16 ToqDemandValue = 0x0;		/* Mapped at index 0x6074, subindex 0x00 */
 INTEGER16 Torque_Actual_Value = 0x0;		/* Mapped at index 0x6077, subindex 0x00 */
 INTEGER32 Target_position = 0x0;		/* Mapped at index 0x607A, subindex 0x00 */
 INTEGER32 Home_offset = 0x0;		/* Mapped at index 0x607C, subindex 0x00 */
-INTEGER32 Software_position_limit_Minimal_position_limit = 0x-80000000;		/* Mapped at index 0x607D, subindex 0x01 */
+INTEGER32 Software_position_limit_Minimal_position_limit = 0x80000000;		/* Mapped at index 0x607D, subindex 0x01 */
 INTEGER32 Software_position_limit_Maximal_position_limit = 0x7FFFFFFF;		/* Mapped at index 0x607D, subindex 0x02 */
 UNS8 Polarity = 0x0;		/* Mapped at index 0x607E, subindex 0x00 */
 UNS32 Maximal_profile_velocity = 0x6400000;		/* Mapped at index 0x607F, subindex 0x00 */
@@ -804,7 +541,7 @@ UNS32 Homing_speeds_Speed_for_zero_search = 0x2AAAB;		/* Mapped at index 0x6099,
 UNS32 Homing_acceleration = 0xA6AAAAA;		/* Mapped at index 0x609A, subindex 0x00 */
 INTEGER32 Interpolated_data_record_the_first_parameter_of_ip_function = 0x0;		/* Mapped at index 0x60C1, subindex 0x01 */
 UNS8 Interpolation_time_period_ip_time_units = 0x1;		/* Mapped at index 0x60C2, subindex 0x01 */
-INTEGER8 Interpolation_time_period_ip_time_index = 0x-3;		/* Mapped at index 0x60C2, subindex 0x02 */
+INTEGER8 Interpolation_time_period_ip_time_index = -3;		/* Mapped at index 0x60C2, subindex 0x02 */
 UNS32 Max_acceleration = 0x7FFFFFFF;		/* Mapped at index 0x60C5, subindex 0x00 */
 UNS32 Max_deceleration = 0x7FFFFFFF;		/* Mapped at index 0x60C6, subindex 0x00 */
 UNS16 MAX_positive_torque_limit = 0xBB8;		/* Mapped at index 0x60E0, subindex 0x00 */
@@ -917,21 +654,24 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1008 :   Manufacturer Device Name. */
-                    UNS8 _obj1008[10] = (UNS8*)"SV660C";
+                    //UNS8 _obj1008[10] = (UNS8*)"SV660C";
+										 UNS8 _obj1008[10] = {"SV660C"};
                     subindex _Index1008[] = 
                      {
                        { RO, visible_string, 10, (void*)&_obj1008 }
                      };
 
 /* index 0x1009 :   Manufacturer Hardware Version. */
-                    UNS8 _obj1009[10] = (UNS8*)"V0.0";
+										 UNS8 _obj1009[10] = {"V0.0"};
+                    // UNS8 _obj1009[10] = (UNS8*)"V0.0";
                     subindex _Index1009[] = 
                      {
                        { RO, visible_string, 10, (void*)&_obj1009 }
                      };
 
 /* index 0x100A :   Manufacturer Software Version. */
-                    UNS8 _obj100A[10] = (UNS8*)"V02.03";
+                    UNS8 _obj100A[10] = {"V02.03"};
+										 //UNS8 _obj100A[10] = (UNS8*)"V02.03";
                     subindex _Index100A[] = 
                      {
                        { RO, visible_string, 10, (void*)&_obj100A }
@@ -1384,9 +1124,9 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      {
                        { RO, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj2000 },
                        { RW, uint16, sizeof (UNS16), (void*)&Servo_Motor_Parameters_Motor_SN },
-                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Motor_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Motor_Parameters_Compatibility_Entry[0] },
                        { RO, uint32, sizeof (UNS32), (void*)&Servo_Motor_Parameters_Customized_motor_SN },
-                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Motor_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Motor_Parameters_Compatibility_Entry[1] },
                        { RO, uint16, sizeof (UNS16), (void*)&Servo_Motor_Parameters_Encoder_Version },
                        { RO, uint16, sizeof (UNS16), (void*)&Servo_Motor_Parameters_Bus_motor_SN }
                      };
@@ -1410,7 +1150,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_BP_AbsPosDetectionSel },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Rotating_direction },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Direction_of_output_pulse },
-                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry[0] },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Stop_mode_at_servo_drive_disabled },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Stop_mode_at_fault_2 },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Stop_mode_at_overtravel },
@@ -1419,14 +1159,14 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Servo_drive_disable_delay_at_brake_apply_command },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Output_speed_limit_of_brake_reference },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Waiting_time_from_servo_disable_signal_to_brake_apply_command },
-                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry[1] },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Switch_speed_of_stop_mode_and_stop_speed },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Display_of_keypad_warning },
-                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry[2] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry[3] },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Filter_time_of_servo_ON_signal },
-                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry[4] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry[5] },
                        { RO, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Allowed_minimum_braking_resistance },
                        { RO, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Power_of_built_in_braking_resistor },
                        { RO, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Resistance_of_built_in_braking_resistor },
@@ -1434,18 +1174,18 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_braking_resistor_type },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Power_of_external_dynamic_resistor },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Resistance_of_external_braking_resistor },
-                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry[6] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry[7] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry[8] },
                        { WO, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Parameter_initialization },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Default_keypad_display },
-                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry[9] },
                        { RO, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_CAN_software_version },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Display_frequency_of_keypad },
-                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry[10] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry[11] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry[12] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Basic_Control_Parameters_Compatibility_Entry[13] },
                        { RW, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_Motor_Parameter_Enable },
                        { WO, uint16, sizeof (UNS16), (void*)&Basic_Control_Parameters_OEM_Password }
                      };
@@ -1475,36 +1215,36 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Input_Terminal_Parameters_DI8_logic_selection },
                        { RW, uint16, sizeof (UNS16), (void*)&Input_Terminal_Parameters_DI9_function_selection },
                        { RW, uint16, sizeof (UNS16), (void*)&Input_Terminal_Parameters_DI9_logic_selection },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[0] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[1] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[2] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[3] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[4] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[5] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[6] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[7] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[8] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[9] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[10] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[11] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[12] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[13] },
                        { RW, uint16, sizeof (UNS16), (void*)&Input_Terminal_Parameters_States_of_functions_not_allocatedamong_FunIN_33_48_HEX },
                        { RW, uint16, sizeof (UNS16), (void*)&Input_Terminal_Parameters_States_of_functions_not_allocatedamong_FunIN_49_64_HEX },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[14] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[15] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[16] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[17] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[18] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[19] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[20] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[21] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[22] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[23] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[24] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[25] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[26] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[27] },
                        { RW, int16, sizeof (INTEGER16), (void*)&Input_Terminal_Parameters_AI1_offset },
                        { RW, uint16, sizeof (UNS16), (void*)&Input_Terminal_Parameters_AI1_filter_time_constant },
                        { RW, uint16, sizeof (UNS16), (void*)&Input_Terminal_Parameters_AI1_Filter_Enable },
@@ -1515,26 +1255,26 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Input_Terminal_Parameters_AI2_Filter_Enable },
                        { RW, uint16, sizeof (UNS16), (void*)&Input_Terminal_Parameters_AI2_dead_zone },
                        { RW, int16, sizeof (INTEGER16), (void*)&Input_Terminal_Parameters_AI2_zero_drift },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[28] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[29] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[30] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[31] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[32] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[33] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[34] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[35] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[36] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[37] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[38] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[39] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[40] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[41] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[42] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[43] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[44] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[45] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[46] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Input_Terminal_Parameters_Compatibility_Entry[47] },
                        { RW, uint16, sizeof (UNS16), (void*)&Input_Terminal_Parameters_Speed_corresponding_to_10_V },
                        { RW, uint16, sizeof (UNS16), (void*)&Input_Terminal_Parameters_Torque_corresponding_to_10_V }
                      };
@@ -1554,46 +1294,46 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Output_terminal_Parameters_DO4_logic_selection },
                        { RW, uint16, sizeof (UNS16), (void*)&Output_terminal_Parameters_DO5_function_selection },
                        { RW, uint16, sizeof (UNS16), (void*)&Output_terminal_Parameters_DO5_logic_selection },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[0] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[1] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[2] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[3] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[4] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[5] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[6] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[7] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[8] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[9] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[10] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[11] },
                        { RW, uint16, sizeof (UNS16), (void*)&Output_terminal_Parameters_DO_source },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[12] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[13] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[14] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[15] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[16] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[17] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[18] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[19] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[20] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[21] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[22] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[23] },
+					             { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[24] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[25] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[26] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[27] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[28] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[29] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[30] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[31] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[32] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[33] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[34] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[35] },
+					             { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[36] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[37] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Output_terminal_Parameters_Compatibility_Entry[38] },
                        { RW, uint16, sizeof (UNS16), (void*)&Output_terminal_Parameters_AO1_signal_selection },
                        { RW, int16, sizeof (INTEGER16), (void*)&Output_terminal_Parameters_AO1_offset_voltage },
                        { RW, int16, sizeof (INTEGER16), (void*)&Output_terminal_Parameters_AO1_multiplying_factor },
@@ -1610,33 +1350,33 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Position_reference_source },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Pulse_reference_input_terminal_selection },
                        { RW, uint32, sizeof (UNS32), (void*)&Position_Control_Parameters_Pulses_for_one_motor_revolution },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[0] },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_First_order_lowpass_filter_time },
                        { RW, int16, sizeof (INTEGER16), (void*)&Position_Control_Parameters_Step_size },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Filter_time_constant_of_of_average_value_of_position_reference },
                        { RW, uint32, sizeof (UNS32), (void*)&Position_Control_Parameters_Electronicgear_ratio_1_numerator },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[1] },
                        { RW, uint32, sizeof (UNS32), (void*)&Position_Control_Parameters_Electronic_gear_ratio_1_denominator },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[2] },
                        { RW, uint32, sizeof (UNS32), (void*)&Position_Control_Parameters_Electronicgear_ratio_2_numerator },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[3] },
                        { RW, uint32, sizeof (UNS32), (void*)&Position_Control_Parameters_Electronic_gear_ratio_2_denominator },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[4] },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Reference_pulse_form },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Clear_action },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Encoder_frequency_division_pulses },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[5] },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Speed_feedforward_control_selection },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Output_condition_of_positioning_completed_signal_COIN },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Amplitude_for_positioning_completed },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Amplitude_of_positioning_almost_completed },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[6] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[7] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[8] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[9] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[10] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[11] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[12] },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Control_of_home_return },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Mode_of_home_return },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_HM_high_speed_searching },
@@ -1644,29 +1384,29 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_HM_Acceleration_Deceleration_time },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Time_of_home_searching },
                        { RW, int32, sizeof (INTEGER32), (void*)&Position_Control_Parameters_H0536 },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[13] },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Servo_pulse_output_source },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Electronic_gear_ratio_switchover_condition },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[14] },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Output_polarity_of_Z_pulse },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[15] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[16] },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Absolute_encode_multi_turns_offset },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[17] },
                        { RW, int32, sizeof (INTEGER32), (void*)&Position_Control_Parameters_Absolute_position_offset_of_absolute_encode_Low },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[18] },
                        { RW, int32, sizeof (INTEGER32), (void*)&Position_Control_Parameters_Absolute_position_offset_of_absolute_encode_High },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[19] },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Mechanical_Gear_ratio_numerator_of_absolute_encode_mode_2 },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Mechanical_Gear_ratio_denominator_of_absolute_encode_mode_2 },
                        { RW, uint32, sizeof (UNS32), (void*)&Position_Control_Parameters_Max_value_of_mechanical_absolute_position_inc_of_absolute_encode_mode_2_Low },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[20] },
                        { RW, uint32, sizeof (UNS32), (void*)&Position_Control_Parameters_Max_value_of_mechanical_absolute_position_inc_of_absolute_encode_mode_2_High },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[21] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[22] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[23] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[24] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Position_Control_Parameters_Compatibility_Entry[25] },
                        { RW, uint16, sizeof (UNS16), (void*)&Position_Control_Parameters_Positon_reach_hold_time },
                        { RW, uint32, sizeof (UNS32), (void*)&Position_Control_Parameters_Position_window_unit_set }
                      };
@@ -1686,11 +1426,11 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Speed_Control_Parameters_Maximum_speed_threshold },
                        { RW, uint16, sizeof (UNS16), (void*)&Speed_Control_Parameters_Forward_speed_threshold },
                        { RW, uint16, sizeof (UNS16), (void*)&Speed_Control_Parameters_Reverse_speed_threshold },
-                       { RW, uint8, sizeof (UNS8), (void*)&Speed_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Speed_Control_Parameters_Compatibility_Entry[0] },
                        { RW, uint16, sizeof (UNS16), (void*)&Speed_Control_Parameters_Torque_feedforward_selection },
-                       { RW, uint8, sizeof (UNS8), (void*)&Speed_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Speed_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Speed_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Speed_Control_Parameters_Compatibility_Entry[1] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Speed_Control_Parameters_Compatibility_Entry[2] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Speed_Control_Parameters_Compatibility_Entry[3] },
                        { RW, uint16, sizeof (UNS16), (void*)&Speed_Control_Parameters_Speed_limit_for_zero_clamp },
                        { RW, uint16, sizeof (UNS16), (void*)&Speed_Control_Parameters_Motor_speed_threshold },
                        { RW, uint16, sizeof (UNS16), (void*)&Speed_Control_Parameters_Threshold_of_speed_consistent_signal },
@@ -1707,7 +1447,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_Auxiliary_torque_reference_B_source },
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_Torque_reference_source },
                        { RW, int16, sizeof (INTEGER16), (void*)&Torque_Control_Parameters_Keypad_setting_value_of_torque_reference },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[0] },
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_Torque_reference_filter_time },
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_The_second_torque_reference_filter_time },
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_Torque_limit_source },
@@ -1716,10 +1456,10 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_Internal_reverse_torque_limit },
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_External_forward_torque_limit },
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_External_reverse_torque_limit },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[1] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[2] },
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_Emergency_stop_torque },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[3] },
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_Speed_limit_source },
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_V_LMT_selection },
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_Forward_speed_limit_Speed_limit_1_in_torque_control },
@@ -1727,22 +1467,22 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_Base_value_for_torque_reached },
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_Threshold_of_torque_reached_valid },
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_Threshold_of_torque_reached_invalid },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[4] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[5] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[6] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[7] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[8] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[9] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[10] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[11] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[12] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[13] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[14] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[15] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[16] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[17] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[18] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Torque_Control_Parameters_Compatibility_Entry[19] },
                        { RW, uint16, sizeof (UNS16), (void*)&Torque_Control_Parameters_Detection_time_of_speed_limit_exceeded }
                      };
 
@@ -1757,18 +1497,18 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Gain_Parameters_The_second_speed_loop_gain },
                        { RW, uint16, sizeof (UNS16), (void*)&Gain_Parameters_The_second_speed_loop_integral_time_constant },
                        { RW, uint16, sizeof (UNS16), (void*)&Gain_Parameters_The_second_position_loop_gain },
-                       { RW, uint8, sizeof (UNS8), (void*)&Gain_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Gain_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Gain_Parameters_Compatibility_Entry[0] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Gain_Parameters_Compatibility_Entry[1] },
                        { RW, uint16, sizeof (UNS16), (void*)&Gain_Parameters_Second_gain_mode_setting },
                        { RW, uint16, sizeof (UNS16), (void*)&Gain_Parameters_Gain_switchover_condition },
                        { RW, uint16, sizeof (UNS16), (void*)&Gain_Parameters_Gain_switchover_delay },
                        { RW, uint16, sizeof (UNS16), (void*)&Gain_Parameters_Gain_switchover_level },
                        { RW, uint16, sizeof (UNS16), (void*)&Gain_Parameters_Gain_switchover_hysteresis },
                        { RW, uint16, sizeof (UNS16), (void*)&Gain_Parameters_Position_gain_switchover_time },
-                       { RW, uint8, sizeof (UNS8), (void*)&Gain_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Gain_Parameters_Compatibility_Entry[2]},
                        { RW, uint16, sizeof (UNS16), (void*)&Gain_Parameters_Average_value_of_load_inertia_ratio },
-                       { RW, uint8, sizeof (UNS8), (void*)&Gain_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Gain_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Gain_Parameters_Compatibility_Entry[3] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Gain_Parameters_Compatibility_Entry[4] },
                        { RW, uint16, sizeof (UNS16), (void*)&Gain_Parameters_Speed_feedforward_filter_time_constant },
                        { RW, uint16, sizeof (UNS16), (void*)&Gain_Parameters_Speed_feedforward_gain },
                        { RW, uint16, sizeof (UNS16), (void*)&Gain_Parameters_Torque_feedforward_filter_time_constant },
@@ -1793,8 +1533,8 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Auto_adjusting_Parameters_Acceleration_Deceleration_time_for_inertia_autotuning },
                        { RW, uint16, sizeof (UNS16), (void*)&Auto_adjusting_Parameters_Interval_after_an_inertia_autotuning },
                        { RO, uint16, sizeof (UNS16), (void*)&Auto_adjusting_Parameters_Motor_revolutions_for_an_inertia_auto_tuning },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry[0] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry[1] },
                        { RW, uint16, sizeof (UNS16), (void*)&Auto_adjusting_Parameters_1st_notch_frequency },
                        { RW, uint16, sizeof (UNS16), (void*)&Auto_adjusting_Parameters_1st_notch_width_level },
                        { RW, uint16, sizeof (UNS16), (void*)&Auto_adjusting_Parameters_1st_notch_attenuation_level },
@@ -1808,19 +1548,19 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Auto_adjusting_Parameters_4th_notch_width_level },
                        { RW, uint16, sizeof (UNS16), (void*)&Auto_adjusting_Parameters_4th_notch_attenuation_level },
                        { RO, uint16, sizeof (UNS16), (void*)&Auto_adjusting_Parameters_Obtained_resonance_frequency },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry[2] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry[3] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry[4] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry[5] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry[6] },
                        { RW, int16, sizeof (INTEGER16), (void*)&Auto_adjusting_Parameters_Disturbance_torque_compensation_gain },
                        { RW, uint16, sizeof (UNS16), (void*)&Auto_adjusting_Parameters_Disturbance_observer_filter_time_constant },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry[7] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry[8] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry[9] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry[10] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry[11] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auto_adjusting_Parameters_Compatibility_Entry[12] },
                        { RW, uint16, sizeof (UNS16), (void*)&Auto_adjusting_Parameters_Low_frequency_vibration_frequency },
                        { RW, uint16, sizeof (UNS16), (void*)&Auto_adjusting_Parameters_Filter_of_low_frequency_vibration_frequency }
                      };
@@ -1832,26 +1572,26 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RO, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj200A },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Power_input_phase_loss_protection },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Absolute_position_limit_set },
-                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry[0] },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Retentive_at_power_failure },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Motor_overload_protection_gain },
-                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry[1] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry[2] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry[3] },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Overspeed_threshold },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Maximum_position_pulse_frequency },
                        { RW, uint32, sizeof (UNS32), (void*)&Fault_and_Protection_Threshold_of_position_deviation_fault },
-                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry[4] },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Run_away_protection },
-                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry[5] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry[6] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry[7] },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Position_deviation_threshold_in_low_frequency_vibration },
-                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry[8] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry[9] },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_DI8_filter_time },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_DI9_filter_time },
-                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry[10] },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Sigma_delta_filter_time },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Tz_signal_filter_time },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Filter_time_of_low_speed_pulse_input_pin },
@@ -1861,7 +1601,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Quadrature_encoder_filter_time },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Line_encoder_filter_time },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Filter_time_constant_of_high_speed_pulse_input_pin },
-                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Fault_and_Protection_Compatibility_Entry[11] },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Overheat_protection_time_duration_for_locked_rotor },
                        { RW, uint16, sizeof (UNS16), (void*)&Fault_and_Protection_Overheat_protection_for_locked_rotor }
                      };
@@ -1871,43 +1611,43 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     subindex _Index200B[] = 
                      {
                        { RO, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj200B },
-                       { RO, int16, sizeof (INTEGER16), (void*)&Display_Parameters_Actual_motor_rotational_speed },
+                       { RO, int16, sizeof (INTEGER16), (void*)&Display_Parameters_Actual_motor_rotational_speed_200B01 },
                        { RO, int16, sizeof (INTEGER16), (void*)&Display_Parameters_Speed_reference },
                        { RO, int16, sizeof (INTEGER16), (void*)&Display_Parameters_Internal_torque_reference },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Monitored_DI_states },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[0] },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Monitored_DO_states },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[1] },
                        { RO, int32, sizeof (INTEGER32), (void*)&Display_Parameters_Absolute_position_counter },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[2] },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Mechanical_angle },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Electrical_angle },
                        { RO, int16, sizeof (INTEGER16), (void*)&Display_Parameters_Speed_corresponding_to_input_position_reference },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Average_load_rate },
                        { RO, int32, sizeof (INTEGER32), (void*)&Display_Parameters_Input_reference_pulse_counter },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[3] },
                        { RO, int32, sizeof (INTEGER32), (void*)&Display_Parameters_Encoder_position_deviation_counter },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[4] },
                        { RO, int32, sizeof (INTEGER32), (void*)&Display_Parameters_Feedback_pulse_counter },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[5] },
                        { RO, uint32, sizeof (UNS32), (void*)&Display_Parameters_Total_power_on_time },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[6] },
                        { RO, int16, sizeof (INTEGER16), (void*)&Display_Parameters_AI1_sampling_voltage },
                        { RO, int16, sizeof (INTEGER16), (void*)&Display_Parameters_AI2_sampling_voltage },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[7] },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Phase_current_valid_value },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[8] },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Bus_voltage },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Module_temperature },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[9] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[10] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[11] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[12] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[13] },
                        { RW, uint16, sizeof (UNS16), (void*)&Display_Parameters_Displayed_fault_record },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Fault_code },
                        { RO, uint32, sizeof (UNS32), (void*)&Display_Parameters_Time_stamp_upon_displayed_fault },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[14] },
                        { RO, int16, sizeof (INTEGER16), (void*)&Display_Parameters_Current_rotational_speed_upon_displayed_fault },
                        { RO, int16, sizeof (INTEGER16), (void*)&Display_Parameters_Current_U_upon_displayed_fault },
                        { RO, int16, sizeof (INTEGER16), (void*)&Display_Parameters_Current_V_upon_displayed_fault },
@@ -1921,41 +1661,41 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_System_state_from_Fpga_upon_displayed_fault },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_System_fault_message_from_Fpga_upon_displayed_fault },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Encode_state_1_upon_displayed_fault },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[15] },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Inner_error_code_upon_displayed_fault },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Fpga_overtime_state_upon_displayed_fault },
                        { RO, int32, sizeof (INTEGER32), (void*)&Display_Parameters_Reference_position_deviation },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
-                       { RO, int32, sizeof (INTEGER32), (void*)&Display_Parameters_Actual_motor_rotational_speed },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[16] },
+                       { RO, int16, sizeof (UNS16), (void*)&Display_Parameters_Actual_motor_rotational_speed_200B38 },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[17] },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Control_bus_voltage },
                        { RO, int32, sizeof (INTEGER32), (void*)&Display_Parameters_Mechanical_absolute_position_inc_Low },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[18] },
                        { RO, int32, sizeof (INTEGER32), (void*)&Display_Parameters_Mechanical_absolute_position_inc_High },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[19] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[20] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[21] },
                        { RO, int32, sizeof (INTEGER32), (void*)&Display_Parameters_Real_Time_Input_reference_pulse_counter },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[22] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[23] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[24] },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Fpga_over_time_state },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[25] },
                        { RO, uint16, sizeof (UNS16), (void*)&Display_Parameters_Number_of_turns_of_absolute_encode },
                        { RO, int32, sizeof (INTEGER32), (void*)&Display_Parameters_Single_feedback_postion_of_absolute_encode },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[26] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[27] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[28] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[29] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[30] },
                        { RO, int32, sizeof (INTEGER32), (void*)&Display_Parameters_feedback_postion_of_absolute_encode_Low },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[31] },
                        { RO, int32, sizeof (INTEGER32), (void*)&Display_Parameters_feedback_postion_of_absolute_encode_High },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[32] },
                        { RO, uint32, sizeof (UNS32), (void*)&Display_Parameters_feedback_postion_inc_of_rotating_load_Low },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[33] },
                        { RO, uint32, sizeof (UNS32), (void*)&Display_Parameters_feedback_postion_inc_of_rotating_load_High },
-                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Display_Parameters_Compatibility_Entry[34] },
                        { RO, uint32, sizeof (UNS32), (void*)&Display_Parameters_Single_feedback_postion_of_rotating_load }
                      };
 
@@ -1965,13 +1705,13 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      {
                        { RO, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj200C },
                        { RW, uint16, sizeof (UNS16), (void*)&Communication_Parameters_Servo_shaft_address },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[0] },
                        { RW, uint16, sizeof (UNS16), (void*)&Communication_Parameters_Serial_port_baud_rate },
                        { RW, uint16, sizeof (UNS16), (void*)&Communication_Parameters_Modbus_data_format },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[1] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[2] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[3] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[4] },
                        { RW, uint16, sizeof (UNS16), (void*)&Communication_Parameters_CAN_communication_rate },
                        { RW, uint16, sizeof (UNS16), (void*)&Communication_Parameters_Communication_virtual_DI },
                        { RW, uint16, sizeof (UNS16), (void*)&Communication_Parameters_Default_virtual_level_of_VDI_at_power_on },
@@ -1979,23 +1719,23 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Communication_Parameters_Default_virtual_level_of_VDO_allocated_with_function_0 },
                        { RW, uint16, sizeof (UNS16), (void*)&Communication_Parameters_Update_function_code_values_written_via_communication_to_EEPROM },
                        { RO, uint16, sizeof (UNS16), (void*)&Communication_Parameters_Modbus_Error_code },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[5] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[6] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[7] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[8] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[9] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[10] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[11] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[12] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[13] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[14] },
                        { RW, uint16, sizeof (UNS16), (void*)&Communication_Parameters_Modbus_send_delay_time },
                        { RW, uint16, sizeof (UNS16), (void*)&Communication_Parameters_Modbus_32_bit_function_code_transmission_sequence },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[15] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[16] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[17] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[18] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Communication_Parameters_Compatibility_Entry[19] },
                        { RO, uint16, sizeof (UNS16), (void*)&Communication_Parameters_CAN_Receive_Frame_Counter_Per_Second },
                        { RO, uint16, sizeof (UNS16), (void*)&Communication_Parameters_CAN_Max_Receive_Frame_Error_Counter_Per_Second },
                        { RO, uint16, sizeof (UNS16), (void*)&Communication_Parameters_CAN_Max_Transmit_Frame_Error_Counter_Per_Second },
@@ -2010,20 +1750,20 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Auxiliary_Function_Parameters_Software_reset },
                        { RW, uint16, sizeof (UNS16), (void*)&Auxiliary_Function_Parameters_Fault_reset },
                        { RW, uint16, sizeof (UNS16), (void*)&Auxiliary_Function_Parameters_Load_inertia_autotuning },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry[0] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry[1] },
                        { RW, uint16, sizeof (UNS16), (void*)&Auxiliary_Function_Parameters_Emergency_stop },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry[2] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry[3] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry[4] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry[5] },
                        { RW, uint16, sizeof (UNS16), (void*)&Auxiliary_Function_Parameters_Analog_automatic_adjustment },
                        { RW, uint16, sizeof (UNS16), (void*)&Auxiliary_Function_Parameters_Jog_function },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry[6] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry[7] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry[8] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry[9] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Auxiliary_Function_Parameters_Compatibility_Entry[10] },
                        { RW, uint16, sizeof (UNS16), (void*)&Auxiliary_Function_Parameters_Forced_input_and_output_mode_of_DI_DO },
                        { RW, uint16, sizeof (UNS16), (void*)&Auxiliary_Function_Parameters_Forced_input_setting_of_DI },
                        { RW, uint16, sizeof (UNS16), (void*)&Auxiliary_Function_Parameters_Forced_output_setting_of_DO },
@@ -2037,24 +1777,24 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RO, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj200F },
                        { RW, uint16, sizeof (UNS16), (void*)&Full_Closed_loop_Parameters_Encoder_feedback_mode },
                        { RW, uint16, sizeof (UNS16), (void*)&Full_Closed_loop_Parameters_Running_mode_of_external_encoder },
-                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry[0] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry[1] },
                        { RW, uint32, sizeof (UNS32), (void*)&Full_Closed_loop_Parameters_External_encoder_pulses_per_motor_revolution },
-                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry[2] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry[3] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry[4] },
                        { RW, uint32, sizeof (UNS32), (void*)&Full_Closed_loop_Parameters_Hybrid_deviation_excess_setting },
-                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry[5] },
                        { RW, uint16, sizeof (UNS16), (void*)&Full_Closed_loop_Parameters_Hybrid_deviation_clear_setting },
-                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry[6] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry[7] },
                        { RW, uint16, sizeof (UNS16), (void*)&Full_Closed_loop_Parameters_First_order_lowpass_filter_time_of_external_internal_deviation },
-                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry[8] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry[9] },
                        { RO, uint32, sizeof (UNS32), (void*)&Full_Closed_loop_Parameters_Hybrid_deviation_counter },
-                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry[10] },
                        { RO, uint32, sizeof (UNS32), (void*)&Full_Closed_loop_Parameters_Pulse_feedback_display_of_internal_encoder },
-                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Full_Closed_loop_Parameters_Compatibility_Entry[11] },
                        { RO, uint32, sizeof (UNS32), (void*)&Full_Closed_loop_Parameters_Pulse_feedback_display_of_external_encoder }
                      };
 
@@ -2069,89 +1809,89 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Time_unit },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Displacement_reference_type },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Start_position_of_sequential_running },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[0] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[1] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[2] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[3] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[4] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[5] },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_1st_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[6] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_1st_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_1st_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_1st_displacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_2nd_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[7] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_2nd_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_2nd_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_2nd_displacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_3rd_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[8] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_3rd_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_3rd_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_3rddisplacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_4th_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[9] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_4th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_4th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_4th_displacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_5th_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[10] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_5th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_5th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_5th_displacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_6th_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[11] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_6th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_6th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_6th_displacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_7th_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[12] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_7th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_7th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_7th_displacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_8th_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[13] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_8th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_8th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_8th_displacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_9th_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[14] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_9th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_9th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_9th_displacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_10th_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[15] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_10th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_10th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_10th_displacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_11th_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[16] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_11th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_11th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_11th_displacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_12th_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[17] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_12th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_12th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_12th_displacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_13th_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[18] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_13th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_13th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_13th_displacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_14th_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[19] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_14th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_14th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_14th_displacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_15th_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[20] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_15th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_15th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_15th_displacement },
                        { RW, int32, sizeof (INTEGER32), (void*)&Multi_Position_Function_Parameters_16th_displacement },
-                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Multi_Position_Function_Parameters_Compatibility_Entry[21] },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Maximum_running_speed_of_16th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_16th_displacement },
                        { RW, uint16, sizeof (UNS16), (void*)&Multi_Position_Function_Parameters_Waiting_time_after_16th_displacement }
@@ -2246,16 +1986,16 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      {
                        { RO, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj2031 },
                        { RW, uint16, sizeof (UNS16), (void*)&Servo_Related_Variables_Set_via_Communication_VDI_virtuallevel_set_via_communication },
-                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry[0] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry[1] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry[2] },
                        { RW, uint16, sizeof (UNS16), (void*)&Servo_Related_Variables_Set_via_Communication_DO_state_set_via_communication },
-                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry },
-                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry[3] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry[4] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry[5] },
+                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry[6] },
                        { RW, int32, sizeof (INTEGER32), (void*)&Servo_Related_Variables_Set_via_Communication_Speed_reference_set_via_communication },
-                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry },
+                       { RW, uint8, sizeof (UNS8), (void*)&Servo_Related_Variables_Set_via_Communication_Compatibility_Entry[7] },
                        { RW, int32, sizeof (INTEGER32), (void*)&Servo_Related_Variables_Set_via_Communication_Torque_reference_set_via_communication }
                      };
 
@@ -2322,7 +2062,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 /* index 0x6064 :   Mapped variable Position actual value */
                     subindex _Index6064[] = 
                      {
-                       { RO, int32, sizeof (INTEGER32), (void*)&Position_actual_value }
+                       { RO, int32, sizeof (INTEGER32), (void*)&Position_actual_value_user }
                      };
 
 /* index 0x6065 :   Mapped variable Maximal following error */
@@ -2579,7 +2319,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      {
                        { RO, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj60FE },
                        { RO, uint32, sizeof (UNS32), (void*)&Digital_outputs_Physical_outputs },
-                       { RO, uint32, sizeof (UNS32), (void*)&Digital_outputs__empty }
+                       { RO, uint32, sizeof (UNS32), (void*)&Digital_outputs_empty }
                      };
 
 /* index 0x60FF :   Mapped variable Target velocity */
@@ -2850,5 +2590,5 @@ const quick_index _lastIndex = {
 
 const UNS16 _ObjdictSize = sizeof(_objdict)/sizeof(_objdict[0]); 
 
-CO_Data _Data = CANOPEN_NODE_DATA_INITIALIZER();
+CO_Data masterObjdict_Data = CANOPEN_NODE_DATA_INITIALIZER();
 

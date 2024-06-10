@@ -82,7 +82,7 @@
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>fromelf --text -a -c --output=CAS_MX.dis C:\Users\WhiteKite2020\Desktop\CAS_MX\MDK-ARM\CAS_MX\CAS_MX.axf</UserProg1Name>
+            <UserProg1Name>fromelf --text -a -c --output=CAS_MX.dis C:\Users\Insprison7447\Desktop\CAS_MX\MDK-ARM\CAS_MX\CAS_MX.axf</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -811,21 +811,6 @@
               <FileName>mb4_1sf_driver.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\IC_MB4\mb4_1sf_driver.c</FilePath>
-            </File>
-            <File>
-              <FileName>oled.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\OLED\oled.c</FilePath>
-            </File>
-            <File>
-              <FileName>lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\ST7789\lcd.c</FilePath>
-            </File>
-            <File>
-              <FileName>lcd_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\HARDWARE\ST7789\lcd_init.c</FilePath>
             </File>
           </Files>
         </Group>
