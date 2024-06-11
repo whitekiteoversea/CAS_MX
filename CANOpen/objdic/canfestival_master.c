@@ -751,20 +751,33 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint8, sizeof (UNS8), (void*)&_obj1029_Communication_Error }
                      };
 
-/* index 0x1200 :   Server SDO Parameter. */
-                    UNS8 _highestSubIndex_obj1200 = 2; /* number of subindex - 1*/
-                    UNS32 _obj1200_COB_ID_Client_to_Server_Receive_SDO = 0x600;	/* 1536 */
-                    UNS32 _obj1200_COB_ID_Server_to_Client_Transmit_SDO = 0x580;	/* 1408 */
-                    subindex _Index1200[] = 
-                     {
-                       { RO, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj1200 },
-                       { RO, uint32, sizeof (UNS32), (void*)&_obj1200_COB_ID_Client_to_Server_Receive_SDO },
-                       { RO, uint32, sizeof (UNS32), (void*)&_obj1200_COB_ID_Server_to_Client_Transmit_SDO }
-                     };
+// /* index 0x1200 :   Server SDO Parameter. */  // MCU As Server
+//                     UNS8 _highestSubIndex_obj1200 = 2; /* number of subindex - 1*/
+//                     UNS32 _obj1200_COB_ID_Client_to_Server_Receive_SDO = 0x608;	/* 1536 */
+//                     UNS32 _obj1200_COB_ID_Server_to_Client_Transmit_SDO = 0x588;	/* 1408 */
+//                     subindex _Index1200[] = 
+//                      {
+//                        { RO, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj1200 },
+//                        { RO, uint32, sizeof (UNS32), (void*)&_obj1200_COB_ID_Client_to_Server_Receive_SDO },
+//                        { RO, uint32, sizeof (UNS32), (void*)&_obj1200_COB_ID_Server_to_Client_Transmit_SDO }
+//                      };
+
+/* index 0x1280 :   Client SDO 1 Parameter. */  // MCU As Client
+                    UNS8 _highestSubIndex_obj1280 = 3; /* number of subindex - 1*/
+                    UNS32 _obj1280_COB_ID_Client_to_Server_Transmit_SDO = 0x608;	/* 1537 */
+                    UNS32 _obj1280_COB_ID_Server_to_Client_Receive_SDO = 0x588;	/* 1409 */
+                    UNS8 _obj1280_Node_ID_of_the_SDO_Server = 0x8;	/* 1 */
+                    subindex _Index1280[] = 
+									  {
+											 { RO, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj1280 },
+											 { RW, uint32, sizeof (UNS32), (void*)&_obj1280_COB_ID_Client_to_Server_Transmit_SDO },
+											 { RW, uint32, sizeof (UNS32), (void*)&_obj1280_COB_ID_Server_to_Client_Receive_SDO },
+											 { RW, uint8, sizeof (UNS8), (void*)&_obj1280_Node_ID_of_the_SDO_Server }
+									  };
 
 /* index 0x1400 :   Receive PDO 1 Parameter. */
                     UNS8 _highestSubIndex_obj1400 = 2; /* number of subindex - 1*/
-                    UNS32 _obj1400_COB_ID_used_by_PDO = 0x200;	/* 512 */
+                    UNS32 _obj1400_COB_ID_used_by_PDO = 0x208;	/* 512 */
                     UNS8 _obj1400_Transmission_Type = 0x1;	/* 1 */
                     subindex _Index1400[] = 
                      {
@@ -775,7 +788,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1401 :   Receive PDO 2 Parameter. */
                     UNS8 _highestSubIndex_obj1401 = 2; /* number of subindex - 1*/
-                    UNS32 _obj1401_COB_ID_used_by_PDO = 0x300;	/* 768 */
+                    UNS32 _obj1401_COB_ID_used_by_PDO = 0x80000308;	/* 768 */
                     UNS8 _obj1401_Transmission_Type = 0x1;	/* 1 */
                     subindex _Index1401[] = 
                      {
@@ -786,7 +799,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1402 :   Receive PDO 3 Parameter. */
                     UNS8 _highestSubIndex_obj1402 = 2; /* number of subindex - 1*/
-                    UNS32 _obj1402_COB_ID_used_by_PDO = 0x80000400;	/* 2147484672 */
+                    UNS32 _obj1402_COB_ID_used_by_PDO = 0x80000408;	/* 2147484672 */
                     UNS8 _obj1402_Transmission_Type = 0xFF;	/* 255 */
                     subindex _Index1402[] = 
                      {
@@ -797,7 +810,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1403 :   Receive PDO 4 Parameter. */
                     UNS8 _highestSubIndex_obj1403 = 2; /* number of subindex - 1*/
-                    UNS32 _obj1403_COB_ID_used_by_PDO = 0x80000500;	/* 2147484928 */
+                    UNS32 _obj1403_COB_ID_used_by_PDO = 0x80000508;	/* 2147484928 */
                     UNS8 _obj1403_Transmission_Type = 0xFF;	/* 255 */
                     subindex _Index1403[] = 
                      {
@@ -912,7 +925,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1800 :   Transmit PDO 1 Parameter. */
                     UNS8 _highestSubIndex_obj1800 = 5; /* number of subindex - 1*/
-                    UNS32 _obj1800_COB_ID_used_by_PDO = 0x40000180;	/* 1073742208 */
+                    UNS32 _obj1800_COB_ID_used_by_PDO = 0x00000188;	/* 1073742208 */
                     UNS8 _obj1800_Transmission_Type = 0x1;	/* 1 */
                     UNS16 _obj1800_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 _obj1800_Compatibility_Entry = 0x0;	/* 0 */
@@ -938,7 +951,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1801 :   Transmit PDO 2 Parameter. */
                     UNS8 _highestSubIndex_obj1801 = 5; /* number of subindex - 1*/
-                    UNS32 _obj1801_COB_ID_used_by_PDO = 0x40000280;	/* 1073742464 */
+                    UNS32 _obj1801_COB_ID_used_by_PDO = 0x80000288;	/* 1073742464 */
                     UNS8 _obj1801_Transmission_Type = 0x1;	/* 1 */
                     UNS16 _obj1801_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 _obj1801_Compatibility_Entry = 0x0;	/* 0 */
@@ -964,7 +977,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1802 :   Transmit PDO 3 Parameter. */
                     UNS8 _highestSubIndex_obj1802 = 5; /* number of subindex - 1*/
-                    UNS32 _obj1802_COB_ID_used_by_PDO = 0xC0000380;	/* 3221226368 */
+                    UNS32 _obj1802_COB_ID_used_by_PDO = 0xC0000388;	/* 3221226368 */
                     UNS8 _obj1802_Transmission_Type = 0xFF;	/* 255 */
                     UNS16 _obj1802_Inhibit_Time = 0x3E8;	/* 1000 */
                     UNS8 _obj1802_Compatibility_Entry = 0x0;	/* 0 */
@@ -990,7 +1003,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1803 :   Transmit PDO 4 Parameter. */
                     UNS8 _highestSubIndex_obj1803 = 5; /* number of subindex - 1*/
-                    UNS32 _obj1803_COB_ID_used_by_PDO = 0xC0000480;	/* 3221226624 */
+                    UNS32 _obj1803_COB_ID_used_by_PDO = 0xC0000488;	/* 3221226624 */
                     UNS8 _obj1803_Transmission_Type = 0xFF;	/* 255 */
                     UNS16 _obj1803_Inhibit_Time = 0x3E8;	/* 1000 */
                     UNS8 _obj1803_Compatibility_Entry = 0x0;	/* 0 */
@@ -2355,7 +2368,8 @@ const indextable _objdict[] =
   { (subindex*)_Index1017,sizeof(_Index1017)/sizeof(_Index1017[0]), 0x1017},
   { (subindex*)_Index1018,sizeof(_Index1018)/sizeof(_Index1018[0]), 0x1018},
   { (subindex*)_Index1029,sizeof(_Index1029)/sizeof(_Index1029[0]), 0x1029},
-  { (subindex*)_Index1200,sizeof(_Index1200)/sizeof(_Index1200[0]), 0x1200},
+  //{ (subindex*)_Index1200,sizeof(_Index1200)/sizeof(_Index1200[0]), 0x1200},
+  { (subindex*)_Index1280,sizeof(_Index1280)/sizeof(_Index1280[0]), 0x1280},
   { (subindex*)_Index1400,sizeof(_Index1400)/sizeof(_Index1400[0]), 0x1400},
   { (subindex*)_Index1401,sizeof(_Index1401)/sizeof(_Index1401[0]), 0x1401},
   { (subindex*)_Index1402,sizeof(_Index1402)/sizeof(_Index1402[0]), 0x1402},
@@ -2444,6 +2458,8 @@ const indextable _objdict[] =
   { (subindex*)_Index60FE,sizeof(_Index60FE)/sizeof(_Index60FE[0]), 0x60FE},
   { (subindex*)_Index60FF,sizeof(_Index60FF)/sizeof(_Index60FF[0]), 0x60FF},
   { (subindex*)_Index6502,sizeof(_Index6502)/sizeof(_Index6502[0]), 0x6502},
+
+
 };
 
 const indextable * _scanIndexOD (UNS16 wIndex, UNS32 * errorCode, ODCallback_t **callbacks)
@@ -2466,8 +2482,11 @@ const indextable * _scanIndexOD (UNS16 wIndex, UNS32 * errorCode, ODCallback_t *
 		case 0x1017: i = 12;*callbacks = _Index1017_callbacks; break;
 		case 0x1018: i = 13;break;
 		case 0x1029: i = 14;break;
-		case 0x1200: i = 15;break;
-		case 0x1400: i = 16;break;
+		// case 0x1200: i = 15;break;
+
+    case 0x1280: i = 15;break;
+		
+    case 0x1400: i = 16;break;
 		case 0x1401: i = 17;break;
 		case 0x1402: i = 18;break;
 		case 0x1403: i = 19;break;
@@ -2570,9 +2589,12 @@ const indextable * _scanIndexOD (UNS16 wIndex, UNS32 * errorCode, ODCallback_t *
  */
 s_PDO_status _PDO_status[4] = {s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer};
 
+// point to the scope of info
 const quick_index _firstIndex = {
-  15, /* SDO_SVR */
-  0, /* SDO_CLT */
+  0, /* SDO_SVR */
+  // 0, /* SDO_CLT */
+  15, /* SDO_CLT */
+
   16, /* PDO_RCV */
   20, /* PDO_RCV_MAP */
   24, /* PDO_TRS */
@@ -2580,8 +2602,10 @@ const quick_index _firstIndex = {
 };
 
 const quick_index _lastIndex = {
-  15, /* SDO_SVR */
-  0, /* SDO_CLT */
+  0, /* SDO_SVR */
+  //0, /* SDO_CLT */
+
+  15, /* SDO_CLT */
   19, /* PDO_RCV */
   23, /* PDO_RCV_MAP */
   27, /* PDO_TRS */

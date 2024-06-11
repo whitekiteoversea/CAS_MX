@@ -611,16 +611,21 @@ void canopen_send_sdo(uint16_t *message_sdo)
 uint8_t canOpenSDOConfig(void)
 {
     uint8_t cnt = 0;
-    uint16_t msg[9] = {0x608,0x23,0x00,0x18,0x01,0x88,0x01,0x00,0x80}; // disable tpdo
+    uint8_t ret = 0;
+    
+    UNS8 content = 0x01; // speed mode
+    UNS8 cobID[4] = {0x88, 0x02, 0x00, 0x00};
     
     printf ("CANOpen: SDO Send Start! \n\r");
-		for(cnt=0;cnt<16 ;cnt++){
-			canopen_send_sdo(msg_allpdoDisable[cnt]);
-      // pair to WriteNetworkDic to close current sdo line
-      closeSDOtransfer(&masterObjdict_Data, SLAVECANID, SDO_CLIENT); 
-			HAL_Delay(20);
-		}
+
+    ret = writeNetworkDict(&masterObjdict_Data, can_var.slaveCANID, 0x6060, 0x00, 1, uint8, &content, 0);
+    closeSDOtransfer(&masterObjdict_Data, can_var.slaveCANID, SDO_CLIENT);
+
+    HAL_Delay(20);
+    ret = writeNetworkDict(&masterObjdict_Data, can_var.slaveCANID, 0x1801, 0x01, 4, uint8, cobID, 0);
+    closeSDOtransfer(&masterObjdict_Data, can_var.slaveCANID, SDO_CLIENT);
+
     printf ("CANOpen: SDO Send END! \n\r");
 
-    return 0;
+    return ret;
 }

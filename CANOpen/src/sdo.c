@@ -757,7 +757,7 @@ UNS8 proceedSDO (CO_Data* d, Message *m)
 	UNS8 subIndex;
 	UNS32 abortCode;
 	UNS32 i;
-	UNS8	j;
+	UNS8  j;
 	UNS32 *pCobId = NULL;
 	UNS16 offset;
 	UNS16 lastIndex;

@@ -174,9 +174,7 @@ proceedPDO (CO_Data * d, Message * m)
 
   status = state2;
 
-  printf("************CANOpen: Into proceedPDO!************\r\n");
-
-  MSG_WAR (0x3935, "proceedPDO, cobID : ", (UNS16_LE(m->cob_id) & 0x7ff));
+  // MSG_WAR (0x3935, "proceedPDO, cobID : ", (UNS16_LE(m->cob_id) & 0x7ff));
   offset = 0x00;
   numPdo = 0;
   numMap = 0;
@@ -380,10 +378,6 @@ proceedPDO (CO_Data * d, Message * m)
               }                 /* end switch status */
           }                     /* end while */
     }                           /* end if Requete */
-
-
-  printf("************CANOpen: NormalEND of proceedPDO!************\r\n");
-
   return 0;
 }
 
