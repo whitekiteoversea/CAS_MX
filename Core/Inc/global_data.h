@@ -90,9 +90,9 @@ typedef struct {
 } GLOBAL_ETH_UDP_VAR;
 
 typedef struct {
-  uint8_t g_posi[5];      // unit depends on BISS-C
+  uint8_t g_posi[4];      // unit depends on BISS-C
 	int32_t g_Distance; 	// um
-	int16_t g_Speed; 			// rpm
+	int32_t g_Speed; 			// rpm
   int16_t g_phaseAmp;   // A
 
 	uint32_t g_InitialPosi; //um

@@ -560,7 +560,7 @@ UNS32 Supported_drive_modes = 0x6D;		/* Mapped at index 0x6502, subindex 0x00 */
 /**************************************************************************/
 
 #define valueRange_EMC 0x9F /* Type for index 0x1003 subindex 0x00 (only set of value 0 is possible) */
-UNS32 _valueRangeTest (UNS8 typeValue, void * value)
+UNS32 canfestival_master_valueRangeTest (UNS8 typeValue, void * value)
 {
   switch (typeValue) {
     case valueRange_EMC:
@@ -574,14 +574,14 @@ UNS32 _valueRangeTest (UNS8 typeValue, void * value)
 /* The node id                                                            */
 /**************************************************************************/
 /* node_id default value.*/
-UNS8 _bDeviceNodeId = 0x00;
+UNS8 canfestival_master_bDeviceNodeId = 0x00;
 
 /**************************************************************************/
 /* Array of message processing information */
 
-const UNS8 _iam_a_slave = 1;
+const UNS8 canfestival_master_iam_a_slave = 1;
 
-TIMER_HANDLE _heartBeatTimers[5] = {TIMER_NONE,TIMER_NONE,TIMER_NONE,TIMER_NONE,TIMER_NONE};
+TIMER_HANDLE canfestival_master_heartBeatTimers[5] = {TIMER_NONE,TIMER_NONE,TIMER_NONE,TIMER_NONE,TIMER_NONE};
 
 /*
 $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
@@ -599,15 +599,15 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1001 :   Error Register. */
-                    UNS8 _obj1001 = 0x0;	/* 0 */
+                    UNS8 canfestival_master_obj1001 = 0x0;	/* 0 */
                     subindex _Index1001[] = 
                      {
-                       { RO, uint8, sizeof (UNS8), (void*)&_obj1001 }
+                       { RO, uint8, sizeof (UNS8), (void*)&canfestival_master_obj1001 }
                      };
 
 /* index 0x1003 :   Pre-defined Error Field. */
-                    UNS8 _highestSubIndex_obj1003 = 0; /* number of subindex - 1*/
-                    UNS32 _obj1003[] = 
+                    UNS8 canfestival_master_highestSubIndex_obj1003 = 0; /* number of subindex - 1*/
+                    UNS32 canfestival_master_obj1003[] = 
                     {
                       0x0,	/* 0 */
                       0x0,	/* 0 */
@@ -624,33 +624,33 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
                     subindex _Index1003[] = 
                      {
-                       { RW, valueRange_EMC, sizeof (UNS8), (void*)&_highestSubIndex_obj1003 },
-                       { RO, uint32, sizeof (UNS32), (void*)&_obj1003[0] },
-                       { RO, uint32, sizeof (UNS32), (void*)&_obj1003[1] },
-                       { RO, uint32, sizeof (UNS32), (void*)&_obj1003[2] },
-                       { RO, uint32, sizeof (UNS32), (void*)&_obj1003[3] }
+                       { RW, valueRange_EMC, sizeof (UNS8), (void*)&canfestival_master_highestSubIndex_obj1003 },
+                       { RO, uint32, sizeof (UNS32), (void*)&canfestival_master_obj1003[0] },
+                       { RO, uint32, sizeof (UNS32), (void*)&canfestival_master_obj1003[1] },
+                       { RO, uint32, sizeof (UNS32), (void*)&canfestival_master_obj1003[2] },
+                       { RO, uint32, sizeof (UNS32), (void*)&canfestival_master_obj1003[3] }
                      };
 
 /* index 0x1005 :   SYNC COB ID. */
-                    UNS32 _obj1005 = 0x80;	/* 128 */
+                    UNS32 canfestival_master_obj1005 = 0x00000080;	/* 128 */
                     ODCallback_t _Index1005_callbacks[] = 
-                     {
-                       NULL,
-                     };
+										 {
+											 NULL,
+										 };
                     subindex _Index1005[] = 
                      {
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1005 }
+                       { RW, uint32, sizeof (UNS32), (void*)&canfestival_master_obj1005 }
                      };
 
 /* index 0x1006 :   Communication / Cycle Period. */
-                    UNS32 _obj1006 = 0x0;	/* 0 */
+                    UNS32 canfestival_master_obj1006 = 0x3E8;	/* 1ms SYNC */
                     ODCallback_t _Index1006_callbacks[] = 
                      {
                        NULL,
                      };
                     subindex _Index1006[] = 
                      {
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1006 }
+                       { RW, uint32, sizeof (UNS32), (void*)&canfestival_master_obj1006 }
                      };
 
 /* index 0x1008 :   Manufacturer Device Name. */
@@ -678,29 +678,29 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x100C :   Guard Time. */
-                    UNS16 _obj100C = 0x0;	/* 0 */
+                    UNS16 canfestival_master_obj100C = 0x0;	/* 0 */
                     subindex _Index100C[] = 
                      {
-                       { RW, uint16, sizeof (UNS16), (void*)&_obj100C }
+                       { RW, uint16, sizeof (UNS16), (void*)&canfestival_master_obj100C }
                      };
 
 /* index 0x100D :   Life Time Factor. */
-                    UNS8 _obj100D = 0x0;	/* 0 */
+                    UNS8 canfestival_master_obj100D = 0x0;	/* 0 */
                     subindex _Index100D[] = 
                      {
-                       { RW, uint8, sizeof (UNS8), (void*)&_obj100D }
+                       { RW, uint8, sizeof (UNS8), (void*)&canfestival_master_obj100D }
                      };
 
 /* index 0x1014 :   Emergency COB ID. */
-                    UNS32 _obj1014 = 0x80;	/* 128 */
+                    UNS32 canfestival_master_obj1014 = 0x80;	/* 128 */
                     subindex _Index1014[] = 
                      {
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1014 }
+                       { RW, uint32, sizeof (UNS32), (void*)&canfestival_master_obj1014 }
                      };
 
 /* index 0x1016 :   Consumer Heartbeat Time. */
-                    UNS8 _highestSubIndex_obj1016 = 5; /* number of subindex - 1*/
-                    UNS32 _obj1016[] = 
+                    UNS8 canfestival_master_highestSubIndex_obj1016 = 5; /* number of subindex - 1*/
+                    UNS32 canfestival_master_obj1016[] = 
                     {
                       0x0,	/* 0 */
                       0x0,	/* 0 */
@@ -710,23 +710,23 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     };
                     subindex _Index1016[] = 
                      {
-                       { RO, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj1016 },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1016[0] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1016[1] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1016[2] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1016[3] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1016[4] }
+                       { RO, uint8, sizeof (UNS8), (void*)&canfestival_master_highestSubIndex_obj1016 },
+                       { RW, uint32, sizeof (UNS32), (void*)&canfestival_master_obj1016[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&canfestival_master_obj1016[1] },
+                       { RW, uint32, sizeof (UNS32), (void*)&canfestival_master_obj1016[2] },
+                       { RW, uint32, sizeof (UNS32), (void*)&canfestival_master_obj1016[3] },
+                       { RW, uint32, sizeof (UNS32), (void*)&canfestival_master_obj1016[4] }
                      };
 
 /* index 0x1017 :   Producer Heartbeat Time. */
-                    UNS16 _obj1017 = 0x0;	/* 0 */
+                    UNS16 canfestival_master_obj1017 = 0x0;	/* 0 */
                     ODCallback_t _Index1017_callbacks[] = 
                      {
                        NULL,
                      };
                     subindex _Index1017[] = 
                      {
-                       { RW, uint16, sizeof (UNS16), (void*)&_obj1017 }
+                       { RW, uint16, sizeof (UNS16), (void*)&canfestival_master_obj1017 }
                      };
 
 /* index 0x1018 :   Identity. */
@@ -799,7 +799,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1402 :   Receive PDO 3 Parameter. */
                     UNS8 _highestSubIndex_obj1402 = 2; /* number of subindex - 1*/
-                    UNS32 _obj1402_COB_ID_used_by_PDO = 0x80000408;	/* 2147484672 */
+                    UNS32 _obj1402_COB_ID_used_by_PDO = 0x00000408;	/* 2147484672 */
                     UNS8 _obj1402_Transmission_Type = 0xFF;	/* 255 */
                     subindex _Index1402[] = 
                      {
@@ -875,7 +875,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 _highestSubIndex_obj1602 = 8; /* number of subindex - 1*/
                     UNS32 _obj1602[] = 
                     {
-                      0x0,	/* 0 */
+                      0x60FF0020,	/* 0 */
                       0x0,	/* 0 */
                       0x0,	/* 0 */
                       0x0,	/* 0 */
@@ -1083,7 +1083,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 _highestSubIndex_obj1A02 = 8; /* number of subindex - 1*/
                     UNS32 _obj1A02[] = 
                     {
-                      0x0,	/* 0 */
+                      0x60FF0020,	/* 0 */
                       0x0,	/* 0 */
                       0x0,	/* 0 */
                       0x0,	/* 0 */
@@ -2351,7 +2351,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 /* Declaration of pointed variables                                       */
 /**************************************************************************/
 
-const indextable _objdict[] = 
+const indextable canfestival_master_objdict[] = 
 {
   { (subindex*)_Index1000,sizeof(_Index1000)/sizeof(_Index1000[0]), 0x1000},
   { (subindex*)_Index1001,sizeof(_Index1001)/sizeof(_Index1001[0]), 0x1001},
@@ -2462,7 +2462,7 @@ const indextable _objdict[] =
 
 };
 
-const indextable * _scanIndexOD (UNS16 wIndex, UNS32 * errorCode, ODCallback_t **callbacks)
+const indextable * canfestival_master_scanIndexOD (UNS16 wIndex, UNS32 * errorCode, ODCallback_t **callbacks)
 {
 	int i;
 	*callbacks = NULL;
@@ -2579,7 +2579,7 @@ const indextable * _scanIndexOD (UNS16 wIndex, UNS32 * errorCode, ODCallback_t *
 			return NULL;
 	}
 	*errorCode = OD_SUCCESSFUL;
-	return &_objdict[i];
+	return &canfestival_master_objdict[i];
 }
 
 /* 
@@ -2587,10 +2587,10 @@ const indextable * _scanIndexOD (UNS16 wIndex, UNS32 * errorCode, ODCallback_t *
  * Even if no pdoTransmit are defined, at least one entry is computed
  * for compilations issues.
  */
-s_PDO_status _PDO_status[4] = {s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer};
+s_PDO_status canfestival_master_PDO_status[4] = {s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer,s_PDO_status_Initializer};
 
 // point to the scope of info
-const quick_index _firstIndex = {
+const quick_index canfestival_master_firstIndex = {
   0, /* SDO_SVR */
   // 0, /* SDO_CLT */
   15, /* SDO_CLT */
@@ -2601,7 +2601,7 @@ const quick_index _firstIndex = {
   28 /* PDO_TRS_MAP */
 };
 
-const quick_index _lastIndex = {
+const quick_index canfestival_master_lastIndex = {
   0, /* SDO_SVR */
   //0, /* SDO_CLT */
 
@@ -2612,7 +2612,7 @@ const quick_index _lastIndex = {
   31 /* PDO_TRS_MAP */
 };
 
-const UNS16 _ObjdictSize = sizeof(_objdict)/sizeof(_objdict[0]); 
+const UNS16 canfestival_master_ObjdictSize = sizeof(canfestival_master_objdict)/sizeof(canfestival_master_objdict[0]); 
 
-CO_Data masterObjdict_Data = CANOPEN_NODE_DATA_INITIALIZER();
+CO_Data masterObjdict_Data = CANOPEN_NODE_DATA_INITIALIZER(canfestival_master);
 

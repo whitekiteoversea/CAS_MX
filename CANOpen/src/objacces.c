@@ -188,7 +188,6 @@ UNS32 _setODentry( CO_Data* d,
     printf("CANOpen: _setOdentry errorCode is 0x%x\r\n", errorCode);
     return errorCode;
   }
-
   if( ptrTable->bSubCount <= bSubindex ) {
     /* Subindex not found */
     accessDictionaryError(wIndex, bSubindex, 0, *pExpectedSize, OD_NO_SUCH_SUBINDEX);
@@ -203,10 +202,7 @@ UNS32 _setODentry( CO_Data* d,
   dataType = ptrTable->pSubindex[bSubindex].bDataType;
   szData = ptrTable->pSubindex[bSubindex].size;
 
-  if( *pExpectedSize == 0 ||
-      *pExpectedSize == szData ||
-      /* allow to store a shorter string than entry size */
-      (dataType == visible_string && *pExpectedSize < szData)) {
+  if ( *pExpectedSize == 0 || *pExpectedSize == szData || (dataType == visible_string && *pExpectedSize < szData)) {
 #ifdef CANOPEN_BIG_ENDIAN
       /* re-endianize do not occur for bool, strings time and domains */
       if(endianize && dataType > boolean && !(

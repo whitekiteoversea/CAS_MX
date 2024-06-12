@@ -91,18 +91,20 @@ void canDispatch(CO_Data* d, Message *m)
 		case PDO4rx:
 			if (d->CurrentCommunicationState.csPDO)
 				proceedPDO(d,m);
-
-				// acquire newest TPDO1
+/*
+				// acquire newest TPDO2
 				expectedNum = sizeof(motionStatus.g_Speed);
 				*pdataType = 0x04;
 				readLocalDict(d, 0x606C, 0x00, &(motionStatus.g_Speed), &expectedNum, pdataType, 0);
-				// printf("TPDO1: motionStatus.g_Speed Feedback is : %d rpm \n\r", motionStatus.g_Speed);
+			
+				expectedNum = sizeof(motionStatus.g_Distance);
+				*pdataType = 0x04;		
+				readLocalDict(d, 0x6064, 0x00, &(motionStatus.g_Distance), &expectedNum, pdataType, 0);
 
-				expectedNum = sizeof(motionStatus.g_phaseAmp);
-				*pdataType = 0x03;		
-				readLocalDict(d, 0x200B, 0x19, &(motionStatus.g_phaseAmp), &expectedNum, pdataType, 0);
-				// printf("TPDO1: motionStatus.g_phaseAmp Feedback is : %f A \n\r", (float)(motionStatus.g_phaseAmp/100));
-
+				// expectedNum = sizeof(motionStatus.g_phaseAmp);
+				// *pdataType = 0x03;		
+				// readLocalDict(d, 0x200B, 0x19, &(motionStatus.g_phaseAmp), &expectedNum, pdataType, 0);
+*/
 			break;
 		case SDOtx:
 		case SDOrx:

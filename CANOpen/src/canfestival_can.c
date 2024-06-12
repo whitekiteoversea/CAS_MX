@@ -141,34 +141,6 @@ void CAN1_RX0_IRQHandler(void)
 	canDispatch(&masterObjdict_Data, &Rx_Message);
 }
 
-/* 功能:	CAN发送数据函数
-	 参数:	notused can总线端口
-			message canopen数据包
-	返回值:	0 成功
-			1 失败
- */
-uint8_t canSend(CAN_PORT notused, Message *message)
-{
-	uint32_t i = 0xFFFFFF;
-	CanTxMsg TxMessage;
-	uint8_t TransmitMailbox = 0;
-
-	/* 组装CAN数据包 */
-	TxMessage.DLC = message->len;							/* 数据长度 */
-	memcpy(TxMessage.Data, message->data, message->len);	/* 数据 */
-	TxMessage.IDE = CAN_ID_STD;								/* 标准ID */
-	TxMessage.StdId = message->cob_id;						/* 标识符 */
-	TxMessage.RTR = (message->rtr == CAN_RTR_DATA) ? 0 : 2;	/* 数据帧 */
-
-	/* 发送数据包 */
-	TransmitMailbox = CAN_Transmit(CAN1, &TxMessage);
-	/* 等待发送成功 */
-	while((CAN_TransmitStatus(CAN1, TransmitMailbox) != CANTXOK) && --i);
-
-	/* 成功0 超时1 */
-	return (i != 0) ? 0 : 1;
-}
-
 #endif
 
 uint8_t canSend(CAN_PORT notused, Message *message)
@@ -183,18 +155,12 @@ uint8_t canSend(CAN_PORT notused, Message *message)
 	Header.IDE = CAN_ID_STD;
 	Header.DLC = len;							/* 数据长度 */
 	Header.StdId = message->cob_id;						/* 标识符 */
-	Header.ExtId = 0;
+	//Header.ExtId = 0;
 	Header.RTR = (message->rtr == CAN_RTR_DATA) ? 0 : 2;	/* 数据帧 */
-
-	while (len != 0)
-	{
-			Header.DLC = len > 8 ? 8 : len;			// 数据长度
-			if (HAL_CAN_AddTxMessage(&hcan2, &Header, message->data + offset, &TransmitMailbox) != HAL_OK) {
-				printf(" CAN2 Send Failed! \n\r");
-				return 1;
-			}
-			offset += Header.DLC;
-			len -= Header.DLC;
+		
+	if (HAL_CAN_AddTxMessage(&hcan2, &Header, message->data, &TransmitMailbox) != HAL_OK) {
+			printf ("CANOpen: CAN2 Send Fail! \n\r");
+			return 1; //Error
 	}
 	return ret;
 }

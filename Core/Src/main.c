@@ -1231,9 +1231,9 @@ void bspInit(void)
 
   // 6. CANOpen NMI Init
 #if HAL_CANOPEN_ENABLE
-  canOpen_Init();
+  canOpenInit();
   // Enable Driver Node
-  canopen_start_node(&masterObjdict_Data, can_var.slaveCANID);
+  //canopen_start_node(&masterObjdict_Data, can_var.slaveCANID);
 #endif
 	
   #if HAL_SDRAM_SELFTEST
@@ -1263,6 +1263,14 @@ void userAppLoop(void)
 
     if (gStatus.l_time_heartbeat == 1) {
       printf("%d ms HeartBeat Msg \n\r", gTime.l_time_ms);
+      //printf("%d ms: TPDO2: g_Distance is is %d pulse, g_Speed Feedback is : %d rpm, \n\r", gTime.l_time_ms,  \
+                                                                                            motionStatus.g_Distance, \
+                                                                                            motionStatus.g_Speed);
+      printf("%d ms: TPDO2: g_Distance is is %d pulse, g_Speed Feedback is : %d rpm, \n\r", gTime.l_time_ms,  \
+                                                                                            Position_actual_value_user, \
+                                                                                            Velocity_actual_value);
+      
+      
       gStatus.l_time_heartbeat = 0;
     }
 
