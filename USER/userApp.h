@@ -64,9 +64,9 @@ void network_init(void);			// Initialize Network information and display it
 void systemParaInit(void);
 void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode); // can recv info distribute
 void canOpenInit(void);
-void canopen_send_sdo(uint16_t *message_sdo);
+uint8_t canopen_send_sdo(uint16_t *message_sdo);
 uint8_t canOpenSDOConfig(void);
-uint8_t canOpenSDOSendWithDelay(CO_Data *d, uint8_t slaveNodeId, uint16_t sdoIndex, uint8_t subIndex, uint8_t sendNum, uint8_t sendType, uint8_t *sendContext); 
+uint8_t canOpenSDOSendWithDelay(CO_Data *d, uint8_t slaveNodeId, uint16_t sdoIndex, uint8_t subIndex, uint8_t sendNum, uint8_t sendType, uint32_t *sendContext); 
 
 
 int32_t avgErrCollect(uint8_t node, int32_t sampleData);  

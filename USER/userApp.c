@@ -161,7 +161,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
     volatile u32 curLocalTimeStamp = 0;
 
     u8 snddata[8]={0};
-    short curGivenSpeed = 0; //rpm
+    INTEGER32 curGivenSpeed = 0; //rpm
     u32 tempGivenVol = 0;    //mV
     u32 sendCnt = 0;
     u16 tempFrameCnt = 0;
@@ -197,10 +197,9 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
                                                                                    (short)curGivenSpeed);
         #else // CANOpen
             if (((short)curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && ((short)curGivenSpeed >= MIN_ALLOWED_SPEED_RPM)) {
-								writeinCnt = 4;
-                writeLocalDict(&masterObjdict_Data, SPEEDGIVEN_INDEX, 0x00, &curGivenSpeed, &writeinCnt, RW);
-
-                printf("UTC: %d ms CAS: %d ms, frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
+                Target_velocity = curGivenSpeed; // update speed instruction
+              
+                printf("UTC: %d ms CAS: %d ms, CAN1 Recv frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
                                                                                       gTime.l_time_ms,
                                                                                       tempFrameCnt,
                                                                                       (short)curGivenSpeed);
@@ -255,7 +254,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
             ext_ID.CAN_Frame_Union.NodeOrGroupID = PCNODEID;  // Send to PC Node
 
             HAL_CAN_Ext_Transmit(phcan, (void *)snddata, 8, ext_ID.Value);
-            printf("UTC:%d ms CAS: %d CurPosi is %d \n\r", gTime.g_time_ms, gTime.l_time_ms, motionStatus.g_Distance);
+            printf("UTC:%d ms CAS: %d ms CAN1 CurPosi is %d \n\r", gTime.g_time_ms, gTime.l_time_ms, motionStatus.g_Distance);
         break;
 
         // 
@@ -297,14 +296,14 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
           else {
             gStatus.workmode = RECVSPEEDMODE;
           }
-          printf("UTC:%d ms CAS: %d Start PI Position Control, Initial posi is %d, givenPosiVal is %d\n\r", gTime.g_time_ms, 
+          printf("UTC:%d ms CAS: %d ms CAN1 Start PI Position Control, Initial posi is %d, givenPosiVal is %d\n\r", gTime.g_time_ms, 
                                                             gTime.l_time_ms,
                                                             recvPosiInitVal,
                                                             givenExecPosiVal);
         break;
 
         default:
-          printf("UTC:%d ms CAS: %d Recv Error Context Pack\n\r", gTime.g_time_ms, gTime.l_time_ms);
+          // printf("UTC:%d ms CAS: %d ms CAN1 Recv Error Context Pack\n\r", gTime.g_time_ms, gTime.l_time_ms);
         break;
     }
 }
@@ -519,155 +518,8 @@ void w5500_stateMachineTask(void)
 }
 #endif
 
-void canOpenInit(void)
-{
-    UNS8 cnt = 0;
-    UNS16 index;
-    UNS8 subindex;	
-    UNS32 size = sizeof(UNS32); 
-    UNS32 Config_Code;
-
-    setNodeId(&masterObjdict_Data, can_var.NodeID);  // Master ID
-    setState(&masterObjdict_Data, Initialisation);   // 000 01 08
-
-    setState(&masterObjdict_Data, Pre_operational); //
-    setState(&masterObjdict_Data, Operational);
-    masterSendNMTstateChange(&masterObjdict_Data, can_var.slaveCANID, NMT_Start_Node);
-
-    stopSYNC(&masterObjdict_Data);
-    // PDO Setup
-    // canOpenSDOConfig();
-    
-    Config_Code = 0x180 +can_var.slaveCANID;
-    index = 0x1800;
-    subindex = 0x01;
-    for (index = 0x1800;index<0x1802; index++) {
-        writeLocalDict( &masterObjdict_Data, /*CO_Data* d*/
-                        index,       /*UNS16 index*/
-                        subindex,         /*UNS8 subind*/ 
-                        &Config_Code,  /*void * pSourceData,*/ 
-                        &size,        /* UNS8 * pExpectedSize*/
-                        RW);          /* UNS8 checkAccess */
-        Config_Code += 0x100;
-    }
-
-    /*Transmit PDO  Mapping*/
-    Config_Code = 0x606C0020;
-    index=0x1A00;
-    subindex=0x01;
-    writeLocalDict( &masterObjdict_Data, /*CO_Data* d*/
-                    index,       /*UNS16 index*/
-                    subindex,         /*UNS8 subind*/ 
-                    &Config_Code,  /*void * pSourceData,*/ 
-                    &size,        /* UNS8 * pExpectedSize*/
-                    RW);          /* UNS8 checkAccess */
-
-    /*Receive PDO  Parameter*/
-    Config_Code = 0x200 + can_var.slaveCANID;
-    index=0x1400;
-    subindex=0x01;
-    for(index=0x1400; index<0x1402; index++)
-    {
-        writeLocalDict( &masterObjdict_Data, /*CO_Data* d*/
-                        index,       /*UNS16 index*/
-                        subindex,         /*UNS8 subind*/ 
-                        &Config_Code,  /*void * pSourceData,*/ 
-                        &size,        /* UNS8 * pExpectedSize*/
-                        RW);          /* UNS8 checkAccess */
-        Config_Code += 0x100;
-    }
-
-    /*Receive PDO Mapping*/
-    Config_Code = 0x60FF0020;
-    index=0x1600;
-    subindex=1;
-    writeLocalDict( &masterObjdict_Data, /*CO_Data* d*/
-                    index,         /*UNS16 index*/
-                    subindex,      /*UNS8 subind*/ 
-                    &Config_Code,  /*void * pSourceData,*/ 
-                    &size,         /* UNS8 * pExpectedSize*/
-                    RW);           /* UNS8 checkAccess */
-
-    startSYNC(&masterObjdict_Data);
-}
-
-// SDO Transmit
-void canopen_send_sdo(uint16_t *message_sdo)
-{
-	  unsigned long abortCode=0;
-    uint8_t      nodeID=0;          /* ID      */
-    uint16_t    index=0;           /* 索引    */
-    uint8_t     subIndex=0;        /* 子索引   */
-    uint8_t     dataType=uint8;    /* 数据类型 */
-    uint32_t    count=4;           /* 数据长度 */
-    uint8_t     data[4];    
-    uint8_t     i=0;
-    
-    nodeID=(int8_t)(message_sdo[0] & 0x7f);  // get low 7 bit (0-255)  
-    index = (message_sdo[3] << 8);
-    index += message_sdo[2];
-    subIndex=(uint8_t)(message_sdo[4]);
-	
-		printf("CANOpen: SDO Send nodeID: 0x%x, index: 0x%x, subIndex: 0x%x \n\r", nodeID, index, subIndex);
-
-    for (i=0; i<4; i++) {
-        data[0+i]=(uint8_t)message_sdo[5+i];
-    }
-
-    //d; nodeId; index; subIndex; count; dataType; data[4]; useBlockMode;
-    writeNetworkDict(&masterObjdict_Data, nodeID, index, subIndex, count, dataType, &data, 0);
-    while (getWriteResultNetworkDict(&masterObjdict_Data, nodeID, &abortCode) != SDO_FINISHED) {
-        break;
-    }
-}
-
-// SDO config PDO
-uint8_t canOpenSDOConfig(void)
-{
-    uint8_t cnt = 0;
-    uint8_t ret = 0;
-    
-    UNS8 operationMode = 0x03; // speed mode
-    UNS8 tpdoCobID[4] = {0x88, 0x01, 0x00, 0x00}; 
-    UNS8 rpdoCobID[4] = {0x08, 0x02, 0x00, 0x00}; 
-    UNS8 data[4] = {0};
-    UNS8 controlWord[2] = {0x0F, 0x00}; 
-    
-    // TPDO使能
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1800, 0x01, 4, uint8, tpdoCobID);
-    tpdoCobID[1] = 0x02;
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1801, 0x01, 4, uint8, tpdoCobID);
-
-    // RPDO使能
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1400, 0x01, 4, uint8, rpdoCobID);// RPDO1
-    rpdoCobID[1] = 0x03;
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1401, 0x01, 4, uint8, rpdoCobID);// RPDO2
-    
-    // RPDO3
-    rpdoCobID[1] = 0x04;
-    rpdoCobID[3] = 0x80;   // RPDO3 disable
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1402, 0x01, 4, uint8, rpdoCobID);// RPDO3
-    data[0] = 0;           // RPDO3 映射清零 
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1602, 0x00, 1, uint8, &data[0]);
-    data[0] = 0x20;        // RPDO3 映射内容更新
-    data[1] = 0x00;
-    data[2] = 0xFF;
-    data[3] = 0x60; // target Speed
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1602, 0x01, 4, uint8, data);
-    data[0] = 1;    // RPDO3 映射个数为1 
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1602, 0x00, 1, uint8, &data[0]);
-    rpdoCobID[3] = 0x00;    // RPDO3 enable
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1402, 0x01, 4, uint8, rpdoCobID);// RPDO2
-
-    // 运动模式: 0x01 位置 0x03:速度
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x6060, 0x00, 1, uint8, &operationMode); 
-    // 切换控制字状态
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x6040, 0x00, 2, uint8, controlWord);
-
-    return ret;
-}
-
-/*
+#define PRESETSDOLENG    (27)
+/*  dataType:
 define in objdictdef.h
 
 #define boolean         0x01
@@ -686,12 +538,169 @@ define in objdictdef.h
 
 */
 
+
+void canOpenInit(void)
+{
+    UNS8 cnt = 0;
+    UNS16 sdoIndex;
+    UNS8 subIndex;	
+    UNS32 size = sizeof(UNS32); 
+    UNS8 Config_Code[4] = {0x88, 0x01, 0x00, 0x80};
+
+    // 这里的SDO都是配置参数，所以数据类型都是UNS8, 如果是SDO发送实时速度，才会变更为INT等
+    uint16_t message_sdo[PRESETSDOLENG][10] = {
+      {0x608, 0x23, 0x00, 0x14, 0x01, 0x88, 0x01, 0x00, 0x80, uint8}, // RPDO1 失能 类型：
+      {0x608, 0x2f, 0x00, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO1 传输类型 同步SYNC
+      {0x608, 0x2f, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // 清除s原有映射内容
+      {0x608, 0x2b, 0x00, 0x16, 0x01, 0x10, 0x00, 0x40, 0x60, uint8}, // 映射为状态字 0x6040
+      {0x608, 0x23, 0x00, 0x16, 0x02, 0x20, 0x00, 0xFF, 0x60, uint8}, // 映射为给定速度 0x60FF
+      {0x608, 0x2f, 0x00, 0x16, 0x00, 0x02, 0x00, 0x00, 0x00, uint8}, // 映射数量改为2
+      {0x608, 0x23, 0x00, 0x14, 0x01, 0x88, 0x01, 0x00, 0x00, uint8},  // RPDO1 使能
+
+      {0x608, 0x23, 0x00, 0x18, 0x01, 0x08, 0x02, 0x00, 0x80, uint8}, // TPDO1 失能
+      {0x608, 0x2f, 0x00, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO1 传输类型 周期触发 100SYNC
+      {0x608, 0x2f, 0x00, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // 清除原有映射内容
+      {0x608, 0x2b, 0x00, 0x1A, 0x01, 0x10, 0x00, 0x40, 0x60, uint8}, // 映射为控制字 0x6040
+      {0x608, 0x23, 0x00, 0x1A, 0x02, 0x20, 0x00, 0x6C, 0x60, uint8}, // 映射为实时速度 0x606C
+      {0x608, 0x2b, 0x00, 0x1A, 0x03, 0x10, 0x19, 0x0B, 0x20, uint8}, // 映射为相电流有效值 0x200B-19H
+      {0x608, 0x2f, 0x00, 0x1A, 0x00, 0x03, 0x00, 0x00, 0x00, uint8}, // 映射数量改为3
+      {0x608, 0x23, 0x00, 0x18, 0x01, 0x08, 0x02, 0x00, 0x00, uint8}, // TPDO1 使能
+
+      {0x608, 0x23, 0x01, 0x18, 0x01, 0x88, 0x02, 0x00, 0x80, uint8}, // RPDO2 失能
+      {0x608, 0x2f, 0x01, 0x18, 0x02, 0x01, 0x00, 0x00, 0x00, uint8}, // RPDO2 传输类型 同步SYNC
+      {0x608, 0x23, 0x02, 0x18, 0x01, 0x88, 0x03, 0x00, 0x80, uint8}, // RPDO3 失能
+      {0x608, 0x2f, 0x02, 0x18, 0x02, 0x01, 0x00, 0x00, 0x00, uint8}, // RPDO3 传输类型 同步SYNC
+      {0x608, 0x23, 0x03, 0x18, 0x01, 0x88, 0x04, 0x00, 0x80, uint8}, // RPDO4 失能
+      {0x608, 0x2f, 0x03, 0x18, 0x02, 0x01, 0x00, 0x00, 0x00, uint8}, // RPDO4 传输类型 同步SYNC
+      
+      {0x608, 0x23, 0x01, 0x14, 0x01, 0x08, 0x03, 0x00, 0x80, uint8}, // TPDO2 失能
+      {0x608, 0x2f, 0x01, 0x14, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO2 传输类型 周期触发
+      {0x608, 0x23, 0x02, 0x14, 0x01, 0x08, 0x04, 0x00, 0x80, uint8}, // TPDO2 失能
+      {0x608, 0x2f, 0x02, 0x14, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO2 传输类型 
+      {0x608, 0x23, 0x03, 0x14, 0x01, 0x08, 0x05, 0x00, 0x80, uint8}, // TPDO2 失能
+      {0x608, 0x2f, 0x03, 0x14, 0x02, 0x64, 0x00, 0x00, 0x00, uint8} // TPDO2 传输类型 
+    };
+
+    setNodeId(&masterObjdict_Data, can_var.NodeID);  // Master ID
+    setState(&masterObjdict_Data, Initialisation);   // 000 01 08
+
+    setState(&masterObjdict_Data, Pre_operational); //
+    setState(&masterObjdict_Data, Operational);
+    masterSendNMTstateChange(&masterObjdict_Data, can_var.slaveCANID, NMT_Start_Node);
+    
+    stopSYNC(&masterObjdict_Data);	
+
+    //canOpenSDOConfig();	
+		for (cnt = 0; cnt<PRESETSDOLENG; cnt++) {
+			canopen_send_sdo(message_sdo[cnt]);
+			closeSDOtransfer(&masterObjdict_Data, can_var.slaveCANID, SDO_CLIENT);
+			HAL_Delay(50);
+		}
+		startSYNC(&masterObjdict_Data);
+}
+
+// SDO Transmit (对多种数据长度写入时存在问题)
+uint8_t canopen_send_sdo(uint16_t *message_sdo)
+{
+	  unsigned long abortCode=0;
+    uint8_t      nodeID=0;          /* ID      */
+    uint16_t    index=0;           /* 索引    */
+    uint8_t     subIndex=0;        /* 子索引   */
+    uint8_t     dataType=message_sdo[9];    /* 数据类型 */
+    uint32_t    count= 0;           /* 数据长度 */
+    uint8_t     data[4] = {0};    
+    uint8_t     i=0;
+		uint8_t 		ret = 0;
+    
+    switch (message_sdo[1]) {
+        case 0x2f:count = 1;break;
+        case 0x2b:count = 2;break;
+        case 0x27:count = 3;break;
+        case 0x23:count = 4;break;
+        default:
+          printf("CANOpen: SDO Data Length Error! \r\n");
+          ret = 0xFF;
+        break;
+    }
+
+		if (ret == 0xFF) {
+				goto __end_label;
+		}
+		
+    nodeID=(uint8_t)(message_sdo[0] & 0x7f);  // get low 7 bit (0-255)  
+    index = (message_sdo[3] << 8);
+    index += message_sdo[2];
+    subIndex= (uint8_t) (message_sdo[4]);
+
+	
+		printf("CANOpen: SDO Send nodeID: 0x%x, index: 0x%x, subIndex: 0x%x \n\r", nodeID, index, subIndex);
+
+    for (i=0; i<count; i++) {
+        data[0+i]= (uint8_t) message_sdo[5+i];
+    }
+
+    //d; nodeId; index; subIndex; count; dataType; data[4]; useBlockMode;
+    writeNetworkDict(&masterObjdict_Data, nodeID, index, subIndex, count, dataType, &data, 0);
+
+__end_label:
+    return ret;
+}
+
+// SDO config PDO
+uint8_t canOpenSDOConfig(void)
+{
+    uint8_t cnt = 0;
+    uint8_t ret = 0;
+    
+    UNS8 operationMode = 0x03; // speed mode
+    UNS32 tpdoCobID = 0x80000208; 
+    UNS32 rpdoCobID = 0x80000188; 
+    UNS16 controlWord = 0x000F;
+    INTEGER32 givenSpeed = 0x00;
+    INTEGER32 RealTimeSpeed = 0x00;
+    UNS8 transferType = 0x64; // 100 SYNC Cycle
+    UNS8 mapCnt = 0;
+    UNS32 data = 0;
+    
+    // TPDO1
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1800, 0x01, 4, uint32, &tpdoCobID);
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1800, 0x02, 1, uint8, (UNS32 *)(&transferType));
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1A00, 0x00, 1, uint8, (UNS32 *)(&mapCnt));
+    data = 0x60410010;  
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1A00, 0x01, 4, uint32, &data);  
+    data = 0x606C0020;
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1A00, 0x02, 4, uint32, &data);  
+    data = 0x200B0019;
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1A00, 0x03, 4, uint32, &data); 
+    mapCnt = 3;
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1A00, 0x00, 1, uint8, (UNS32 *)(&mapCnt));
+    tpdoCobID = 0x00000208;
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1800, 0x01, 4, uint32, &tpdoCobID); 
+
+    // RPDO1
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1400, 0x01, 4, uint32, &rpdoCobID);
+    transferType = 0x01;
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1400, 0x02, 1, uint8, (UNS32 *)(&transferType));
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1600, 0x00, 1, uint8, (UNS32 *)(&mapCnt));
+    data = 0x60400010;  
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1600, 0x01, 1, uint32, &data);  
+    data = 0x60FF0020;
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1600, 0x02, 1, uint32, &data);  
+    mapCnt = 2;
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1600, 0x00, 1, uint8, (UNS32 *)(&mapCnt));
+    rpdoCobID = 0x0000188;
+    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1800, 0x01, 4, uint32, &rpdoCobID); 
+
+    return ret;
+}
+
 //Only Use before RUN
-uint8_t canOpenSDOSendWithDelay(CO_Data *d, uint8_t slaveNodeId, uint16_t sdoIndex, uint8_t subIndex, uint8_t sendNum, uint8_t sendType, uint8_t *sendContext) 
+uint8_t canOpenSDOSendWithDelay(CO_Data *d, uint8_t slaveNodeId, uint16_t sdoIndex, uint8_t subIndex, uint8_t sendNum, uint8_t sendType, uint32_t *sendContext) 
 {
   uint8_t ret = 0;
   ret = writeNetworkDict(d, slaveNodeId, sdoIndex, subIndex, sendNum, sendType, (void *)sendContext, 0);
   closeSDOtransfer(d, slaveNodeId, SDO_CLIENT);
   HAL_Delay(20);
+
   return ret;
 }

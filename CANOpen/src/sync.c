@@ -132,7 +132,7 @@ UNS8 sendSYNCMessage(CO_Data* d)
 {
   Message m;
   
-  MSG_WAR(0x3001, "sendSYNC ", 0);
+  //MSG_WAR(0x3001, "sendSYNC ", 0);
   
   m.cob_id = (UNS16)UNS16_LE(*d->COB_ID_Sync);
   m.rtr = NOT_A_REQUEST;
@@ -171,7 +171,7 @@ UNS8 proceedSYNC(CO_Data* d)
 
   UNS8 res;
   
-  MSG_WAR(0x3002, "SYNC received. Proceed. ", 0);
+  //MSG_WAR(0x3002, "SYNC received. Proceed. ", 0);
   
   (*d->post_sync)(d);
 

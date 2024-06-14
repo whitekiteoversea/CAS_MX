@@ -6,555 +6,554 @@
 /**************************************************************************/
 /* Declaration of mapped variables                                        */
 /**************************************************************************/
-UNS16 Servo_Motor_Parameters_Motor_SN = 0x36B0;		/* Mapped at index 0x2000, subindex 0x01 */
-UNS8 Servo_Motor_Parameters_Compatibility_Entry[2] = {0x0};		/* Mapped at index 0x2000, subindex 0x02 */
-UNS32 Servo_Motor_Parameters_Customized_motor_SN = 0x0;		/* Mapped at index 0x2000, subindex 0x03 */
-UNS16 Servo_Motor_Parameters_Encoder_Version = 0x0;		/* Mapped at index 0x2000, subindex 0x05 */
-UNS16 Servo_Motor_Parameters_Bus_motor_SN = 0x0;		/* Mapped at index 0x2000, subindex 0x06 */
+volatile UNS16 Servo_Motor_Parameters_Motor_SN = 0x36B0;		/* Mapped at index 0x2000, subindex 0x01 */
+volatile UNS8 Servo_Motor_Parameters_Compatibility_Entry[2] = {0x0};		/* Mapped at index 0x2000, subindex 0x02 */
+volatile UNS32 Servo_Motor_Parameters_Customized_motor_SN = 0x0;		/* Mapped at index 0x2000, subindex 0x03 */
+volatile UNS16 Servo_Motor_Parameters_Encoder_Version = 0x0;		/* Mapped at index 0x2000, subindex 0x05 */
+volatile UNS16 Servo_Motor_Parameters_Bus_motor_SN = 0x0;		/* Mapped at index 0x2000, subindex 0x06 */
 
-UNS16 Servo_Drive_Parameters_DSP_Software_Version = 0x0;		/* Mapped at index 0x2001, subindex 0x01 */
-UNS16 Servo_Drive_Parameters_Fpga_Software_Version = 0x0;		/* Mapped at index 0x2001, subindex 0x02 */
-UNS16 Servo_Drive_Parameters_Servo_drive_SN = 0x0;		/* Mapped at index 0x2001, subindex 0x03 */
+volatile UNS16 Servo_Drive_Parameters_DSP_Software_Version = 0x0;		/* Mapped at index 0x2001, subindex 0x01 */
+volatile UNS16 Servo_Drive_Parameters_Fpga_Software_Version = 0x0;		/* Mapped at index 0x2001, subindex 0x02 */
+volatile UNS16 Servo_Drive_Parameters_Servo_drive_SN = 0x0;		/* Mapped at index 0x2001, subindex 0x03 */
 
-UNS16 Basic_Control_Parameters_Control_mode = 0x8;		/* Mapped at index 0x2002, subindex 0x01 */
-UNS16 Basic_Control_Parameters_BP_AbsPosDetectionSel = 0x0;		/* Mapped at index 0x2002, subindex 0x02 */
-UNS16 Basic_Control_Parameters_Rotating_direction = 0x0;		/* Mapped at index 0x2002, subindex 0x03 */
-UNS16 Basic_Control_Parameters_Direction_of_output_pulse = 0x0;		/* Mapped at index 0x2002, subindex 0x04 */
-UNS8 Basic_Control_Parameters_Compatibility_Entry[14] = {0x0};		/* Mapped at index 0x2002, subindex 0x05 */
-UNS16 Basic_Control_Parameters_Stop_mode_at_servo_drive_disabled = 0x0;		/* Mapped at index 0x2002, subindex 0x06 */
-UNS16 Basic_Control_Parameters_Stop_mode_at_fault_2 = 0x0;		/* Mapped at index 0x2002, subindex 0x07 */
-UNS16 Basic_Control_Parameters_Stop_mode_at_overtravel = 0x1;		/* Mapped at index 0x2002, subindex 0x08 */
-UNS16 Basic_Control_Parameters_Stop_mode_at_fault_1 = 0x0;		/* Mapped at index 0x2002, subindex 0x09 */
-UNS16 Basic_Control_Parameters_Brake_release_command_delay_at_servo_drive_enabled = 0xFA;		/* Mapped at index 0x2002, subindex 0x0A */
-UNS16 Basic_Control_Parameters_Servo_drive_disable_delay_at_brake_apply_command = 0x96;		/* Mapped at index 0x2002, subindex 0x0B */
-UNS16 Basic_Control_Parameters_Output_speed_limit_of_brake_reference = 0x1E;		/* Mapped at index 0x2002, subindex 0x0C */
-UNS16 Basic_Control_Parameters_Waiting_time_from_servo_disable_signal_to_brake_apply_command = 0x1F4;		/* Mapped at index 0x2002, subindex 0x0D */
-UNS16 Basic_Control_Parameters_Switch_speed_of_stop_mode_and_stop_speed = 0x64;		/* Mapped at index 0x2002, subindex 0x0F */
-UNS16 Basic_Control_Parameters_Display_of_keypad_warning = 0x0;		/* Mapped at index 0x2002, subindex 0x10 */
-UNS16 Basic_Control_Parameters_Filter_time_of_servo_ON_signal = 0x0;		/* Mapped at index 0x2002, subindex 0x13 */
-UNS16 Basic_Control_Parameters_Allowed_minimum_braking_resistance = 0x0;		/* Mapped at index 0x2002, subindex 0x16 */
-UNS16 Basic_Control_Parameters_Power_of_built_in_braking_resistor = 0x0;		/* Mapped at index 0x2002, subindex 0x17 */
-UNS16 Basic_Control_Parameters_Resistance_of_built_in_braking_resistor = 0x0;		/* Mapped at index 0x2002, subindex 0x18 */
-UNS16 Basic_Control_Parameters_Resistor_heat_dissipation_coefficient = 0x1E;		/* Mapped at index 0x2002, subindex 0x19 */
-UNS16 Basic_Control_Parameters_braking_resistor_type = 0x0;		/* Mapped at index 0x2002, subindex 0x1A */
-UNS16 Basic_Control_Parameters_Power_of_external_dynamic_resistor = 0x0;		/* Mapped at index 0x2002, subindex 0x1B */
-UNS16 Basic_Control_Parameters_Resistance_of_external_braking_resistor = 0x0;		/* Mapped at index 0x2002, subindex 0x1C */
-UNS16 Basic_Control_Parameters_Parameter_initialization = 0x0;		/* Mapped at index 0x2002, subindex 0x20 */
-UNS16 Basic_Control_Parameters_Default_keypad_display = 0x32;		/* Mapped at index 0x2002, subindex 0x21 */
-UNS16 Basic_Control_Parameters_CAN_software_version = 0x0;		/* Mapped at index 0x2002, subindex 0x23 */
-UNS16 Basic_Control_Parameters_Display_frequency_of_keypad = 0x0;		/* Mapped at index 0x2002, subindex 0x24 */
-UNS16 Basic_Control_Parameters_Motor_Parameter_Enable = 0x0;		/* Mapped at index 0x2002, subindex 0x29 */
-UNS16 Basic_Control_Parameters_OEM_Password = 0x0;		/* Mapped at index 0x2002, subindex 0x2A */
+volatile UNS16 Basic_Control_Parameters_Control_mode = 0x8;		/* Mapped at index 0x2002, subindex 0x01 */
+volatile UNS16 Basic_Control_Parameters_BP_AbsPosDetectionSel = 0x0;		/* Mapped at index 0x2002, subindex 0x02 */
+volatile UNS16 Basic_Control_Parameters_Rotating_direction = 0x0;		/* Mapped at index 0x2002, subindex 0x03 */
+volatile UNS16 Basic_Control_Parameters_Direction_of_output_pulse = 0x0;		/* Mapped at index 0x2002, subindex 0x04 */
+volatile UNS8 Basic_Control_Parameters_Compatibility_Entry[14] = {0x0};		/* Mapped at index 0x2002, subindex 0x05 */
+volatile UNS16 Basic_Control_Parameters_Stop_mode_at_servo_drive_disabled = 0x0;		/* Mapped at index 0x2002, subindex 0x06 */
+volatile UNS16 Basic_Control_Parameters_Stop_mode_at_fault_2 = 0x0;		/* Mapped at index 0x2002, subindex 0x07 */
+volatile UNS16 Basic_Control_Parameters_Stop_mode_at_overtravel = 0x1;		/* Mapped at index 0x2002, subindex 0x08 */
+volatile UNS16 Basic_Control_Parameters_Stop_mode_at_fault_1 = 0x0;		/* Mapped at index 0x2002, subindex 0x09 */
+volatile UNS16 Basic_Control_Parameters_Brake_release_command_delay_at_servo_drive_enabled = 0xFA;		/* Mapped at index 0x2002, subindex 0x0A */
+volatile UNS16 Basic_Control_Parameters_Servo_drive_disable_delay_at_brake_apply_command = 0x96;		/* Mapped at index 0x2002, subindex 0x0B */
+volatile UNS16 Basic_Control_Parameters_Output_speed_limit_of_brake_reference = 0x1E;		/* Mapped at index 0x2002, subindex 0x0C */
+volatile UNS16 Basic_Control_Parameters_Waiting_time_from_servo_disable_signal_to_brake_apply_command = 0x1F4;		/* Mapped at index 0x2002, subindex 0x0D */
+volatile UNS16 Basic_Control_Parameters_Switch_speed_of_stop_mode_and_stop_speed = 0x64;		/* Mapped at index 0x2002, subindex 0x0F */
+volatile UNS16 Basic_Control_Parameters_Display_of_keypad_warning = 0x0;		/* Mapped at index 0x2002, subindex 0x10 */
+volatile UNS16 Basic_Control_Parameters_Filter_time_of_servo_ON_signal = 0x0;		/* Mapped at index 0x2002, subindex 0x13 */
+volatile UNS16 Basic_Control_Parameters_Allowed_minimum_braking_resistance = 0x0;		/* Mapped at index 0x2002, subindex 0x16 */
+volatile UNS16 Basic_Control_Parameters_Power_of_built_in_braking_resistor = 0x0;		/* Mapped at index 0x2002, subindex 0x17 */
+volatile UNS16 Basic_Control_Parameters_Resistance_of_built_in_braking_resistor = 0x0;		/* Mapped at index 0x2002, subindex 0x18 */
+volatile UNS16 Basic_Control_Parameters_Resistor_heat_dissipation_coefficient = 0x1E;		/* Mapped at index 0x2002, subindex 0x19 */
+volatile UNS16 Basic_Control_Parameters_braking_resistor_type = 0x0;		/* Mapped at index 0x2002, subindex 0x1A */
+volatile UNS16 Basic_Control_Parameters_Power_of_external_dynamic_resistor = 0x0;		/* Mapped at index 0x2002, subindex 0x1B */
+volatile UNS16 Basic_Control_Parameters_Resistance_of_external_braking_resistor = 0x0;		/* Mapped at index 0x2002, subindex 0x1C */
+volatile UNS16 Basic_Control_Parameters_Parameter_initialization = 0x0;		/* Mapped at index 0x2002, subindex 0x20 */
+volatile UNS16 Basic_Control_Parameters_Default_keypad_display = 0x32;		/* Mapped at index 0x2002, subindex 0x21 */
+volatile UNS16 Basic_Control_Parameters_CAN_software_version = 0x0;		/* Mapped at index 0x2002, subindex 0x23 */
+volatile UNS16 Basic_Control_Parameters_Display_frequency_of_keypad = 0x0;		/* Mapped at index 0x2002, subindex 0x24 */
+volatile UNS16 Basic_Control_Parameters_Motor_Parameter_Enable = 0x0;		/* Mapped at index 0x2002, subindex 0x29 */
+volatile UNS16 Basic_Control_Parameters_OEM_Password = 0x0;		/* Mapped at index 0x2002, subindex 0x2A */
 
-UNS16 Input_Terminal_Parameters_States_of_functions_not_allocated_among_FunIN_1_16_HEX = 0x0;		/* Mapped at index 0x2003, subindex 0x01 */
-UNS16 Input_Terminal_Parameters_States_of_functions_not_allocated_among_FunIN_17_32_HEX = 0x0;		/* Mapped at index 0x2003, subindex 0x02 */
-UNS16 Input_Terminal_Parameters_DI1_function_selection = 0xE;		/* Mapped at index 0x2003, subindex 0x03 */
-UNS16 Input_Terminal_Parameters_DI1_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x04 */
-UNS16 Input_Terminal_Parameters_DI2_function_selection = 0xF;		/* Mapped at index 0x2003, subindex 0x05 */
-UNS16 Input_Terminal_Parameters_DI2_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x06 */
-UNS16 Input_Terminal_Parameters_DI3_function_selection = 0xD;		/* Mapped at index 0x2003, subindex 0x07 */
-UNS16 Input_Terminal_Parameters_DI3_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x08 */
-UNS16 Input_Terminal_Parameters_DI4_function_selection = 0x2;		/* Mapped at index 0x2003, subindex 0x09 */
-UNS16 Input_Terminal_Parameters_DI4_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x0A */
-UNS16 Input_Terminal_Parameters_DI5_function_selection = 0x1;		/* Mapped at index 0x2003, subindex 0x0B */
-UNS16 Input_Terminal_Parameters_DI5_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x0C */
-UNS16 Input_Terminal_Parameters_DI6_function_selection = 0xC;		/* Mapped at index 0x2003, subindex 0x0D */
-UNS16 Input_Terminal_Parameters_DI6_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x0E */
-UNS16 Input_Terminal_Parameters_DI7_function_selection = 0x3;		/* Mapped at index 0x2003, subindex 0x0F */
-UNS16 Input_Terminal_Parameters_DI7_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x10 */
-UNS16 Input_Terminal_Parameters_DI8_function_selection = 0x1F;		/* Mapped at index 0x2003, subindex 0x11 */
-UNS16 Input_Terminal_Parameters_DI8_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x12 */
-UNS16 Input_Terminal_Parameters_DI9_function_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x13 */
-UNS16 Input_Terminal_Parameters_DI9_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x14 */
-UNS8 Input_Terminal_Parameters_Compatibility_Entry[48] = {0x0};		/* Mapped at index 0x2003, subindex 0x15 */
-UNS16 Input_Terminal_Parameters_States_of_functions_not_allocatedamong_FunIN_33_48_HEX = 0x0;		/* Mapped at index 0x2003, subindex 0x23 */
-UNS16 Input_Terminal_Parameters_States_of_functions_not_allocatedamong_FunIN_49_64_HEX = 0x0;		/* Mapped at index 0x2003, subindex 0x24 */
-INTEGER16 Input_Terminal_Parameters_AI1_offset = 0x0;		/* Mapped at index 0x2003, subindex 0x33 */
-UNS16 Input_Terminal_Parameters_AI1_filter_time_constant = 0xC8;		/* Mapped at index 0x2003, subindex 0x34 */
-UNS16 Input_Terminal_Parameters_AI1_Filter_Enable = 0x1;		/* Mapped at index 0x2003, subindex 0x35 */
-UNS16 Input_Terminal_Parameters_AI1_dead_zone = 0x64;		/* Mapped at index 0x2003, subindex 0x36 */
-INTEGER16 Input_Terminal_Parameters_AI1_zero_drift = 0x0;		/* Mapped at index 0x2003, subindex 0x37 */
-INTEGER16 Input_Terminal_Parameters_AI2_offset = 0x0;		/* Mapped at index 0x2003, subindex 0x38 */
-UNS16 Input_Terminal_Parameters_AI2_filter_time_constant = 0xC8;		/* Mapped at index 0x2003, subindex 0x39 */
-UNS16 Input_Terminal_Parameters_AI2_Filter_Enable = 0x1;		/* Mapped at index 0x2003, subindex 0x3A */
-UNS16 Input_Terminal_Parameters_AI2_dead_zone = 0x64;		/* Mapped at index 0x2003, subindex 0x3B */
-INTEGER16 Input_Terminal_Parameters_AI2_zero_drift = 0x0;		/* Mapped at index 0x2003, subindex 0x3C */
-UNS16 Input_Terminal_Parameters_Speed_corresponding_to_10_V = 0xBB8;		/* Mapped at index 0x2003, subindex 0x51 */
-UNS16 Input_Terminal_Parameters_Torque_corresponding_to_10_V = 0x64;		/* Mapped at index 0x2003, subindex 0x52 */
+volatile UNS16 Input_Terminal_Parameters_States_of_functions_not_allocated_among_FunIN_1_16_HEX = 0x0;		/* Mapped at index 0x2003, subindex 0x01 */
+volatile UNS16 Input_Terminal_Parameters_States_of_functions_not_allocated_among_FunIN_17_32_HEX = 0x0;		/* Mapped at index 0x2003, subindex 0x02 */
+volatile UNS16 Input_Terminal_Parameters_DI1_function_selection = 0xE;		/* Mapped at index 0x2003, subindex 0x03 */
+volatile UNS16 Input_Terminal_Parameters_DI1_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x04 */
+volatile UNS16 Input_Terminal_Parameters_DI2_function_selection = 0xF;		/* Mapped at index 0x2003, subindex 0x05 */
+volatile UNS16 Input_Terminal_Parameters_DI2_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x06 */
+volatile UNS16 Input_Terminal_Parameters_DI3_function_selection = 0xD;		/* Mapped at index 0x2003, subindex 0x07 */
+volatile UNS16 Input_Terminal_Parameters_DI3_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x08 */
+volatile UNS16 Input_Terminal_Parameters_DI4_function_selection = 0x2;		/* Mapped at index 0x2003, subindex 0x09 */
+volatile UNS16 Input_Terminal_Parameters_DI4_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x0A */
+volatile UNS16 Input_Terminal_Parameters_DI5_function_selection = 0x1;		/* Mapped at index 0x2003, subindex 0x0B */
+volatile UNS16 Input_Terminal_Parameters_DI5_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x0C */
+volatile UNS16 Input_Terminal_Parameters_DI6_function_selection = 0xC;		/* Mapped at index 0x2003, subindex 0x0D */
+volatile UNS16 Input_Terminal_Parameters_DI6_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x0E */
+volatile UNS16 Input_Terminal_Parameters_DI7_function_selection = 0x3;		/* Mapped at index 0x2003, subindex 0x0F */
+volatile UNS16 Input_Terminal_Parameters_DI7_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x10 */
+volatile UNS16 Input_Terminal_Parameters_DI8_function_selection = 0x1F;		/* Mapped at index 0x2003, subindex 0x11 */
+volatile UNS16 Input_Terminal_Parameters_DI8_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x12 */
+volatile UNS16 Input_Terminal_Parameters_DI9_function_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x13 */
+volatile UNS16 Input_Terminal_Parameters_DI9_logic_selection = 0x0;		/* Mapped at index 0x2003, subindex 0x14 */
+volatile UNS8 Input_Terminal_Parameters_Compatibility_Entry[48] = {0x0};		/* Mapped at index 0x2003, subindex 0x15 */
+volatile UNS16 Input_Terminal_Parameters_States_of_functions_not_allocatedamong_FunIN_33_48_HEX = 0x0;		/* Mapped at index 0x2003, subindex 0x23 */
+volatile UNS16 Input_Terminal_Parameters_States_of_functions_not_allocatedamong_FunIN_49_64_HEX = 0x0;		/* Mapped at index 0x2003, subindex 0x24 */
+volatile INTEGER16 Input_Terminal_Parameters_AI1_offset = 0x0;		/* Mapped at index 0x2003, subindex 0x33 */
+volatile UNS16 Input_Terminal_Parameters_AI1_filter_time_constant = 0xC8;		/* Mapped at index 0x2003, subindex 0x34 */
+volatile UNS16 Input_Terminal_Parameters_AI1_Filter_Enable = 0x1;		/* Mapped at index 0x2003, subindex 0x35 */
+volatile UNS16 Input_Terminal_Parameters_AI1_dead_zone = 0x64;		/* Mapped at index 0x2003, subindex 0x36 */
+volatile INTEGER16 Input_Terminal_Parameters_AI1_zero_drift = 0x0;		/* Mapped at index 0x2003, subindex 0x37 */
+volatile INTEGER16 Input_Terminal_Parameters_AI2_offset = 0x0;		/* Mapped at index 0x2003, subindex 0x38 */
+volatile UNS16 Input_Terminal_Parameters_AI2_filter_time_constant = 0xC8;		/* Mapped at index 0x2003, subindex 0x39 */
+volatile UNS16 Input_Terminal_Parameters_AI2_Filter_Enable = 0x1;		/* Mapped at index 0x2003, subindex 0x3A */
+volatile UNS16 Input_Terminal_Parameters_AI2_dead_zone = 0x64;		/* Mapped at index 0x2003, subindex 0x3B */
+volatile INTEGER16 Input_Terminal_Parameters_AI2_zero_drift = 0x0;		/* Mapped at index 0x2003, subindex 0x3C */
+volatile UNS16 Input_Terminal_Parameters_Speed_corresponding_to_10_V = 0xBB8;		/* Mapped at index 0x2003, subindex 0x51 */
+volatile UNS16 Input_Terminal_Parameters_Torque_corresponding_to_10_V = 0x64;		/* Mapped at index 0x2003, subindex 0x52 */
 
-UNS16 Output_terminal_Parameters_DO1_function_selection = 0x1;		/* Mapped at index 0x2004, subindex 0x01 */
-UNS16 Output_terminal_Parameters_DO1_logic_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x02 */
-UNS16 Output_terminal_Parameters_DO2_function_selection = 0x5;		/* Mapped at index 0x2004, subindex 0x03 */
-UNS16 Output_terminal_Parameters_DO2_logic_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x04 */
-UNS16 Output_terminal_Parameters_DO3_function_selection = 0x3;		/* Mapped at index 0x2004, subindex 0x05 */
-UNS16 Output_terminal_Parameters_DO3_logic_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x06 */
-UNS16 Output_terminal_Parameters_DO4_function_selection = 0xB;		/* Mapped at index 0x2004, subindex 0x07 */
-UNS16 Output_terminal_Parameters_DO4_logic_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x08 */
-UNS16 Output_terminal_Parameters_DO5_function_selection = 0x10;		/* Mapped at index 0x2004, subindex 0x09 */
-UNS16 Output_terminal_Parameters_DO5_logic_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x0A */
-UNS8 Output_terminal_Parameters_Compatibility_Entry[39] = {0x00};		/* Mapped at index 0x2004*/
-UNS16 Output_terminal_Parameters_DO_source = 0x0;		/* Mapped at index 0x2004, subindex 0x17 */
-UNS16 Output_terminal_Parameters_AO1_signal_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x33 */
-INTEGER16 Output_terminal_Parameters_AO1_offset_voltage = 0x1388;		/* Mapped at index 0x2004, subindex 0x34 */
-INTEGER16 Output_terminal_Parameters_AO1_multiplying_factor = 0x64;		/* Mapped at index 0x2004, subindex 0x35 */
-UNS16 Output_terminal_Parameters_AO2_signal_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x36 */
-INTEGER16 Output_terminal_Parameters_AO2_offset_voltage = 0x1388;		/* Mapped at index 0x2004, subindex 0x37 */
-INTEGER16 Output_terminal_Parameters_AO2_multiplying_factor = 0x64;		/* Mapped at index 0x2004, subindex 0x38 */
+volatile UNS16 Output_terminal_Parameters_DO1_function_selection = 0x1;		/* Mapped at index 0x2004, subindex 0x01 */
+volatile UNS16 Output_terminal_Parameters_DO1_logic_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x02 */
+volatile UNS16 Output_terminal_Parameters_DO2_function_selection = 0x5;		/* Mapped at index 0x2004, subindex 0x03 */
+volatile UNS16 Output_terminal_Parameters_DO2_logic_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x04 */
+volatile UNS16 Output_terminal_Parameters_DO3_function_selection = 0x3;		/* Mapped at index 0x2004, subindex 0x05 */
+volatile UNS16 Output_terminal_Parameters_DO3_logic_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x06 */
+volatile UNS16 Output_terminal_Parameters_DO4_function_selection = 0xB;		/* Mapped at index 0x2004, subindex 0x07 */
+volatile UNS16 Output_terminal_Parameters_DO4_logic_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x08 */
+volatile UNS16 Output_terminal_Parameters_DO5_function_selection = 0x10;		/* Mapped at index 0x2004, subindex 0x09 */
+volatile UNS16 Output_terminal_Parameters_DO5_logic_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x0A */
+volatile UNS8 Output_terminal_Parameters_Compatibility_Entry[39] = {0x00};		/* Mapped at index 0x2004*/
+volatile UNS16 Output_terminal_Parameters_DO_source = 0x0;		/* Mapped at index 0x2004, subindex 0x17 */
+volatile UNS16 Output_terminal_Parameters_AO1_signal_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x33 */
+volatile INTEGER16 Output_terminal_Parameters_AO1_offset_voltage = 0x1388;		/* Mapped at index 0x2004, subindex 0x34 */
+volatile INTEGER16 Output_terminal_Parameters_AO1_multiplying_factor = 0x64;		/* Mapped at index 0x2004, subindex 0x35 */
+volatile UNS16 Output_terminal_Parameters_AO2_signal_selection = 0x0;		/* Mapped at index 0x2004, subindex 0x36 */
+volatile INTEGER16 Output_terminal_Parameters_AO2_offset_voltage = 0x1388;		/* Mapped at index 0x2004, subindex 0x37 */
+volatile INTEGER16 Output_terminal_Parameters_AO2_multiplying_factor = 0x64;		/* Mapped at index 0x2004, subindex 0x38 */
 
-UNS16 Position_Control_Parameters_Position_reference_source = 0x0;		/* Mapped at index 0x2005, subindex 0x01 */
-UNS16 Position_Control_Parameters_Pulse_reference_input_terminal_selection = 0x0;		/* Mapped at index 0x2005, subindex 0x02 */
-UNS32 Position_Control_Parameters_Pulses_for_one_motor_revolution = 0x0;		/* Mapped at index 0x2005, subindex 0x03 */
-UNS8 Position_Control_Parameters_Compatibility_Entry[26] = {0x0};		/* Mapped at index 0x2005, subindex 0x04 */
-UNS16 Position_Control_Parameters_First_order_lowpass_filter_time = 0x0;		/* Mapped at index 0x2005, subindex 0x05 */
-INTEGER16 Position_Control_Parameters_Step_size = 0x32;		/* Mapped at index 0x2005, subindex 0x06 */
-UNS16 Position_Control_Parameters_Filter_time_constant_of_of_average_value_of_position_reference = 0x0;		/* Mapped at index 0x2005, subindex 0x07 */
-UNS32 Position_Control_Parameters_Electronicgear_ratio_1_numerator = 0x4;		/* Mapped at index 0x2005, subindex 0x08 */
-UNS32 Position_Control_Parameters_Electronic_gear_ratio_1_denominator = 0x1;		/* Mapped at index 0x2005, subindex 0x0A */
-UNS32 Position_Control_Parameters_Electronicgear_ratio_2_numerator = 0x4;		/* Mapped at index 0x2005, subindex 0x0C */
-UNS32 Position_Control_Parameters_Electronic_gear_ratio_2_denominator = 0x1;		/* Mapped at index 0x2005, subindex 0x0E */
-UNS16 Position_Control_Parameters_Reference_pulse_form = 0x0;		/* Mapped at index 0x2005, subindex 0x10 */
-UNS16 Position_Control_Parameters_Clear_action = 0x0;		/* Mapped at index 0x2005, subindex 0x11 */
-UNS16 Position_Control_Parameters_Encoder_frequency_division_pulses = 0x9C4;		/* Mapped at index 0x2005, subindex 0x12 */
-UNS16 Position_Control_Parameters_Speed_feedforward_control_selection = 0x1;		/* Mapped at index 0x2005, subindex 0x14 */
-UNS16 Position_Control_Parameters_Output_condition_of_positioning_completed_signal_COIN = 0x0;		/* Mapped at index 0x2005, subindex 0x15 */
-UNS16 Position_Control_Parameters_Amplitude_for_positioning_completed = 0x7;		/* Mapped at index 0x2005, subindex 0x16 */
-UNS16 Position_Control_Parameters_Amplitude_of_positioning_almost_completed = 0xFFFF;		/* Mapped at index 0x2005, subindex 0x17 */
-UNS16 Position_Control_Parameters_Control_of_home_return = 0x0;		/* Mapped at index 0x2005, subindex 0x1F */
-UNS16 Position_Control_Parameters_Mode_of_home_return = 0x0;		/* Mapped at index 0x2005, subindex 0x20 */
-UNS16 Position_Control_Parameters_HM_high_speed_searching = 0x64;		/* Mapped at index 0x2005, subindex 0x21 */
-UNS16 Position_Control_Parameters_HM_low_speed_searching = 0xA;		/* Mapped at index 0x2005, subindex 0x22 */
-UNS16 Position_Control_Parameters_HM_Acceleration_Deceleration_time = 0x3E8;		/* Mapped at index 0x2005, subindex 0x23 */
-UNS16 Position_Control_Parameters_Time_of_home_searching = 0xC350;		/* Mapped at index 0x2005, subindex 0x24 */
-INTEGER32 Position_Control_Parameters_H0536 = 0x0;		/* Mapped at index 0x2005, subindex 0x25 */
-UNS16 Position_Control_Parameters_Servo_pulse_output_source = 0x0;		/* Mapped at index 0x2005, subindex 0x27 */
-UNS16 Position_Control_Parameters_Electronic_gear_ratio_switchover_condition = 0x0;		/* Mapped at index 0x2005, subindex 0x28 */
-UNS16 Position_Control_Parameters_Output_polarity_of_Z_pulse = 0x1;		/* Mapped at index 0x2005, subindex 0x2A */
-UNS16 Position_Control_Parameters_Absolute_encode_multi_turns_offset = 0x0;		/* Mapped at index 0x2005, subindex 0x2D */
-INTEGER32 Position_Control_Parameters_Absolute_position_offset_of_absolute_encode_Low = 0x0;		/* Mapped at index 0x2005, subindex 0x2F */
-INTEGER32 Position_Control_Parameters_Absolute_position_offset_of_absolute_encode_High = 0x0;		/* Mapped at index 0x2005, subindex 0x31 */
-UNS16 Position_Control_Parameters_Mechanical_Gear_ratio_numerator_of_absolute_encode_mode_2 = 0x1;		/* Mapped at index 0x2005, subindex 0x33 */
-UNS16 Position_Control_Parameters_Mechanical_Gear_ratio_denominator_of_absolute_encode_mode_2 = 0x1;		/* Mapped at index 0x2005, subindex 0x34 */
-UNS32 Position_Control_Parameters_Max_value_of_mechanical_absolute_position_inc_of_absolute_encode_mode_2_Low = 0x0;		/* Mapped at index 0x2005, subindex 0x35 */
-UNS32 Position_Control_Parameters_Max_value_of_mechanical_absolute_position_inc_of_absolute_encode_mode_2_High = 0x0;		/* Mapped at index 0x2005, subindex 0x37 */
-UNS16 Position_Control_Parameters_Positon_reach_hold_time = 0x0;		/* Mapped at index 0x2005, subindex 0x3D */
-UNS32 Position_Control_Parameters_Position_window_unit_set = 0x0;		/* Mapped at index 0x2005, subindex 0x3E */
+volatile UNS16 Position_Control_Parameters_Position_reference_source = 0x0;		/* Mapped at index 0x2005, subindex 0x01 */
+volatile UNS16 Position_Control_Parameters_Pulse_reference_input_terminal_selection = 0x0;		/* Mapped at index 0x2005, subindex 0x02 */
+volatile UNS32 Position_Control_Parameters_Pulses_for_one_motor_revolution = 0x0;		/* Mapped at index 0x2005, subindex 0x03 */
+volatile UNS8 Position_Control_Parameters_Compatibility_Entry[26] = {0x0};		/* Mapped at index 0x2005, subindex 0x04 */
+volatile UNS16 Position_Control_Parameters_First_order_lowpass_filter_time = 0x0;		/* Mapped at index 0x2005, subindex 0x05 */
+volatile INTEGER16 Position_Control_Parameters_Step_size = 0x32;		/* Mapped at index 0x2005, subindex 0x06 */
+volatile UNS16 Position_Control_Parameters_Filter_time_constant_of_of_average_value_of_position_reference = 0x0;		/* Mapped at index 0x2005, subindex 0x07 */
+volatile UNS32 Position_Control_Parameters_Electronicgear_ratio_1_numerator = 0x4;		/* Mapped at index 0x2005, subindex 0x08 */
+volatile UNS32 Position_Control_Parameters_Electronic_gear_ratio_1_denominator = 0x1;		/* Mapped at index 0x2005, subindex 0x0A */
+volatile UNS32 Position_Control_Parameters_Electronicgear_ratio_2_numerator = 0x4;		/* Mapped at index 0x2005, subindex 0x0C */
+volatile UNS32 Position_Control_Parameters_Electronic_gear_ratio_2_denominator = 0x1;		/* Mapped at index 0x2005, subindex 0x0E */
+volatile UNS16 Position_Control_Parameters_Reference_pulse_form = 0x0;		/* Mapped at index 0x2005, subindex 0x10 */
+volatile UNS16 Position_Control_Parameters_Clear_action = 0x0;		/* Mapped at index 0x2005, subindex 0x11 */
+volatile UNS16 Position_Control_Parameters_Encoder_frequency_division_pulses = 0x9C4;		/* Mapped at index 0x2005, subindex 0x12 */
+volatile UNS16 Position_Control_Parameters_Speed_feedforward_control_selection = 0x1;		/* Mapped at index 0x2005, subindex 0x14 */
+volatile UNS16 Position_Control_Parameters_Output_condition_of_positioning_completed_signal_COIN = 0x0;		/* Mapped at index 0x2005, subindex 0x15 */
+volatile UNS16 Position_Control_Parameters_Amplitude_for_positioning_completed = 0x7;		/* Mapped at index 0x2005, subindex 0x16 */
+volatile UNS16 Position_Control_Parameters_Amplitude_of_positioning_almost_completed = 0xFFFF;		/* Mapped at index 0x2005, subindex 0x17 */
+volatile UNS16 Position_Control_Parameters_Control_of_home_return = 0x0;		/* Mapped at index 0x2005, subindex 0x1F */
+volatile UNS16 Position_Control_Parameters_Mode_of_home_return = 0x0;		/* Mapped at index 0x2005, subindex 0x20 */
+volatile UNS16 Position_Control_Parameters_HM_high_speed_searching = 0x64;		/* Mapped at index 0x2005, subindex 0x21 */
+volatile UNS16 Position_Control_Parameters_HM_low_speed_searching = 0xA;		/* Mapped at index 0x2005, subindex 0x22 */
+volatile UNS16 Position_Control_Parameters_HM_Acceleration_Deceleration_time = 0x3E8;		/* Mapped at index 0x2005, subindex 0x23 */
+volatile UNS16 Position_Control_Parameters_Time_of_home_searching = 0xC350;		/* Mapped at index 0x2005, subindex 0x24 */
+volatile INTEGER32 Position_Control_Parameters_H0536 = 0x0;		/* Mapped at index 0x2005, subindex 0x25 */
+volatile UNS16 Position_Control_Parameters_Servo_pulse_output_source = 0x0;		/* Mapped at index 0x2005, subindex 0x27 */
+volatile UNS16 Position_Control_Parameters_Electronic_gear_ratio_switchover_condition = 0x0;		/* Mapped at index 0x2005, subindex 0x28 */
+volatile UNS16 Position_Control_Parameters_Output_polarity_of_Z_pulse = 0x1;		/* Mapped at index 0x2005, subindex 0x2A */
+volatile UNS16 Position_Control_Parameters_Absolute_encode_multi_turns_offset = 0x0;		/* Mapped at index 0x2005, subindex 0x2D */
+volatile INTEGER32 Position_Control_Parameters_Absolute_position_offset_of_absolute_encode_Low = 0x0;		/* Mapped at index 0x2005, subindex 0x2F */
+volatile INTEGER32 Position_Control_Parameters_Absolute_position_offset_of_absolute_encode_High = 0x0;		/* Mapped at index 0x2005, subindex 0x31 */
+volatile UNS16 Position_Control_Parameters_Mechanical_Gear_ratio_numerator_of_absolute_encode_mode_2 = 0x1;		/* Mapped at index 0x2005, subindex 0x33 */
+volatile UNS16 Position_Control_Parameters_Mechanical_Gear_ratio_denominator_of_absolute_encode_mode_2 = 0x1;		/* Mapped at index 0x2005, subindex 0x34 */
+volatile UNS32 Position_Control_Parameters_Max_value_of_mechanical_absolute_position_inc_of_absolute_encode_mode_2_Low = 0x0;		/* Mapped at index 0x2005, subindex 0x35 */
+volatile UNS32 Position_Control_Parameters_Max_value_of_mechanical_absolute_position_inc_of_absolute_encode_mode_2_High = 0x0;		/* Mapped at index 0x2005, subindex 0x37 */
+volatile UNS16 Position_Control_Parameters_Positon_reach_hold_time = 0x0;		/* Mapped at index 0x2005, subindex 0x3D */
+volatile UNS32 Position_Control_Parameters_Position_window_unit_set = 0x0;		/* Mapped at index 0x2005, subindex 0x3E */
 
-UNS16 Speed_Control_Parameters_Main_speed_reference_A_source = 0x0;		/* Mapped at index 0x2006, subindex 0x01 */
-UNS16 Speed_Control_Parameters_Auxiliary_speed_reference_B_source = 0x1;		/* Mapped at index 0x2006, subindex 0x02 */
-UNS16 Speed_Control_Parameters_Speed_reference_selection = 0x0;		/* Mapped at index 0x2006, subindex 0x03 */
-INTEGER16 Speed_Control_Parameters_Keypad_setting_value_of_speed_reference = 0xC8;		/* Mapped at index 0x2006, subindex 0x04 */
-UNS16 Speed_Control_Parameters_Jog_speed_setting_value = 0x64;		/* Mapped at index 0x2006, subindex 0x05 */
-UNS16 Speed_Control_Parameters_Acceleration_ramp_time_constant_of_speed_reference = 0x0;		/* Mapped at index 0x2006, subindex 0x06 */
-UNS16 Speed_Control_Parameters_Deceleration_ramp_time_constant_of_speed_reference = 0x0;		/* Mapped at index 0x2006, subindex 0x07 */
-UNS16 Speed_Control_Parameters_Maximum_speed_threshold = 0x1770;		/* Mapped at index 0x2006, subindex 0x08 */
-UNS16 Speed_Control_Parameters_Forward_speed_threshold = 0x1770;		/* Mapped at index 0x2006, subindex 0x09 */
-UNS16 Speed_Control_Parameters_Reverse_speed_threshold = 0x1770;		/* Mapped at index 0x2006, subindex 0x0A */
-UNS8 Speed_Control_Parameters_Compatibility_Entry[4] = {0x0};		/* Mapped at index 0x2006, subindex 0x0B */
-UNS16 Speed_Control_Parameters_Torque_feedforward_selection = 0x1;		/* Mapped at index 0x2006, subindex 0x0C */
-UNS16 Speed_Control_Parameters_Speed_limit_for_zero_clamp = 0xA;		/* Mapped at index 0x2006, subindex 0x10 */
-UNS16 Speed_Control_Parameters_Motor_speed_threshold = 0x14;		/* Mapped at index 0x2006, subindex 0x11 */
-UNS16 Speed_Control_Parameters_Threshold_of_speed_consistent_signal = 0xA;		/* Mapped at index 0x2006, subindex 0x12 */
-UNS16 Speed_Control_Parameters_Threshold_of_speed_reached_signal = 0x3E8;		/* Mapped at index 0x2006, subindex 0x13 */
-UNS16 Speed_Control_Parameters_Threshold_of_zero_speed_output_signal = 0xA;		/* Mapped at index 0x2006, subindex 0x14 */
+volatile UNS16 Speed_Control_Parameters_Main_speed_reference_A_source = 0x0;		/* Mapped at index 0x2006, subindex 0x01 */
+volatile UNS16 Speed_Control_Parameters_Auxiliary_speed_reference_B_source = 0x1;		/* Mapped at index 0x2006, subindex 0x02 */
+volatile UNS16 Speed_Control_Parameters_Speed_reference_selection = 0x0;		/* Mapped at index 0x2006, subindex 0x03 */
+volatile INTEGER16 Speed_Control_Parameters_Keypad_setting_value_of_speed_reference = 0xC8;		/* Mapped at index 0x2006, subindex 0x04 */
+volatile UNS16 Speed_Control_Parameters_Jog_speed_setting_value = 0x64;		/* Mapped at index 0x2006, subindex 0x05 */
+volatile UNS16 Speed_Control_Parameters_Acceleration_ramp_time_constant_of_speed_reference = 0x0;		/* Mapped at index 0x2006, subindex 0x06 */
+volatile UNS16 Speed_Control_Parameters_Deceleration_ramp_time_constant_of_speed_reference = 0x0;		/* Mapped at index 0x2006, subindex 0x07 */
+volatile UNS16 Speed_Control_Parameters_Maximum_speed_threshold = 0x1770;		/* Mapped at index 0x2006, subindex 0x08 */
+volatile UNS16 Speed_Control_Parameters_Forward_speed_threshold = 0x1770;		/* Mapped at index 0x2006, subindex 0x09 */
+volatile UNS16 Speed_Control_Parameters_Reverse_speed_threshold = 0x1770;		/* Mapped at index 0x2006, subindex 0x0A */
+volatile UNS8 Speed_Control_Parameters_Compatibility_Entry[4] = {0x0};		/* Mapped at index 0x2006, subindex 0x0B */
+volatile UNS16 Speed_Control_Parameters_Torque_feedforward_selection = 0x1;		/* Mapped at index 0x2006, subindex 0x0C */
+volatile UNS16 Speed_Control_Parameters_Speed_limit_for_zero_clamp = 0xA;		/* Mapped at index 0x2006, subindex 0x10 */
+volatile UNS16 Speed_Control_Parameters_Motor_speed_threshold = 0x14;		/* Mapped at index 0x2006, subindex 0x11 */
+volatile UNS16 Speed_Control_Parameters_Threshold_of_speed_consistent_signal = 0xA;		/* Mapped at index 0x2006, subindex 0x12 */
+volatile UNS16 Speed_Control_Parameters_Threshold_of_speed_reached_signal = 0x3E8;		/* Mapped at index 0x2006, subindex 0x13 */
+volatile UNS16 Speed_Control_Parameters_Threshold_of_zero_speed_output_signal = 0xA;		/* Mapped at index 0x2006, subindex 0x14 */
 
-UNS16 Torque_Control_Parameters_Main_torque_reference_A_source = 0x0;		/* Mapped at index 0x2007, subindex 0x01 */
-UNS16 Torque_Control_Parameters_Auxiliary_torque_reference_B_source = 0x1;		/* Mapped at index 0x2007, subindex 0x02 */
-UNS16 Torque_Control_Parameters_Torque_reference_source = 0x0;		/* Mapped at index 0x2007, subindex 0x03 */
-INTEGER16 Torque_Control_Parameters_Keypad_setting_value_of_torque_reference = 0x0;		/* Mapped at index 0x2007, subindex 0x04 */
-UNS8 Torque_Control_Parameters_Compatibility_Entry[20] = {0x0};		/* Mapped at index 0x2007, subindex 0x05 */
-UNS16 Torque_Control_Parameters_Torque_reference_filter_time = 0x4F;		/* Mapped at index 0x2007, subindex 0x06 */
-UNS16 Torque_Control_Parameters_The_second_torque_reference_filter_time = 0x4F;		/* Mapped at index 0x2007, subindex 0x07 */
-UNS16 Torque_Control_Parameters_Torque_limit_source = 0x0;		/* Mapped at index 0x2007, subindex 0x08 */
-UNS16 Torque_Control_Parameters_T_LMT_selection = 0x2;		/* Mapped at index 0x2007, subindex 0x09 */
-UNS16 Torque_Control_Parameters_Internal_forward_torque_limit = 0xBB8;		/* Mapped at index 0x2007, subindex 0x0A */
-UNS16 Torque_Control_Parameters_Internal_reverse_torque_limit = 0xBB8;		/* Mapped at index 0x2007, subindex 0x0B */
-UNS16 Torque_Control_Parameters_External_forward_torque_limit = 0xBB8;		/* Mapped at index 0x2007, subindex 0x0C */
-UNS16 Torque_Control_Parameters_External_reverse_torque_limit = 0xBB8;		/* Mapped at index 0x2007, subindex 0x0D */
-UNS16 Torque_Control_Parameters_Emergency_stop_torque = 0x3E8;		/* Mapped at index 0x2007, subindex 0x10 */
-UNS16 Torque_Control_Parameters_Speed_limit_source = 0x0;		/* Mapped at index 0x2007, subindex 0x12 */
-UNS16 Torque_Control_Parameters_V_LMT_selection = 0x1;		/* Mapped at index 0x2007, subindex 0x13 */
-UNS16 Torque_Control_Parameters_Forward_speed_limit_Speed_limit_1_in_torque_control = 0xBB8;		/* Mapped at index 0x2007, subindex 0x14 */
-UNS16 Torque_Control_Parameters_Reverse_speed_limit_Speed_limit_2_in_torque_control = 0xBB8;		/* Mapped at index 0x2007, subindex 0x15 */
-UNS16 Torque_Control_Parameters_Base_value_for_torque_reached = 0x0;		/* Mapped at index 0x2007, subindex 0x16 */
-UNS16 Torque_Control_Parameters_Threshold_of_torque_reached_valid = 0xC8;		/* Mapped at index 0x2007, subindex 0x17 */
-UNS16 Torque_Control_Parameters_Threshold_of_torque_reached_invalid = 0x64;		/* Mapped at index 0x2007, subindex 0x18 */
-UNS16 Torque_Control_Parameters_Detection_time_of_speed_limit_exceeded = 0xA;		/* Mapped at index 0x2007, subindex 0x29 */
+volatile UNS16 Torque_Control_Parameters_Main_torque_reference_A_source = 0x0;		/* Mapped at index 0x2007, subindex 0x01 */
+volatile UNS16 Torque_Control_Parameters_Auxiliary_torque_reference_B_source = 0x1;		/* Mapped at index 0x2007, subindex 0x02 */
+volatile UNS16 Torque_Control_Parameters_Torque_reference_source = 0x0;		/* Mapped at index 0x2007, subindex 0x03 */
+volatile INTEGER16 Torque_Control_Parameters_Keypad_setting_value_of_torque_reference = 0x0;		/* Mapped at index 0x2007, subindex 0x04 */
+volatile UNS8 Torque_Control_Parameters_Compatibility_Entry[20] = {0x0};		/* Mapped at index 0x2007, subindex 0x05 */
+volatile UNS16 Torque_Control_Parameters_Torque_reference_filter_time = 0x4F;		/* Mapped at index 0x2007, subindex 0x06 */
+volatile UNS16 Torque_Control_Parameters_The_second_torque_reference_filter_time = 0x4F;		/* Mapped at index 0x2007, subindex 0x07 */
+volatile UNS16 Torque_Control_Parameters_Torque_limit_source = 0x0;		/* Mapped at index 0x2007, subindex 0x08 */
+volatile UNS16 Torque_Control_Parameters_T_LMT_selection = 0x2;		/* Mapped at index 0x2007, subindex 0x09 */
+volatile UNS16 Torque_Control_Parameters_Internal_forward_torque_limit = 0xBB8;		/* Mapped at index 0x2007, subindex 0x0A */
+volatile UNS16 Torque_Control_Parameters_Internal_reverse_torque_limit = 0xBB8;		/* Mapped at index 0x2007, subindex 0x0B */
+volatile UNS16 Torque_Control_Parameters_External_forward_torque_limit = 0xBB8;		/* Mapped at index 0x2007, subindex 0x0C */
+volatile UNS16 Torque_Control_Parameters_External_reverse_torque_limit = 0xBB8;		/* Mapped at index 0x2007, subindex 0x0D */
+volatile UNS16 Torque_Control_Parameters_Emergency_stop_torque = 0x3E8;		/* Mapped at index 0x2007, subindex 0x10 */
+volatile UNS16 Torque_Control_Parameters_Speed_limit_source = 0x0;		/* Mapped at index 0x2007, subindex 0x12 */
+volatile UNS16 Torque_Control_Parameters_V_LMT_selection = 0x1;		/* Mapped at index 0x2007, subindex 0x13 */
+volatile UNS16 Torque_Control_Parameters_Forward_speed_limit_Speed_limit_1_in_torque_control = 0xBB8;		/* Mapped at index 0x2007, subindex 0x14 */
+volatile UNS16 Torque_Control_Parameters_Reverse_speed_limit_Speed_limit_2_in_torque_control = 0xBB8;		/* Mapped at index 0x2007, subindex 0x15 */
+volatile UNS16 Torque_Control_Parameters_Base_value_for_torque_reached = 0x0;		/* Mapped at index 0x2007, subindex 0x16 */
+volatile UNS16 Torque_Control_Parameters_Threshold_of_torque_reached_valid = 0xC8;		/* Mapped at index 0x2007, subindex 0x17 */
+volatile UNS16 Torque_Control_Parameters_Threshold_of_torque_reached_invalid = 0x64;		/* Mapped at index 0x2007, subindex 0x18 */
+volatile UNS16 Torque_Control_Parameters_Detection_time_of_speed_limit_exceeded = 0xA;		/* Mapped at index 0x2007, subindex 0x29 */
 
-UNS16 Gain_Parameters_Speed_loop_gain = 0xFA;		/* Mapped at index 0x2008, subindex 0x01 */
-UNS16 Gain_Parameters_Speed_loop_integral_time_constant = 0xC6F;		/* Mapped at index 0x2008, subindex 0x02 */
-UNS16 Gain_Parameters_Position_loop_gain = 0x190;		/* Mapped at index 0x2008, subindex 0x03 */
-UNS16 Gain_Parameters_The_second_speed_loop_gain = 0x190;		/* Mapped at index 0x2008, subindex 0x04 */
-UNS16 Gain_Parameters_The_second_speed_loop_integral_time_constant = 0x7D0;		/* Mapped at index 0x2008, subindex 0x05 */
-UNS16 Gain_Parameters_The_second_position_loop_gain = 0x280;		/* Mapped at index 0x2008, subindex 0x06 */
-UNS8 Gain_Parameters_Compatibility_Entry[5] = {0x0};		/* Mapped at index 0x2008, subindex 0x07 */
-UNS16 Gain_Parameters_Second_gain_mode_setting = 0x1;		/* Mapped at index 0x2008, subindex 0x09 */
-UNS16 Gain_Parameters_Gain_switchover_condition = 0x0;		/* Mapped at index 0x2008, subindex 0x0A */
-UNS16 Gain_Parameters_Gain_switchover_delay = 0x32;		/* Mapped at index 0x2008, subindex 0x0B */
-UNS16 Gain_Parameters_Gain_switchover_level = 0x32;		/* Mapped at index 0x2008, subindex 0x0C */
-UNS16 Gain_Parameters_Gain_switchover_hysteresis = 0x1E;		/* Mapped at index 0x2008, subindex 0x0D */
-UNS16 Gain_Parameters_Position_gain_switchover_time = 0x1E;		/* Mapped at index 0x2008, subindex 0x0E */
-UNS16 Gain_Parameters_Average_value_of_load_inertia_ratio = 0x64;		/* Mapped at index 0x2008, subindex 0x10 */
-UNS16 Gain_Parameters_Speed_feedforward_filter_time_constant = 0x32;		/* Mapped at index 0x2008, subindex 0x13 */
-UNS16 Gain_Parameters_Speed_feedforward_gain = 0x0;		/* Mapped at index 0x2008, subindex 0x14 */
-UNS16 Gain_Parameters_Torque_feedforward_filter_time_constant = 0x32;		/* Mapped at index 0x2008, subindex 0x15 */
-UNS16 Gain_Parameters_Torque_feedforward_gain = 0x0;		/* Mapped at index 0x2008, subindex 0x16 */
-UNS16 Gain_Parameters_Speed_feedback_filter = 0x0;		/* Mapped at index 0x2008, subindex 0x17 */
-UNS16 Gain_Parameters_Cutoff_frequency_of_speed_feedback_lowpass_filter = 0xFA0;		/* Mapped at index 0x2008, subindex 0x18 */
-UNS16 Gain_Parameters_Pseudo_differential_forward_feedback_control_coefficient = 0x3E8;		/* Mapped at index 0x2008, subindex 0x19 */
+volatile UNS16 Gain_Parameters_Speed_loop_gain = 0xFA;		/* Mapped at index 0x2008, subindex 0x01 */
+volatile UNS16 Gain_Parameters_Speed_loop_integral_time_constant = 0xC6F;		/* Mapped at index 0x2008, subindex 0x02 */
+volatile UNS16 Gain_Parameters_Position_loop_gain = 0x190;		/* Mapped at index 0x2008, subindex 0x03 */
+volatile UNS16 Gain_Parameters_The_second_speed_loop_gain = 0x190;		/* Mapped at index 0x2008, subindex 0x04 */
+volatile UNS16 Gain_Parameters_The_second_speed_loop_integral_time_constant = 0x7D0;		/* Mapped at index 0x2008, subindex 0x05 */
+volatile UNS16 Gain_Parameters_The_second_position_loop_gain = 0x280;		/* Mapped at index 0x2008, subindex 0x06 */
+volatile UNS8 Gain_Parameters_Compatibility_Entry[5] = {0x0};		/* Mapped at index 0x2008, subindex 0x07 */
+volatile UNS16 Gain_Parameters_Second_gain_mode_setting = 0x1;		/* Mapped at index 0x2008, subindex 0x09 */
+volatile UNS16 Gain_Parameters_Gain_switchover_condition = 0x0;		/* Mapped at index 0x2008, subindex 0x0A */
+volatile UNS16 Gain_Parameters_Gain_switchover_delay = 0x32;		/* Mapped at index 0x2008, subindex 0x0B */
+volatile UNS16 Gain_Parameters_Gain_switchover_level = 0x32;		/* Mapped at index 0x2008, subindex 0x0C */
+volatile UNS16 Gain_Parameters_Gain_switchover_hysteresis = 0x1E;		/* Mapped at index 0x2008, subindex 0x0D */
+volatile UNS16 Gain_Parameters_Position_gain_switchover_time = 0x1E;		/* Mapped at index 0x2008, subindex 0x0E */
+volatile UNS16 Gain_Parameters_Average_value_of_load_inertia_ratio = 0x64;		/* Mapped at index 0x2008, subindex 0x10 */
+volatile UNS16 Gain_Parameters_Speed_feedforward_filter_time_constant = 0x32;		/* Mapped at index 0x2008, subindex 0x13 */
+volatile UNS16 Gain_Parameters_Speed_feedforward_gain = 0x0;		/* Mapped at index 0x2008, subindex 0x14 */
+volatile UNS16 Gain_Parameters_Torque_feedforward_filter_time_constant = 0x32;		/* Mapped at index 0x2008, subindex 0x15 */
+volatile UNS16 Gain_Parameters_Torque_feedforward_gain = 0x0;		/* Mapped at index 0x2008, subindex 0x16 */
+volatile UNS16 Gain_Parameters_Speed_feedback_filter = 0x0;		/* Mapped at index 0x2008, subindex 0x17 */
+volatile UNS16 Gain_Parameters_Cutoff_frequency_of_speed_feedback_lowpass_filter = 0xFA0;		/* Mapped at index 0x2008, subindex 0x18 */
+volatile UNS16 Gain_Parameters_Pseudo_differential_forward_feedback_control_coefficient = 0x3E8;		/* Mapped at index 0x2008, subindex 0x19 */
 
-UNS16 Auto_adjusting_Parameters_Auto_adjusting_mode = 0x0;		/* Mapped at index 0x2009, subindex 0x01 */
-UNS16 Auto_adjusting_Parameters_Rigidity_level_selection = 0xC;		/* Mapped at index 0x2009, subindex 0x02 */
-UNS16 Auto_adjusting_Parameters_Working_mode_of_self_adaptive_notch = 0x0;		/* Mapped at index 0x2009, subindex 0x03 */
-UNS16 Auto_adjusting_Parameters_Online_inertia_auto_tuning_mode = 0x0;		/* Mapped at index 0x2009, subindex 0x04 */
-UNS16 Auto_adjusting_Parameters_Low_frequency_vibration_mode_selection = 0x0;		/* Mapped at index 0x2009, subindex 0x05 */
-UNS16 Auto_adjusting_Parameters_Offline_inertia_auto_tuning_mode = 0x0;		/* Mapped at index 0x2009, subindex 0x06 */
-UNS16 Auto_adjusting_Parameters_Maximum_speed_for_inertia_autotuning = 0x1F4;		/* Mapped at index 0x2009, subindex 0x07 */
-UNS16 Auto_adjusting_Parameters_Acceleration_Deceleration_time_for_inertia_autotuning = 0x7D;		/* Mapped at index 0x2009, subindex 0x08 */
-UNS16 Auto_adjusting_Parameters_Interval_after_an_inertia_autotuning = 0x320;		/* Mapped at index 0x2009, subindex 0x09 */
-UNS16 Auto_adjusting_Parameters_Motor_revolutions_for_an_inertia_auto_tuning = 0x0;		/* Mapped at index 0x2009, subindex 0x0A */
-UNS8 Auto_adjusting_Parameters_Compatibility_Entry[13] = {0x0};		/* Mapped at index 0x2009, subindex 0x0B */
-UNS16 Auto_adjusting_Parameters_1st_notch_frequency = 0xFA0;		/* Mapped at index 0x2009, subindex 0x0D */
-UNS16 Auto_adjusting_Parameters_1st_notch_width_level = 0x2;		/* Mapped at index 0x2009, subindex 0x0E */
-UNS16 Auto_adjusting_Parameters_1st_notch_attenuation_level = 0x0;		/* Mapped at index 0x2009, subindex 0x0F */
-UNS16 Auto_adjusting_Parameters_2nd_notch_frequency = 0xFA0;		/* Mapped at index 0x2009, subindex 0x10 */
-UNS16 Auto_adjusting_Parameters_2nd_notch_width_level = 0x2;		/* Mapped at index 0x2009, subindex 0x11 */
-UNS16 Auto_adjusting_Parameters_2nd_notch_attenuation_level = 0x0;		/* Mapped at index 0x2009, subindex 0x12 */
-UNS16 Auto_adjusting_Parameters_3rd_notch_frequency = 0xFA0;		/* Mapped at index 0x2009, subindex 0x13 */
-UNS16 Auto_adjusting_Parameters_3rd_notch_width_level = 0x2;		/* Mapped at index 0x2009, subindex 0x14 */
-UNS16 Auto_adjusting_Parameters_3rd_notch_attenuation_level = 0x0;		/* Mapped at index 0x2009, subindex 0x15 */
-UNS16 Auto_adjusting_Parameters_4th_notch_frequency = 0xFA0;		/* Mapped at index 0x2009, subindex 0x16 */
-UNS16 Auto_adjusting_Parameters_4th_notch_width_level = 0x2;		/* Mapped at index 0x2009, subindex 0x17 */
-UNS16 Auto_adjusting_Parameters_4th_notch_attenuation_level = 0x0;		/* Mapped at index 0x2009, subindex 0x18 */
-UNS16 Auto_adjusting_Parameters_Obtained_resonance_frequency = 0x0;		/* Mapped at index 0x2009, subindex 0x19 */
-INTEGER16 Auto_adjusting_Parameters_Disturbance_torque_compensation_gain = 0x0;		/* Mapped at index 0x009, subindex 0x1F */
-UNS16 Auto_adjusting_Parameters_Disturbance_observer_filter_time_constant = 0x32;		/* Mapped at index 0x2009, subindex 0x20 */
-UNS16 Auto_adjusting_Parameters_Low_frequency_vibration_frequency = 0x3E8;		/* Mapped at index 0x2009, subindex 0x27 */
-UNS16 Auto_adjusting_Parameters_Filter_of_low_frequency_vibration_frequency = 0x2;		/* Mapped at index 0x2009, subindex 0x28 */
+volatile UNS16 Auto_adjusting_Parameters_Auto_adjusting_mode = 0x0;		/* Mapped at index 0x2009, subindex 0x01 */
+volatile UNS16 Auto_adjusting_Parameters_Rigidity_level_selection = 0xC;		/* Mapped at index 0x2009, subindex 0x02 */
+volatile UNS16 Auto_adjusting_Parameters_Working_mode_of_self_adaptive_notch = 0x0;		/* Mapped at index 0x2009, subindex 0x03 */
+volatile UNS16 Auto_adjusting_Parameters_Online_inertia_auto_tuning_mode = 0x0;		/* Mapped at index 0x2009, subindex 0x04 */
+volatile UNS16 Auto_adjusting_Parameters_Low_frequency_vibration_mode_selection = 0x0;		/* Mapped at index 0x2009, subindex 0x05 */
+volatile UNS16 Auto_adjusting_Parameters_Offline_inertia_auto_tuning_mode = 0x0;		/* Mapped at index 0x2009, subindex 0x06 */
+volatile UNS16 Auto_adjusting_Parameters_Maximum_speed_for_inertia_autotuning = 0x1F4;		/* Mapped at index 0x2009, subindex 0x07 */
+volatile UNS16 Auto_adjusting_Parameters_Acceleration_Deceleration_time_for_inertia_autotuning = 0x7D;		/* Mapped at index 0x2009, subindex 0x08 */
+volatile UNS16 Auto_adjusting_Parameters_Interval_after_an_inertia_autotuning = 0x320;		/* Mapped at index 0x2009, subindex 0x09 */
+volatile UNS16 Auto_adjusting_Parameters_Motor_revolutions_for_an_inertia_auto_tuning = 0x0;		/* Mapped at index 0x2009, subindex 0x0A */
+volatile UNS8 Auto_adjusting_Parameters_Compatibility_Entry[13] = {0x0};		/* Mapped at index 0x2009, subindex 0x0B */
+volatile UNS16 Auto_adjusting_Parameters_1st_notch_frequency = 0xFA0;		/* Mapped at index 0x2009, subindex 0x0D */
+volatile UNS16 Auto_adjusting_Parameters_1st_notch_width_level = 0x2;		/* Mapped at index 0x2009, subindex 0x0E */
+volatile UNS16 Auto_adjusting_Parameters_1st_notch_attenuation_level = 0x0;		/* Mapped at index 0x2009, subindex 0x0F */
+volatile UNS16 Auto_adjusting_Parameters_2nd_notch_frequency = 0xFA0;		/* Mapped at index 0x2009, subindex 0x10 */
+volatile UNS16 Auto_adjusting_Parameters_2nd_notch_width_level = 0x2;		/* Mapped at index 0x2009, subindex 0x11 */
+volatile UNS16 Auto_adjusting_Parameters_2nd_notch_attenuation_level = 0x0;		/* Mapped at index 0x2009, subindex 0x12 */
+volatile UNS16 Auto_adjusting_Parameters_3rd_notch_frequency = 0xFA0;		/* Mapped at index 0x2009, subindex 0x13 */
+volatile UNS16 Auto_adjusting_Parameters_3rd_notch_width_level = 0x2;		/* Mapped at index 0x2009, subindex 0x14 */
+volatile UNS16 Auto_adjusting_Parameters_3rd_notch_attenuation_level = 0x0;		/* Mapped at index 0x2009, subindex 0x15 */
+volatile UNS16 Auto_adjusting_Parameters_4th_notch_frequency = 0xFA0;		/* Mapped at index 0x2009, subindex 0x16 */
+volatile UNS16 Auto_adjusting_Parameters_4th_notch_width_level = 0x2;		/* Mapped at index 0x2009, subindex 0x17 */
+volatile UNS16 Auto_adjusting_Parameters_4th_notch_attenuation_level = 0x0;		/* Mapped at index 0x2009, subindex 0x18 */
+volatile UNS16 Auto_adjusting_Parameters_Obtained_resonance_frequency = 0x0;		/* Mapped at index 0x2009, subindex 0x19 */
+volatile INTEGER16 Auto_adjusting_Parameters_Disturbance_torque_compensation_gain = 0x0;		/* Mapped at index 0x009, subindex 0x1F */
+volatile UNS16 Auto_adjusting_Parameters_Disturbance_observer_filter_time_constant = 0x32;		/* Mapped at index 0x2009, subindex 0x20 */
+volatile UNS16 Auto_adjusting_Parameters_Low_frequency_vibration_frequency = 0x3E8;		/* Mapped at index 0x2009, subindex 0x27 */
+volatile UNS16 Auto_adjusting_Parameters_Filter_of_low_frequency_vibration_frequency = 0x2;		/* Mapped at index 0x2009, subindex 0x28 */
 
-UNS16 Fault_and_Protection_Power_input_phase_loss_protection = 0x0;		/* Mapped at index 0x200A, subindex 0x01 */
-UNS16 Fault_and_Protection_Absolute_position_limit_set = 0x0;		/* Mapped at index 0x200A, subindex 0x02 */
-UNS8 Fault_and_Protection_Compatibility_Entry[12] = {0x0};		/* Mapped at index 0x200A, subindex 0x03 */
-UNS16 Fault_and_Protection_Retentive_at_power_failure = 0x0;		/* Mapped at index 0x200A, subindex 0x04 */
-UNS16 Fault_and_Protection_Motor_overload_protection_gain = 0x64;		/* Mapped at index 0x200A, subindex 0x05 */
-UNS16 Fault_and_Protection_Overspeed_threshold = 0x0;		/* Mapped at index 0x200A, subindex 0x09 */
-UNS16 Fault_and_Protection_Maximum_position_pulse_frequency = 0xFA0;		/* Mapped at index 0x200A, subindex 0x0A */
-UNS32 Fault_and_Protection_Threshold_of_position_deviation_fault = 0x0;		/* Mapped at index 0x200A, subindex 0x0B */
-UNS16 Fault_and_Protection_Run_away_protection = 0x1;		/* Mapped at index 0x200A, subindex 0x0D */
-UNS16 Fault_and_Protection_Position_deviation_threshold_in_low_frequency_vibration = 0x5;		/* Mapped at index 0x200A, subindex 0x11 */
-UNS16 Fault_and_Protection_DI8_filter_time = 0x50;		/* Mapped at index 0x200A, subindex 0x14 */
-UNS16 Fault_and_Protection_DI9_filter_time = 0x50;		/* Mapped at index 0x200A, subindex 0x15 */
-UNS16 Fault_and_Protection_Sigma_delta_filter_time = 0x1;		/* Mapped at index 0x200A, subindex 0x17 */
-UNS16 Fault_and_Protection_Tz_signal_filter_time = 0xF;		/* Mapped at index 0x200A, subindex 0x18 */
-UNS16 Fault_and_Protection_Filter_time_of_low_speed_pulse_input_pin = 0x1E;		/* Mapped at index 0x200A, subindex 0x19 */
-UNS16 Fault_and_Protection_Filter_time_of_speed_feedback_display = 0x32;		/* Mapped at index 0x200A, subindex 0x1A */
-UNS16 Fault_and_Protection_Motor_overload_shielding = 0x0;		/* Mapped at index 0x200A, subindex 0x1B */
-UNS16 Fault_and_Protection_Speed_DO_Filter_time_constant = 0xA;		/* Mapped at index 0x200A, subindex 0x1C */
-UNS16 Fault_and_Protection_Quadrature_encoder_filter_time = 0x1E;		/* Mapped at index 0x200A, subindex 0x1D */
-UNS16 Fault_and_Protection_Line_encoder_filter_time = 0xF;		/* Mapped at index 0x200A, subindex 0x1E */
-UNS16 Fault_and_Protection_Filter_time_constant_of_high_speed_pulse_input_pin = 0x3;		/* Mapped at index 0x200A, subindex 0x1F */
-UNS16 Fault_and_Protection_Overheat_protection_time_duration_for_locked_rotor = 0xC8;		/* Mapped at index 0x200A, subindex 0x21 */
-UNS16 Fault_and_Protection_Overheat_protection_for_locked_rotor = 0x1;		/* Mapped at index 0x200A, subindex 0x22 */
+volatile UNS16 Fault_and_Protection_Power_input_phase_loss_protection = 0x0;		/* Mapped at index 0x200A, subindex 0x01 */
+volatile UNS16 Fault_and_Protection_Absolute_position_limit_set = 0x0;		/* Mapped at index 0x200A, subindex 0x02 */
+volatile UNS8 Fault_and_Protection_Compatibility_Entry[12] = {0x0};		/* Mapped at index 0x200A, subindex 0x03 */
+volatile UNS16 Fault_and_Protection_Retentive_at_power_failure = 0x0;		/* Mapped at index 0x200A, subindex 0x04 */
+volatile UNS16 Fault_and_Protection_Motor_overload_protection_gain = 0x64;		/* Mapped at index 0x200A, subindex 0x05 */
+volatile UNS16 Fault_and_Protection_Overspeed_threshold = 0x0;		/* Mapped at index 0x200A, subindex 0x09 */
+volatile UNS16 Fault_and_Protection_Maximum_position_pulse_frequency = 0xFA0;		/* Mapped at index 0x200A, subindex 0x0A */
+volatile UNS32 Fault_and_Protection_Threshold_of_position_deviation_fault = 0x0;		/* Mapped at index 0x200A, subindex 0x0B */
+volatile UNS16 Fault_and_Protection_Run_away_protection = 0x1;		/* Mapped at index 0x200A, subindex 0x0D */
+volatile UNS16 Fault_and_Protection_Position_deviation_threshold_in_low_frequency_vibration = 0x5;		/* Mapped at index 0x200A, subindex 0x11 */
+volatile UNS16 Fault_and_Protection_DI8_filter_time = 0x50;		/* Mapped at index 0x200A, subindex 0x14 */
+volatile UNS16 Fault_and_Protection_DI9_filter_time = 0x50;		/* Mapped at index 0x200A, subindex 0x15 */
+volatile UNS16 Fault_and_Protection_Sigma_delta_filter_time = 0x1;		/* Mapped at index 0x200A, subindex 0x17 */
+volatile UNS16 Fault_and_Protection_Tz_signal_filter_time = 0xF;		/* Mapped at index 0x200A, subindex 0x18 */
+volatile UNS16 Fault_and_Protection_Filter_time_of_low_speed_pulse_input_pin = 0x1E;		/* Mapped at index 0x200A, subindex 0x19 */
+volatile UNS16 Fault_and_Protection_Filter_time_of_speed_feedback_display = 0x32;		/* Mapped at index 0x200A, subindex 0x1A */
+volatile UNS16 Fault_and_Protection_Motor_overload_shielding = 0x0;		/* Mapped at index 0x200A, subindex 0x1B */
+volatile UNS16 Fault_and_Protection_Speed_DO_Filter_time_constant = 0xA;		/* Mapped at index 0x200A, subindex 0x1C */
+volatile UNS16 Fault_and_Protection_Quadrature_encoder_filter_time = 0x1E;		/* Mapped at index 0x200A, subindex 0x1D */
+volatile UNS16 Fault_and_Protection_Line_encoder_filter_time = 0xF;		/* Mapped at index 0x200A, subindex 0x1E */
+volatile UNS16 Fault_and_Protection_Filter_time_constant_of_high_speed_pulse_input_pin = 0x3;		/* Mapped at index 0x200A, subindex 0x1F */
+volatile UNS16 Fault_and_Protection_Overheat_protection_time_duration_for_locked_rotor = 0xC8;		/* Mapped at index 0x200A, subindex 0x21 */
+volatile UNS16 Fault_and_Protection_Overheat_protection_for_locked_rotor = 0x1;		/* Mapped at index 0x200A, subindex 0x22 */
 
-INTEGER16 Display_Parameters_Actual_motor_rotational_speed_200B01 = 0x0;		/* Mapped at index 0x200B, subindex 0x01 */
-INTEGER16 Display_Parameters_Speed_reference = 0x0;		/* Mapped at index 0x200B, subindex 0x02 */
-INTEGER16 Display_Parameters_Internal_torque_reference = 0x0;		/* Mapped at index 0x200B, subindex 0x03 */
-UNS16 Display_Parameters_Monitored_DI_states = 0x0;		/* Mapped at index 0x200B, subindex 0x04 */
-UNS8 Display_Parameters_Compatibility_Entry[35] = {0x0};		/* Mapped at index 0x200B, subindex 0x05 */
-UNS16 Display_Parameters_Monitored_DO_states = 0x0;		/* Mapped at index 0x200B, subindex 0x06 */
-INTEGER32 Display_Parameters_Absolute_position_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x08 */
+volatile INTEGER16 Display_Parameters_Actual_motor_rotational_speed_200B01 = 0x0;		/* Mapped at index 0x200B, subindex 0x01 */
+volatile INTEGER16 Display_Parameters_Speed_reference = 0x0;		/* Mapped at index 0x200B, subindex 0x02 */
+volatile INTEGER16 Display_Parameters_Internal_torque_reference = 0x0;		/* Mapped at index 0x200B, subindex 0x03 */
+volatile UNS16 Display_Parameters_Monitored_DI_states = 0x0;		/* Mapped at index 0x200B, subindex 0x04 */
+volatile UNS8 Display_Parameters_Compatibility_Entry[35] = {0x0};		/* Mapped at index 0x200B, subindex 0x05 */
+volatile UNS16 Display_Parameters_Monitored_DO_states = 0x0;		/* Mapped at index 0x200B, subindex 0x06 */
+volatile INTEGER32 Display_Parameters_Absolute_position_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x08 */
 
-UNS16 Display_Parameters_Mechanical_angle = 0x0;		/* Mapped at index 0x200B, subindex 0x0A */
-UNS16 Display_Parameters_Electrical_angle = 0x0;		/* Mapped at index 0x200B, subindex 0x0B */
-INTEGER16 Display_Parameters_Speed_corresponding_to_input_position_reference = 0x0;		/* Mapped at index 0x200B, subindex 0x0C */
-UNS16 Display_Parameters_Average_load_rate = 0x0;		/* Mapped at index 0x200B, subindex 0x0D */
-INTEGER32 Display_Parameters_Input_reference_pulse_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x0E */
-INTEGER32 Display_Parameters_Encoder_position_deviation_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x10 */
-INTEGER32 Display_Parameters_Feedback_pulse_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x12 */
-UNS32 Display_Parameters_Total_power_on_time = 0x0;		/* Mapped at index 0x200B, subindex 0x14 */
-INTEGER16 Display_Parameters_AI1_sampling_voltage = 0x0;		/* Mapped at index 0x200B, subindex 0x16 */
-INTEGER16 Display_Parameters_AI2_sampling_voltage = 0x0;		/* Mapped at index 0x200B, subindex 0x17 */
-UNS16 Display_Parameters_Phase_current_valid_value = 0x0;		/* Mapped at index 0x200B, subindex 0x19 */
-UNS16 Display_Parameters_Bus_voltage = 0x0;		/* Mapped at index 0x200B, subindex 0x1B */
-UNS16 Display_Parameters_Module_temperature = 0x0;		/* Mapped at index 0x200B, subindex 0x1C */
-UNS16 Display_Parameters_Displayed_fault_record = 0x0;		/* Mapped at index 0x200B, subindex 0x22 */
-UNS16 Display_Parameters_Fault_code = 0x0;		/* Mapped at index 0x200B, subindex 0x23 */
-UNS32 Display_Parameters_Time_stamp_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x24 */
-INTEGER16 Display_Parameters_Current_rotational_speed_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x26 */
-INTEGER16 Display_Parameters_Current_U_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x27 */
-INTEGER16 Display_Parameters_Current_V_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x28 */
-UNS16 Display_Parameters_Bus_voltage_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x29 */
-UNS16 Display_Parameters_Input_terminal_state_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x2A */
-UNS16 Display_Parameters_Output_terminal_state_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x2B */
-UNS16 Display_Parameters_Group_of_unusual_function_code = 0x0;		/* Mapped at index 0x200B, subindex 0x2C */
-UNS16 Display_Parameters_Offset_of_unusual_function_code = 0x0;		/* Mapped at index 0x200B, subindex 0x2D */
-UNS16 Display_Parameters_Inner_error_code = 0x0;		/* Mapped at index 0x200B, subindex 0x2E */
-UNS16 Display_Parameters_Fault_message_of_absolute_encode_from_Fpga_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x2F */
-UNS16 Display_Parameters_System_state_from_Fpga_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x30 */
-UNS16 Display_Parameters_System_fault_message_from_Fpga_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x31 */
-UNS16 Display_Parameters_Encode_state_1_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x32 */
-UNS16 Display_Parameters_Inner_error_code_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x34 */
-UNS16 Display_Parameters_Fpga_overtime_state_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x35 */
-INTEGER32 Display_Parameters_Reference_position_deviation = 0x0;		/* Mapped at index 0x200B, subindex 0x36 */
-INTEGER32 Display_Parameters_Actual_motor_rotational_speed_200B38= 0x0;		/* Mapped at index 0x200B, subindex 0x38 */
-UNS16 Display_Parameters_Control_bus_voltage = 0x0;		/* Mapped at index 0x200B, subindex 0x3A */
-INTEGER32 Display_Parameters_Mechanical_absolute_position_inc_Low = 0x0;		/* Mapped at index 0x200B, subindex 0x3B */
-INTEGER32 Display_Parameters_Mechanical_absolute_position_inc_High = 0x0;		/* Mapped at index 0x200B, subindex 0x3D */
-INTEGER32 Display_Parameters_Real_Time_Input_reference_pulse_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x41 */
-UNS16 Display_Parameters_Fpga_over_time_state = 0x0;		/* Mapped at index 0x200B, subindex 0x45 */
-UNS16 Display_Parameters_Number_of_turns_of_absolute_encode = 0x0;		/* Mapped at index 0x200B, subindex 0x47 */
-INTEGER32 Display_Parameters_Single_feedback_postion_of_absolute_encode = 0x0;		/* Mapped at index 0x200B, subindex 0x48 */
-INTEGER32 Display_Parameters_feedback_postion_of_absolute_encode_Low = 0x0;		/* Mapped at index 0x200B, subindex 0x4E */
-INTEGER32 Display_Parameters_feedback_postion_of_absolute_encode_High = 0x0;		/* Mapped at index 0x200B, subindex 0x50 */
-UNS32 Display_Parameters_feedback_postion_inc_of_rotating_load_Low = 0x0;		/* Mapped at index 0x200B, subindex 0x52 */
-UNS32 Display_Parameters_feedback_postion_inc_of_rotating_load_High = 0x0;		/* Mapped at index 0x200B, subindex 0x54 */
-UNS32 Display_Parameters_Single_feedback_postion_of_rotating_load = 0x0;		/* Mapped at index 0x200B, subindex 0x56 */
-UNS16 Communication_Parameters_Servo_shaft_address = 0x1;		/* Mapped at index 0x200C, subindex 0x01 */
-UNS8 Communication_Parameters_Compatibility_Entry[20] = {0x0};		/* Mapped at index 0x200C, subindex 0x02 */
-UNS16 Communication_Parameters_Serial_port_baud_rate = 0x5;		/* Mapped at index 0x200C, subindex 0x03 */
-UNS16 Communication_Parameters_Modbus_data_format = 0x0;		/* Mapped at index 0x200C, subindex 0x04 */
-UNS16 Communication_Parameters_CAN_communication_rate = 0x5;		/* Mapped at index 0x200C, subindex 0x09 */
-UNS16 Communication_Parameters_Communication_virtual_DI = 0x0;		/* Mapped at index 0x200C, subindex 0x0A */
-UNS16 Communication_Parameters_Default_virtual_level_of_VDI_at_power_on = 0x0;		/* Mapped at index 0x200C, subindex 0x0B */
-UNS16 Communication_Parameters_Communication_virtual_DO = 0x0;		/* Mapped at index 0x200C, subindex 0x0C */
-UNS16 Communication_Parameters_Default_virtual_level_of_VDO_allocated_with_function_0 = 0x0;		/* Mapped at index 0x200C, subindex 0x0D */
-UNS16 Communication_Parameters_Update_function_code_values_written_via_communication_to_EEPROM = 0x0;		/* Mapped at index 0x200C, subindex 0x0E */
-UNS16 Communication_Parameters_Modbus_Error_code = 0x0;		/* Mapped at index 0x200C, subindex 0x0F */
-UNS16 Communication_Parameters_Modbus_send_delay_time = 0x1;		/* Mapped at index 0x200C, subindex 0x1A */
-UNS16 Communication_Parameters_Modbus_32_bit_function_code_transmission_sequence = 0x1;		/* Mapped at index 0x200C, subindex 0x1B */
-UNS16 Communication_Parameters_CAN_Receive_Frame_Counter_Per_Second = 0x0;		/* Mapped at index 0x200C, subindex 0x21 */
-UNS16 Communication_Parameters_CAN_Max_Receive_Frame_Error_Counter_Per_Second = 0x0;		/* Mapped at index 0x200C, subindex 0x22 */
-UNS16 Communication_Parameters_CAN_Max_Transmit_Frame_Error_Counter_Per_Second = 0x0;		/* Mapped at index 0x200C, subindex 0x23 */
+volatile UNS16 Display_Parameters_Mechanical_angle = 0x0;		/* Mapped at index 0x200B, subindex 0x0A */
+volatile UNS16 Display_Parameters_Electrical_angle = 0x0;		/* Mapped at index 0x200B, subindex 0x0B */
+volatile INTEGER16 Display_Parameters_Speed_corresponding_to_input_position_reference = 0x0;		/* Mapped at index 0x200B, subindex 0x0C */
+volatile UNS16 Display_Parameters_Average_load_rate = 0x0;		/* Mapped at index 0x200B, subindex 0x0D */
+volatile INTEGER32 Display_Parameters_Input_reference_pulse_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x0E */
+volatile INTEGER32 Display_Parameters_Encoder_position_deviation_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x10 */
+volatile INTEGER32 Display_Parameters_Feedback_pulse_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x12 */
+volatile UNS32 Display_Parameters_Total_power_on_time = 0x0;		/* Mapped at index 0x200B, subindex 0x14 */
+volatile INTEGER16 Display_Parameters_AI1_sampling_voltage = 0x0;		/* Mapped at index 0x200B, subindex 0x16 */
+volatile INTEGER16 Display_Parameters_AI2_sampling_voltage = 0x0;		/* Mapped at index 0x200B, subindex 0x17 */
+volatile UNS16 Display_Parameters_Phase_current_valid_value = 0x0;		/* Mapped at index 0x200B, subindex 0x19 */
+volatile UNS16 Display_Parameters_Bus_voltage = 0x0;		/* Mapped at index 0x200B, subindex 0x1B */
+volatile UNS16 Display_Parameters_Module_temperature = 0x0;		/* Mapped at index 0x200B, subindex 0x1C */
+volatile UNS16 Display_Parameters_Displayed_fault_record = 0x0;		/* Mapped at index 0x200B, subindex 0x22 */
+volatile UNS16 Display_Parameters_Fault_code = 0x0;		/* Mapped at index 0x200B, subindex 0x23 */
+volatile UNS32 Display_Parameters_Time_stamp_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x24 */
+volatile INTEGER16 Display_Parameters_Current_rotational_speed_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x26 */
+volatile INTEGER16 Display_Parameters_Current_U_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x27 */
+volatile INTEGER16 Display_Parameters_Current_V_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x28 */
+volatile UNS16 Display_Parameters_Bus_voltage_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x29 */
+volatile UNS16 Display_Parameters_Input_terminal_state_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x2A */
+volatile UNS16 Display_Parameters_Output_terminal_state_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x2B */
+volatile UNS16 Display_Parameters_Group_of_unusual_function_code = 0x0;		/* Mapped at index 0x200B, subindex 0x2C */
+volatile UNS16 Display_Parameters_Offset_of_unusual_function_code = 0x0;		/* Mapped at index 0x200B, subindex 0x2D */
+volatile UNS16 Display_Parameters_Inner_error_code = 0x0;		/* Mapped at index 0x200B, subindex 0x2E */
+volatile UNS16 Display_Parameters_Fault_message_of_absolute_encode_from_Fpga_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x2F */
+volatile UNS16 Display_Parameters_System_state_from_Fpga_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x30 */
+volatile UNS16 Display_Parameters_System_fault_message_from_Fpga_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x31 */
+volatile UNS16 Display_Parameters_Encode_state_1_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x32 */
+volatile UNS16 Display_Parameters_Inner_error_code_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x34 */
+volatile UNS16 Display_Parameters_Fpga_overtime_state_upon_displayed_fault = 0x0;		/* Mapped at index 0x200B, subindex 0x35 */
+volatile INTEGER32 Display_Parameters_Reference_position_deviation = 0x0;		/* Mapped at index 0x200B, subindex 0x36 */
+volatile INTEGER32 Display_Parameters_Actual_motor_rotational_speed_200B38= 0x0;		/* Mapped at index 0x200B, subindex 0x38 */
+volatile UNS16 Display_Parameters_Control_bus_voltage = 0x0;		/* Mapped at index 0x200B, subindex 0x3A */
+volatile INTEGER32 Display_Parameters_Mechanical_absolute_position_inc_Low = 0x0;		/* Mapped at index 0x200B, subindex 0x3B */
+volatile INTEGER32 Display_Parameters_Mechanical_absolute_position_inc_High = 0x0;		/* Mapped at index 0x200B, subindex 0x3D */
+volatile INTEGER32 Display_Parameters_Real_Time_Input_reference_pulse_counter = 0x0;		/* Mapped at index 0x200B, subindex 0x41 */
+volatile UNS16 Display_Parameters_Fpga_over_time_state = 0x0;		/* Mapped at index 0x200B, subindex 0x45 */
+volatile UNS16 Display_Parameters_Number_of_turns_of_absolute_encode = 0x0;		/* Mapped at index 0x200B, subindex 0x47 */
+volatile INTEGER32 Display_Parameters_Single_feedback_postion_of_absolute_encode = 0x0;		/* Mapped at index 0x200B, subindex 0x48 */
+volatile INTEGER32 Display_Parameters_feedback_postion_of_absolute_encode_Low = 0x0;		/* Mapped at index 0x200B, subindex 0x4E */
+volatile INTEGER32 Display_Parameters_feedback_postion_of_absolute_encode_High = 0x0;		/* Mapped at index 0x200B, subindex 0x50 */
+volatile UNS32 Display_Parameters_feedback_postion_inc_of_rotating_load_Low = 0x0;		/* Mapped at index 0x200B, subindex 0x52 */
+volatile UNS32 Display_Parameters_feedback_postion_inc_of_rotating_load_High = 0x0;		/* Mapped at index 0x200B, subindex 0x54 */
+volatile UNS32 Display_Parameters_Single_feedback_postion_of_rotating_load = 0x0;		/* Mapped at index 0x200B, subindex 0x56 */
+volatile UNS16 Communication_Parameters_Servo_shaft_address = 0x1;		/* Mapped at index 0x200C, subindex 0x01 */
+volatile UNS8 Communication_Parameters_Compatibility_Entry[20] = {0x0};		/* Mapped at index 0x200C, subindex 0x02 */
+volatile UNS16 Communication_Parameters_Serial_port_baud_rate = 0x5;		/* Mapped at index 0x200C, subindex 0x03 */
+volatile UNS16 Communication_Parameters_Modbus_data_format = 0x0;		/* Mapped at index 0x200C, subindex 0x04 */
+volatile UNS16 Communication_Parameters_CAN_communication_rate = 0x5;		/* Mapped at index 0x200C, subindex 0x09 */
+volatile UNS16 Communication_Parameters_Communication_virtual_DI = 0x0;		/* Mapped at index 0x200C, subindex 0x0A */
+volatile UNS16 Communication_Parameters_Default_virtual_level_of_VDI_at_power_on = 0x0;		/* Mapped at index 0x200C, subindex 0x0B */
+volatile UNS16 Communication_Parameters_Communication_virtual_DO = 0x0;		/* Mapped at index 0x200C, subindex 0x0C */
+volatile UNS16 Communication_Parameters_Default_virtual_level_of_VDO_allocated_with_function_0 = 0x0;		/* Mapped at index 0x200C, subindex 0x0D */
+volatile UNS16 Communication_Parameters_Update_function_code_values_written_via_communication_to_EEPROM = 0x0;		/* Mapped at index 0x200C, subindex 0x0E */
+volatile UNS16 Communication_Parameters_Modbus_Error_code = 0x0;		/* Mapped at index 0x200C, subindex 0x0F */
+volatile UNS16 Communication_Parameters_Modbus_send_delay_time = 0x1;		/* Mapped at index 0x200C, subindex 0x1A */
+volatile UNS16 Communication_Parameters_Modbus_32_bit_function_code_transmission_sequence = 0x1;		/* Mapped at index 0x200C, subindex 0x1B */
+volatile UNS16 Communication_Parameters_CAN_Receive_Frame_Counter_Per_Second = 0x0;		/* Mapped at index 0x200C, subindex 0x21 */
+volatile UNS16 Communication_Parameters_CAN_Max_Receive_Frame_Error_Counter_Per_Second = 0x0;		/* Mapped at index 0x200C, subindex 0x22 */
+volatile UNS16 Communication_Parameters_CAN_Max_Transmit_Frame_Error_Counter_Per_Second = 0x0;		/* Mapped at index 0x200C, subindex 0x23 */
 
-UNS16 Communication_Parameters_CAN_Bus_Off_Counter_Per_Second = 0x0;		/* Mapped at index 0x200C, subindex 0x24 */
-UNS16 Auxiliary_Function_Parameters_Software_reset = 0x0;		/* Mapped at index 0x200D, subindex 0x01 */
-UNS16 Auxiliary_Function_Parameters_Fault_reset = 0x0;		/* Mapped at index 0x200D, subindex 0x02 */
-UNS16 Auxiliary_Function_Parameters_Load_inertia_autotuning = 0x0;		/* Mapped at index 0x200D, subindex 0x03 */
-UNS8 Auxiliary_Function_Parameters_Compatibility_Entry[11] = {0x0};		/* Mapped at index 0x200D, subindex 0x04 */
-UNS16 Auxiliary_Function_Parameters_Emergency_stop = 0x0;		/* Mapped at index 0x200D, subindex 0x06 */
-UNS16 Auxiliary_Function_Parameters_Analog_automatic_adjustment = 0x0;		/* Mapped at index 0x200D, subindex 0x0B */
-UNS16 Auxiliary_Function_Parameters_Jog_function = 0x0;		/* Mapped at index 0x200D, subindex 0x0C */
-UNS16 Auxiliary_Function_Parameters_Forced_input_and_output_mode_of_DI_DO = 0x0;		/* Mapped at index 0x200D, subindex 0x12 */
-UNS16 Auxiliary_Function_Parameters_Forced_input_setting_of_DI = 0x1FF;		/* Mapped at index 0x200D, subindex 0x13 */
-UNS16 Auxiliary_Function_Parameters_Forced_output_setting_of_DO = 0x0;		/* Mapped at index 0x200D, subindex 0x14 */
-UNS16 Auxiliary_Function_Parameters_Absolute_encoder_alarm_reset = 0x0;		/* Mapped at index 0x200D, subindex 0x15 */
+volatile UNS16 Communication_Parameters_CAN_Bus_Off_Counter_Per_Second = 0x0;		/* Mapped at index 0x200C, subindex 0x24 */
+volatile UNS16 Auxiliary_Function_Parameters_Software_reset = 0x0;		/* Mapped at index 0x200D, subindex 0x01 */
+volatile UNS16 Auxiliary_Function_Parameters_Fault_reset = 0x0;		/* Mapped at index 0x200D, subindex 0x02 */
+volatile UNS16 Auxiliary_Function_Parameters_Load_inertia_autotuning = 0x0;		/* Mapped at index 0x200D, subindex 0x03 */
+volatile UNS8 Auxiliary_Function_Parameters_Compatibility_Entry[11] = {0x0};		/* Mapped at index 0x200D, subindex 0x04 */
+volatile UNS16 Auxiliary_Function_Parameters_Emergency_stop = 0x0;		/* Mapped at index 0x200D, subindex 0x06 */
+volatile UNS16 Auxiliary_Function_Parameters_Analog_automatic_adjustment = 0x0;		/* Mapped at index 0x200D, subindex 0x0B */
+volatile UNS16 Auxiliary_Function_Parameters_Jog_function = 0x0;		/* Mapped at index 0x200D, subindex 0x0C */
+volatile UNS16 Auxiliary_Function_Parameters_Forced_input_and_output_mode_of_DI_DO = 0x0;		/* Mapped at index 0x200D, subindex 0x12 */
+volatile UNS16 Auxiliary_Function_Parameters_Forced_input_setting_of_DI = 0x1FF;		/* Mapped at index 0x200D, subindex 0x13 */
+volatile UNS16 Auxiliary_Function_Parameters_Forced_output_setting_of_DO = 0x0;		/* Mapped at index 0x200D, subindex 0x14 */
+volatile UNS16 Auxiliary_Function_Parameters_Absolute_encoder_alarm_reset = 0x0;		/* Mapped at index 0x200D, subindex 0x15 */
 
-UNS16 Full_Closed_loop_Parameters_Encoder_feedback_mode = 0x0;		/* Mapped at index 0x200F, subindex 0x01 */
-UNS16 Full_Closed_loop_Parameters_Running_mode_of_external_encoder = 0x0;		/* Mapped at index 0x200F, subindex 0x02 */
-UNS8 Full_Closed_loop_Parameters_Compatibility_Entry[12] = {0x0};		/* Mapped at index 0x200F, subindex 0x03 */
-UNS32 Full_Closed_loop_Parameters_External_encoder_pulses_per_motor_revolution = 0x2710;		/* Mapped at index 0x200F, subindex 0x05 */
-UNS32 Full_Closed_loop_Parameters_Hybrid_deviation_excess_setting = 0x3E8;		/* Mapped at index 0x200F, subindex 0x09 */
-UNS16 Full_Closed_loop_Parameters_Hybrid_deviation_clear_setting = 0x1;		/* Mapped at index 0x200F, subindex 0x0B */
-UNS16 Full_Closed_loop_Parameters_First_order_lowpass_filter_time_of_external_internal_deviation = 0x0;		/* Mapped at index 0x200F, subindex 0x0E */
-UNS32 Full_Closed_loop_Parameters_Hybrid_deviation_counter = 0x0;		/* Mapped at index 0x200F, subindex 0x11 */
-UNS32 Full_Closed_loop_Parameters_Pulse_feedback_display_of_internal_encoder = 0x0;		/* Mapped at index 0x200F, subindex 0x13 */
-UNS32 Full_Closed_loop_Parameters_Pulse_feedback_display_of_external_encoder = 0x0;		/* Mapped at index 0x200F, subindex 0x15 */
+volatile UNS16 Full_Closed_loop_Parameters_Encoder_feedback_mode = 0x0;		/* Mapped at index 0x200F, subindex 0x01 */
+volatile UNS16 Full_Closed_loop_Parameters_Running_mode_of_external_encoder = 0x0;		/* Mapped at index 0x200F, subindex 0x02 */
+volatile UNS8 Full_Closed_loop_Parameters_Compatibility_Entry[12] = {0x0};		/* Mapped at index 0x200F, subindex 0x03 */
+volatile UNS32 Full_Closed_loop_Parameters_External_encoder_pulses_per_motor_revolution = 0x2710;		/* Mapped at index 0x200F, subindex 0x05 */
+volatile UNS32 Full_Closed_loop_Parameters_Hybrid_deviation_excess_setting = 0x3E8;		/* Mapped at index 0x200F, subindex 0x09 */
+volatile UNS16 Full_Closed_loop_Parameters_Hybrid_deviation_clear_setting = 0x1;		/* Mapped at index 0x200F, subindex 0x0B */
+volatile UNS16 Full_Closed_loop_Parameters_First_order_lowpass_filter_time_of_external_internal_deviation = 0x0;		/* Mapped at index 0x200F, subindex 0x0E */
+volatile UNS32 Full_Closed_loop_Parameters_Hybrid_deviation_counter = 0x0;		/* Mapped at index 0x200F, subindex 0x11 */
+volatile UNS32 Full_Closed_loop_Parameters_Pulse_feedback_display_of_internal_encoder = 0x0;		/* Mapped at index 0x200F, subindex 0x13 */
+volatile UNS32 Full_Closed_loop_Parameters_Pulse_feedback_display_of_external_encoder = 0x0;		/* Mapped at index 0x200F, subindex 0x15 */
 
-UNS16 Multi_Position_Function_Parameters_Multi_position_running_mode = 0x1;		/* Mapped at index 0x2011, subindex 0x01 */
-UNS16 Multi_Position_Function_Parameters_Number_of_position_reference_profile = 0x1;		/* Mapped at index 0x2011, subindex 0x02 */
-UNS16 Multi_Position_Function_Parameters_Margin_processing_method = 0x0;		/* Mapped at index 0x2011, subindex 0x03 */
-UNS16 Multi_Position_Function_Parameters_Time_unit = 0x0;		/* Mapped at index 0x2011, subindex 0x04 */
-UNS16 Multi_Position_Function_Parameters_Displacement_reference_type = 0x0;		/* Mapped at index 0x2011, subindex 0x05 */
-UNS16 Multi_Position_Function_Parameters_Start_position_of_sequential_running = 0x0;		/* Mapped at index 0x2011, subindex 0x06 */
-UNS8 Multi_Position_Function_Parameters_Compatibility_Entry[22] = {0x0};		/* Mapped at index 0x2011, subindex 0x07 */
-INTEGER32 Multi_Position_Function_Parameters_1st_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x0D */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_1st_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x0F */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_1st_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x10 */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_1st_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x11 */
-INTEGER32 Multi_Position_Function_Parameters_2nd_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x12 */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_2nd_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x14 */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_2nd_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x15 */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_2nd_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x16 */
-INTEGER32 Multi_Position_Function_Parameters_3rd_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x17 */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_3rd_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x19 */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_3rd_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x1A */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_3rddisplacement = 0xA;		/* Mapped at index 0x2011, subindex 0x1B */
-INTEGER32 Multi_Position_Function_Parameters_4th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x1C */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_4th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x1E */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_4th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x1F */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_4th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x20 */
-INTEGER32 Multi_Position_Function_Parameters_5th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x21 */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_5th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x23 */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_5th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x24 */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_5th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x25 */
-INTEGER32 Multi_Position_Function_Parameters_6th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x26 */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_6th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x28 */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_6th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x29 */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_6th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x2A */
-INTEGER32 Multi_Position_Function_Parameters_7th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x2B */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_7th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x2D */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_7th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x2E */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_7th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x2F */
-INTEGER32 Multi_Position_Function_Parameters_8th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x30 */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_8th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x32 */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_8th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x33 */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_8th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x34 */
-INTEGER32 Multi_Position_Function_Parameters_9th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x35 */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_9th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x37 */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_9th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x38 */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_9th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x39 */
-INTEGER32 Multi_Position_Function_Parameters_10th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x3A */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_10th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x3C */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_10th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x3D */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_10th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x3E */
-INTEGER32 Multi_Position_Function_Parameters_11th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x3F */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_11th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x41 */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_11th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x42 */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_11th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x43 */
-INTEGER32 Multi_Position_Function_Parameters_12th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x44 */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_12th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x46 */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_12th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x47 */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_12th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x48 */
-INTEGER32 Multi_Position_Function_Parameters_13th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x49 */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_13th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x4B */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_13th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x4C */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_13th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x4D */
-INTEGER32 Multi_Position_Function_Parameters_14th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x4E */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_14th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x50 */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_14th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x51 */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_14th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x52 */
-INTEGER32 Multi_Position_Function_Parameters_15th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x53 */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_15th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x55 */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_15th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x56 */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_15th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x57 */
-INTEGER32 Multi_Position_Function_Parameters_16th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x58 */
-UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_16th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x5A */
-UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_16th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x5B */
-UNS16 Multi_Position_Function_Parameters_Waiting_time_after_16th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x5C */
+volatile UNS16 Multi_Position_Function_Parameters_Multi_position_running_mode = 0x1;		/* Mapped at index 0x2011, subindex 0x01 */
+volatile UNS16 Multi_Position_Function_Parameters_Number_of_position_reference_profile = 0x1;		/* Mapped at index 0x2011, subindex 0x02 */
+volatile UNS16 Multi_Position_Function_Parameters_Margin_processing_method = 0x0;		/* Mapped at index 0x2011, subindex 0x03 */
+volatile UNS16 Multi_Position_Function_Parameters_Time_unit = 0x0;		/* Mapped at index 0x2011, subindex 0x04 */
+volatile UNS16 Multi_Position_Function_Parameters_Displacement_reference_type = 0x0;		/* Mapped at index 0x2011, subindex 0x05 */
+volatile UNS16 Multi_Position_Function_Parameters_Start_position_of_sequential_running = 0x0;		/* Mapped at index 0x2011, subindex 0x06 */
+volatile UNS8 Multi_Position_Function_Parameters_Compatibility_Entry[22] = {0x0};		/* Mapped at index 0x2011, subindex 0x07 */
+volatile INTEGER32 Multi_Position_Function_Parameters_1st_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x0D */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_1st_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x0F */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_1st_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x10 */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_1st_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x11 */
+volatile INTEGER32 Multi_Position_Function_Parameters_2nd_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x12 */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_2nd_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x14 */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_2nd_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x15 */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_2nd_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x16 */
+volatile INTEGER32 Multi_Position_Function_Parameters_3rd_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x17 */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_3rd_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x19 */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_3rd_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x1A */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_3rddisplacement = 0xA;		/* Mapped at index 0x2011, subindex 0x1B */
+volatile INTEGER32 Multi_Position_Function_Parameters_4th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x1C */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_4th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x1E */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_4th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x1F */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_4th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x20 */
+volatile INTEGER32 Multi_Position_Function_Parameters_5th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x21 */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_5th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x23 */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_5th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x24 */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_5th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x25 */
+volatile INTEGER32 Multi_Position_Function_Parameters_6th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x26 */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_6th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x28 */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_6th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x29 */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_6th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x2A */
+volatile INTEGER32 Multi_Position_Function_Parameters_7th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x2B */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_7th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x2D */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_7th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x2E */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_7th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x2F */
+volatile INTEGER32 Multi_Position_Function_Parameters_8th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x30 */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_8th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x32 */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_8th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x33 */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_8th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x34 */
+volatile INTEGER32 Multi_Position_Function_Parameters_9th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x35 */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_9th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x37 */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_9th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x38 */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_9th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x39 */
+volatile INTEGER32 Multi_Position_Function_Parameters_10th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x3A */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_10th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x3C */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_10th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x3D */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_10th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x3E */
+volatile INTEGER32 Multi_Position_Function_Parameters_11th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x3F */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_11th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x41 */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_11th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x42 */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_11th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x43 */
+volatile INTEGER32 Multi_Position_Function_Parameters_12th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x44 */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_12th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x46 */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_12th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x47 */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_12th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x48 */
+volatile INTEGER32 Multi_Position_Function_Parameters_13th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x49 */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_13th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x4B */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_13th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x4C */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_13th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x4D */
+volatile INTEGER32 Multi_Position_Function_Parameters_14th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x4E */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_14th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x50 */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_14th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x51 */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_14th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x52 */
+volatile INTEGER32 Multi_Position_Function_Parameters_15th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x53 */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_15th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x55 */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_15th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x56 */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_15th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x57 */
+volatile INTEGER32 Multi_Position_Function_Parameters_16th_displacement = 0x2710;		/* Mapped at index 0x2011, subindex 0x58 */
+volatile UNS16 Multi_Position_Function_Parameters_Maximum_running_speed_of_16th_displacement = 0xC8;		/* Mapped at index 0x2011, subindex 0x5A */
+volatile UNS16 Multi_Position_Function_Parameters_Acceleration_Deceleration_time_of_16th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x5B */
+volatile UNS16 Multi_Position_Function_Parameters_Waiting_time_after_16th_displacement = 0xA;		/* Mapped at index 0x2011, subindex 0x5C */
 
-UNS16 VDI_VDO_Parameters_VDI1_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x01 */
-UNS16 VDI_VDO_Parameters_VDI1_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x02 */
-UNS16 VDI_VDO_Parameters_VDI2_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x03 */
-UNS16 VDI_VDO_Parameters_VDI2_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x04 */
-UNS16 VDI_VDO_Parameters_VDI3_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x05 */
-UNS16 VDI_VDO_Parameters_VDI3_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x06 */
-UNS16 VDI_VDO_Parameters_VDI4_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x07 */
-UNS16 VDI_VDO_Parameters_VDI4_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x08 */
-UNS16 VDI_VDO_Parameters_VDI5_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x09 */
-UNS16 VDI_VDO_Parameters_VDI5_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x0A */
-UNS16 VDI_VDO_Parameters_VDI6_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x0B */
-UNS16 VDI_VDO_Parameters_VDI6_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x0C */
-UNS16 VDI_VDO_Parameters_VDI7_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x0D */
-UNS16 VDI_VDO_Parameters_VDI7_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x0E */
-UNS16 VDI_VDO_Parameters_VDI8_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x0F */
-UNS16 VDI_VDO_Parameters_VD8_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x10 */
-UNS16 VDI_VDO_Parameters_VDI9_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x11 */
-UNS16 VDI_VDO_Parameters_VDI9_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x12 */
-UNS16 VDI_VDO_Parameters_VDI10_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x13 */
-UNS16 VDI_VDO_Parameters_VDI10_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x14 */
-UNS16 VDI_VDO_Parameters_VDI11_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x15 */
-UNS16 VDI_VDO_Parameters_VDI11_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x16 */
-UNS16 VDI_VDO_Parameters_VDI12_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x17 */
-UNS16 VDI_VDO_Parameters_VDI12_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x18 */
-UNS16 VDI_VDO_Parameters_VDI13_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x19 */
-UNS16 VDI_VDO_Parameters_VDI13_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x1A */
-UNS16 VDI_VDO_Parameters_VDI14_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x1B */
-UNS16 VDI_VDO_Parameters_VDI14_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x1C */
-UNS16 VDI_VDO_Parameters_VDI15_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x1D */
-UNS16 VDI_VDO_Parameters_VDI15_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x1E */
-UNS16 VDI_VDO_Parameters_VDI16_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x1F */
-UNS16 VDI_VDO_Parameters_VDI16_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x20 */
-UNS16 VDI_VDO_Parameters_VDO_virtual_level = 0x0;		/* Mapped at index 0x2017, subindex 0x21 */
-UNS16 VDI_VDO_Parameters_VDO1_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x22 */
-UNS16 VDI_VDO_Parameters_VDO1_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x23 */
-UNS16 VDI_VDO_Parameters_VDO2_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x24 */
-UNS16 VDI_VDO_Parameters_VDO2_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x25 */
-UNS16 VDI_VDO_Parameters_VDO3_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x26 */
-UNS16 VDI_VDO_Parameters_VDO3_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x27 */
-UNS16 VDI_VDO_Parameters_VDO4_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x28 */
-UNS16 VDI_VDO_Parameters_VDO4_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x29 */
-UNS16 VDI_VDO_Parameters_VDO5_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x2A */
-UNS16 VDI_VDO_Parameters_VDO5_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x2B */
-UNS16 VDI_VDO_Parameters_VDO6_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x2C */
-UNS16 VDI_VDO_Parameters_VDO6_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x2D */
-UNS16 VDI_VDO_Parameters_VDO7_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x2E */
-UNS16 VDI_VDO_Parameters_VDO7_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x2F */
-UNS16 VDI_VDO_Parameters_VDO8_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x30 */
-UNS16 VDI_VDO_Parameters_VDO8_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x31 */
-UNS16 VDI_VDO_Parameters_VDO9_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x32 */
-UNS16 VDI_VDO_Parameters_VDO9_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x33 */
-UNS16 VDI_VDO_Parameters_VDO10_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x34 */
-UNS16 VDI_VDO_Parameters_VDO10_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x35 */
-UNS16 VDI_VDO_Parameters_VDO11_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x36 */
-UNS16 VDI_VDO_Parameters_VDO11_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x37 */
-UNS16 VDI_VDO_Parameters_VDO12_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x38 */
-UNS16 VDI_VDO_Parameters_VDO12_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x39 */
-UNS16 VDI_VDO_Parameters_VDO13_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x3A */
-UNS16 VDI_VDO_Parameters_VDO13_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x3B */
-UNS16 VDI_VDO_Parameters_VDO14_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x3C */
-UNS16 VDI_VDO_Parameters_VDO14_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x3D */
-UNS16 VDI_VDO_Parameters_VDO15_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x3E */
-UNS16 VDI_VDO_Parameters_VDO15_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x3F */
-UNS16 VDI_VDO_Parameters_VDO16_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x40 */
-UNS16 VDI_VDO_Parameters_VDO16_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x41 */
+volatile UNS16 VDI_VDO_Parameters_VDI1_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x01 */
+volatile UNS16 VDI_VDO_Parameters_VDI1_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x02 */
+volatile UNS16 VDI_VDO_Parameters_VDI2_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x03 */
+volatile UNS16 VDI_VDO_Parameters_VDI2_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x04 */
+volatile UNS16 VDI_VDO_Parameters_VDI3_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x05 */
+volatile UNS16 VDI_VDO_Parameters_VDI3_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x06 */
+volatile UNS16 VDI_VDO_Parameters_VDI4_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x07 */
+volatile UNS16 VDI_VDO_Parameters_VDI4_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x08 */
+volatile UNS16 VDI_VDO_Parameters_VDI5_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x09 */
+volatile UNS16 VDI_VDO_Parameters_VDI5_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x0A */
+volatile UNS16 VDI_VDO_Parameters_VDI6_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x0B */
+volatile UNS16 VDI_VDO_Parameters_VDI6_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x0C */
+volatile UNS16 VDI_VDO_Parameters_VDI7_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x0D */
+volatile UNS16 VDI_VDO_Parameters_VDI7_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x0E */
+volatile UNS16 VDI_VDO_Parameters_VDI8_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x0F */
+volatile UNS16 VDI_VDO_Parameters_VD8_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x10 */
+volatile UNS16 VDI_VDO_Parameters_VDI9_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x11 */
+volatile UNS16 VDI_VDO_Parameters_VDI9_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x12 */
+volatile UNS16 VDI_VDO_Parameters_VDI10_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x13 */
+volatile UNS16 VDI_VDO_Parameters_VDI10_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x14 */
+volatile UNS16 VDI_VDO_Parameters_VDI11_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x15 */
+volatile UNS16 VDI_VDO_Parameters_VDI11_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x16 */
+volatile UNS16 VDI_VDO_Parameters_VDI12_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x17 */
+volatile UNS16 VDI_VDO_Parameters_VDI12_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x18 */
+volatile UNS16 VDI_VDO_Parameters_VDI13_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x19 */
+volatile UNS16 VDI_VDO_Parameters_VDI13_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x1A */
+volatile UNS16 VDI_VDO_Parameters_VDI14_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x1B */
+volatile UNS16 VDI_VDO_Parameters_VDI14_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x1C */
+volatile UNS16 VDI_VDO_Parameters_VDI15_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x1D */
+volatile UNS16 VDI_VDO_Parameters_VDI15_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x1E */
+volatile UNS16 VDI_VDO_Parameters_VDI16_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x1F */
+volatile UNS16 VDI_VDO_Parameters_VDI16_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x20 */
+volatile UNS16 VDI_VDO_Parameters_VDO_virtual_level = 0x0;		/* Mapped at index 0x2017, subindex 0x21 */
+volatile UNS16 VDI_VDO_Parameters_VDO1_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x22 */
+volatile UNS16 VDI_VDO_Parameters_VDO1_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x23 */
+volatile UNS16 VDI_VDO_Parameters_VDO2_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x24 */
+volatile UNS16 VDI_VDO_Parameters_VDO2_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x25 */
+volatile UNS16 VDI_VDO_Parameters_VDO3_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x26 */
+volatile UNS16 VDI_VDO_Parameters_VDO3_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x27 */
+volatile UNS16 VDI_VDO_Parameters_VDO4_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x28 */
+volatile UNS16 VDI_VDO_Parameters_VDO4_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x29 */
+volatile UNS16 VDI_VDO_Parameters_VDO5_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x2A */
+volatile UNS16 VDI_VDO_Parameters_VDO5_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x2B */
+volatile UNS16 VDI_VDO_Parameters_VDO6_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x2C */
+volatile UNS16 VDI_VDO_Parameters_VDO6_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x2D */
+volatile UNS16 VDI_VDO_Parameters_VDO7_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x2E */
+volatile UNS16 VDI_VDO_Parameters_VDO7_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x2F */
+volatile UNS16 VDI_VDO_Parameters_VDO8_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x30 */
+volatile UNS16 VDI_VDO_Parameters_VDO8_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x31 */
+volatile UNS16 VDI_VDO_Parameters_VDO9_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x32 */
+volatile UNS16 VDI_VDO_Parameters_VDO9_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x33 */
+volatile UNS16 VDI_VDO_Parameters_VDO10_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x34 */
+volatile UNS16 VDI_VDO_Parameters_VDO10_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x35 */
+volatile UNS16 VDI_VDO_Parameters_VDO11_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x36 */
+volatile UNS16 VDI_VDO_Parameters_VDO11_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x37 */
+volatile UNS16 VDI_VDO_Parameters_VDO12_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x38 */
+volatile UNS16 VDI_VDO_Parameters_VDO12_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x39 */
+volatile UNS16 VDI_VDO_Parameters_VDO13_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x3A */
+volatile UNS16 VDI_VDO_Parameters_VDO13_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x3B */
+volatile UNS16 VDI_VDO_Parameters_VDO14_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x3C */
+volatile UNS16 VDI_VDO_Parameters_VDO14_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x3D */
+volatile UNS16 VDI_VDO_Parameters_VDO15_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x3E */
+volatile UNS16 VDI_VDO_Parameters_VDO15_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x3F */
+volatile UNS16 VDI_VDO_Parameters_VDO16_function_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x40 */
+volatile UNS16 VDI_VDO_Parameters_VDO16_logic_selection = 0x0;		/* Mapped at index 0x2017, subindex 0x41 */
 
-UNS16 Servo_Related_Variables_Read_via_Communication_Servo_state_read_via_communication = 0x0;		/* Mapped at index 0x2030, subindex 0x01 */
-UNS16 Servo_Related_Variables_Read_via_Communication_DO_function_state_1_read_via_communication = 0x0;		/* Mapped at index 0x2030, subindex 0x02 */
-UNS16 Servo_Related_Variables_Read_via_Communication_DO_function_state_2_read_via_communication = 0x0;		/* Mapped at index 0x2030, subindex 0x03 */
-UNS16 Servo_Related_Variables_Read_via_Communication_Input_reference_pulse_sampling_read_via_communication = 0x0;		/* Mapped at index 0x2030, subindex 0x04 */
-UNS16 Servo_Related_Variables_Set_via_Communication_VDI_virtuallevel_set_via_communication = 0x0;		/* Mapped at index 0x2031, subindex 0x01 */
-UNS8 Servo_Related_Variables_Set_via_Communication_Compatibility_Entry[8] = {0x0};		/* Mapped at index 0x2031, subindex 0x02 */
-UNS16 Servo_Related_Variables_Set_via_Communication_DO_state_set_via_communication = 0x0;		/* Mapped at index 0x2031, subindex 0x05 */
-INTEGER32 Servo_Related_Variables_Set_via_Communication_Speed_reference_set_via_communication = 0x0;		/* Mapped at index 0x2031, subindex 0x0A */
-INTEGER32 Servo_Related_Variables_Set_via_Communication_Torque_reference_set_via_communication = 0x0;		/* Mapped at index 0x2031, subindex 0x0C */
-UNS32 Inovance_drive_fault_code = 0x0;		/* Mapped at index 0x203F, subindex 0x00 */
-UNS16 Error_code = 0x0;		/* Mapped at index 0x603F, subindex 0x00 */
-UNS16 Controlword = 0x0;		/* Mapped at index 0x6040, subindex 0x00 */
-UNS16 Statusword = 0x0;		/* Mapped at index 0x6041, subindex 0x00 */
-INTEGER16 Quick_stop_option_code = 0x2;		/* Mapped at index 0x605A, subindex 0x00 */
-INTEGER16 Halt_option_code = 0x1;		/* Mapped at index 0x605D, subindex 0x00 */
-INTEGER8 Modes_of_operation = 0x0;		/* Mapped at index 0x6060, subindex 0x00 */
-INTEGER8 Modes_of_operation_display = 0x0;		/* Mapped at index 0x6061, subindex 0x00 */
-INTEGER32 Position_demannd_value = 0x0;		/* Mapped at index 0x6062, subindex 0x00 */
-INTEGER32 Position_actual_value = 0x0;		/* Mapped at index 0x6063, subindex 0x00 */
-INTEGER32 Position_actual_value_user = 0x0;		/* Mapped at index 0x6064, subindex 0x00 */
-UNS32 Maximal_following_error = 0x300000;		/* Mapped at index 0x6065, subindex 0x00 */
-UNS32 Following_error_timeout = 0x0;		/* Mapped at index 0x6066, subindex 0x00 */
-UNS32 Position_window = 0x2DE;		/* Mapped at index 0x6067, subindex 0x00 */
-UNS16 Position_window_time = 0x0;		/* Mapped at index 0x6068, subindex 0x00 */
-INTEGER32 Velocity_demand_value = 0x0;		/* Mapped at index 0x606B, subindex 0x00 */
-INTEGER32 Velocity_actual_value = 0x0;		/* Mapped at index 0x606C, subindex 0x00 */
-UNS16 Velocity_window = 0xA;		/* Mapped at index 0x606D, subindex 0x00 */
-UNS16 Velocity_window_time = 0x0;		/* Mapped at index 0x606E, subindex 0x00 */
-UNS16 Velocity_threshold = 0xA;		/* Mapped at index 0x606F, subindex 0x00 */
-UNS16 Velocity_threshold_time = 0x0;		/* Mapped at index 0x6070, subindex 0x00 */
-INTEGER16 Target_Torque = 0x0;		/* Mapped at index 0x6071, subindex 0x00 */
-UNS16 Max_Torque = 0xBB8;		/* Mapped at index 0x6072, subindex 0x00 */
-INTEGER16 ToqDemandValue = 0x0;		/* Mapped at index 0x6074, subindex 0x00 */
-INTEGER16 Torque_Actual_Value = 0x0;		/* Mapped at index 0x6077, subindex 0x00 */
-INTEGER32 Target_position = 0x0;		/* Mapped at index 0x607A, subindex 0x00 */
-INTEGER32 Home_offset = 0x0;		/* Mapped at index 0x607C, subindex 0x00 */
-INTEGER32 Software_position_limit_Minimal_position_limit = 0x80000000;		/* Mapped at index 0x607D, subindex 0x01 */
-INTEGER32 Software_position_limit_Maximal_position_limit = 0x7FFFFFFF;		/* Mapped at index 0x607D, subindex 0x02 */
-UNS8 Polarity = 0x0;		/* Mapped at index 0x607E, subindex 0x00 */
-UNS32 Maximal_profile_velocity = 0x6400000;		/* Mapped at index 0x607F, subindex 0x00 */
-UNS32 Profile_velocity = 0x1AAAAB;		/* Mapped at index 0x6081, subindex 0x00 */
-UNS32 Profile_acceleration = 0xA6AAAAA;		/* Mapped at index 0x6083, subindex 0x00 */
-UNS32 Profile_deceleration = 0xA6AAAAA;		/* Mapped at index 0x6084, subindex 0x00 */
-UNS32 Quick_stop_deceleration = 0x7FFFFFFF;		/* Mapped at index 0x6085, subindex 0x00 */
-INTEGER16 Motion_profile_type = 0x0;		/* Mapped at index 0x6086, subindex 0x00 */
-UNS32 Torque_Slope = 0xFFFFFFFF;		/* Mapped at index 0x6087, subindex 0x00 */
-UNS32 GearRatio_MotorRev = 0x1;		/* Mapped at index 0x6091, subindex 0x01 */
-UNS32 GearRatio_ShaftRev = 0x1;		/* Mapped at index 0x6091, subindex 0x02 */
-INTEGER8 Homing_method = 0x1;		/* Mapped at index 0x6098, subindex 0x00 */
-UNS32 Homing_speeds_Speed_for_switch_search = 0x1AAAAB;		/* Mapped at index 0x6099, subindex 0x01 */
-UNS32 Homing_speeds_Speed_for_zero_search = 0x2AAAB;		/* Mapped at index 0x6099, subindex 0x02 */
-UNS32 Homing_acceleration = 0xA6AAAAA;		/* Mapped at index 0x609A, subindex 0x00 */
-INTEGER32 Interpolated_data_record_the_first_parameter_of_ip_function = 0x0;		/* Mapped at index 0x60C1, subindex 0x01 */
-UNS8 Interpolation_time_period_ip_time_units = 0x1;		/* Mapped at index 0x60C2, subindex 0x01 */
-INTEGER8 Interpolation_time_period_ip_time_index = -3;		/* Mapped at index 0x60C2, subindex 0x02 */
-UNS32 Max_acceleration = 0x7FFFFFFF;		/* Mapped at index 0x60C5, subindex 0x00 */
-UNS32 Max_deceleration = 0x7FFFFFFF;		/* Mapped at index 0x60C6, subindex 0x00 */
-UNS16 MAX_positive_torque_limit = 0xBB8;		/* Mapped at index 0x60E0, subindex 0x00 */
-UNS16 MAX_negative_torque_limit = 0xBB8;		/* Mapped at index 0x60E1, subindex 0x00 */
-UNS8 Actual_pos_calculate_method = 0x0;		/* Mapped at index 0x60E6, subindex 0x00 */
-INTEGER32 Following_error_actual_value = 0x0;		/* Mapped at index 0x60F4, subindex 0x00 */
-INTEGER32 Position_demand_value = 0x0;		/* Mapped at index 0x60FC, subindex 0x00 */
-UNS32 Digital_inputs = 0x0;		/* Mapped at index 0x60FD, subindex 0x00 */
-UNS32 Digital_outputs_Physical_outputs = 0x0;		/* Mapped at index 0x60FE, subindex 0x01 */
-UNS32 Digital_outputs_empty = 0x0;		/* Mapped at index 0x60FE, subindex 0x02 */
-INTEGER32 Target_velocity = 0x0;		/* Mapped at index 0x60FF, subindex 0x00 */
-UNS32 Supported_drive_modes = 0x6D;		/* Mapped at index 0x6502, subindex 0x00 */
-
+volatile UNS16 Servo_Related_Variables_Read_via_Communication_Servo_state_read_via_communication = 0x0;		/* Mapped at index 0x2030, subindex 0x01 */
+volatile UNS16 Servo_Related_Variables_Read_via_Communication_DO_function_state_1_read_via_communication = 0x0;		/* Mapped at index 0x2030, subindex 0x02 */
+volatile UNS16 Servo_Related_Variables_Read_via_Communication_DO_function_state_2_read_via_communication = 0x0;		/* Mapped at index 0x2030, subindex 0x03 */
+volatile UNS16 Servo_Related_Variables_Read_via_Communication_Input_reference_pulse_sampling_read_via_communication = 0x0;		/* Mapped at index 0x2030, subindex 0x04 */
+volatile UNS16 Servo_Related_Variables_Set_via_Communication_VDI_virtuallevel_set_via_communication = 0x0;		/* Mapped at index 0x2031, subindex 0x01 */
+volatile UNS8 Servo_Related_Variables_Set_via_Communication_Compatibility_Entry[8] = {0x0};		/* Mapped at index 0x2031, subindex 0x02 */
+volatile UNS16 Servo_Related_Variables_Set_via_Communication_DO_state_set_via_communication = 0x0;		/* Mapped at index 0x2031, subindex 0x05 */
+volatile INTEGER32 Servo_Related_Variables_Set_via_Communication_Speed_reference_set_via_communication = 0x0;		/* Mapped at index 0x2031, subindex 0x0A */
+volatile INTEGER32 Servo_Related_Variables_Set_via_Communication_Torque_reference_set_via_communication = 0x0;		/* Mapped at index 0x2031, subindex 0x0C */
+volatile UNS32 Inovance_drive_fault_code = 0x0;		/* Mapped at index 0x203F, subindex 0x00 */
+volatile UNS16 Error_code = 0x0;		/* Mapped at index 0x603F, subindex 0x00 */
+volatile UNS16 Controlword = 0x0;		/* Mapped at index 0x6040, subindex 0x00 */
+volatile UNS16 Statusword = 0x0;		/* Mapped at index 0x6041, subindex 0x00 */
+volatile INTEGER16 Quick_stop_option_code = 0x2;		/* Mapped at index 0x605A, subindex 0x00 */
+volatile INTEGER16 Halt_option_code = 0x1;		/* Mapped at index 0x605D, subindex 0x00 */
+volatile INTEGER8 Modes_of_operation = 0x0;		/* Mapped at index 0x6060, subindex 0x00 */
+volatile INTEGER8 Modes_of_operation_display = 0x0;		/* Mapped at index 0x6061, subindex 0x00 */
+volatile INTEGER32 Position_demannd_value = 0x0;		/* Mapped at index 0x6062, subindex 0x00 */
+volatile INTEGER32 Position_actual_value = 0x0;		/* Mapped at index 0x6063, subindex 0x00 */
+volatile INTEGER32 Position_actual_value_user = 0x0;		/* Mapped at index 0x6064, subindex 0x00 */
+volatile UNS32 Maximal_following_error = 0x300000;		/* Mapped at index 0x6065, subindex 0x00 */
+volatile UNS32 Following_error_timeout = 0x0;		/* Mapped at index 0x6066, subindex 0x00 */
+volatile UNS32 Position_window = 0x2DE;		/* Mapped at index 0x6067, subindex 0x00 */
+volatile UNS16 Position_window_time = 0x0;		/* Mapped at index 0x6068, subindex 0x00 */
+volatile INTEGER32 Velocity_demand_value = 0x0;		/* Mapped at index 0x606B, subindex 0x00 */
+volatile INTEGER32 Velocity_actual_value = 0x0;		/* Mapped at index 0x606C, subindex 0x00 */
+volatile UNS16 Velocity_window = 0xA;		/* Mapped at index 0x606D, subindex 0x00 */
+volatile UNS16 Velocity_window_time = 0x0;		/* Mapped at index 0x606E, subindex 0x00 */
+volatile UNS16 Velocity_threshold = 0xA;		/* Mapped at index 0x606F, subindex 0x00 */
+volatile UNS16 Velocity_threshold_time = 0x0;		/* Mapped at index 0x6070, subindex 0x00 */
+volatile INTEGER16 Target_Torque = 0x0;		/* Mapped at index 0x6071, subindex 0x00 */
+volatile UNS16 Max_Torque = 0xBB8;		/* Mapped at index 0x6072, subindex 0x00 */
+volatile INTEGER16 ToqDemandValue = 0x0;		/* Mapped at index 0x6074, subindex 0x00 */
+volatile INTEGER16 Torque_Actual_Value = 0x0;		/* Mapped at index 0x6077, subindex 0x00 */
+volatile INTEGER32 Target_position = 0x0;		/* Mapped at index 0x607A, subindex 0x00 */
+volatile INTEGER32 Home_offset = 0x0;		/* Mapped at index 0x607C, subindex 0x00 */
+volatile INTEGER32 Software_position_limit_Minimal_position_limit = 0x80000000;		/* Mapped at index 0x607D, subindex 0x01 */
+volatile INTEGER32 Software_position_limit_Maximal_position_limit = 0x7FFFFFFF;		/* Mapped at index 0x607D, subindex 0x02 */
+volatile UNS8 Polarity = 0x0;		/* Mapped at index 0x607E, subindex 0x00 */
+volatile UNS32 Maximal_profile_velocity = 0x6400000;		/* Mapped at index 0x607F, subindex 0x00 */
+volatile UNS32 Profile_velocity = 0x1AAAAB;		/* Mapped at index 0x6081, subindex 0x00 */
+volatile UNS32 Profile_acceleration = 0xA6AAAAA;		/* Mapped at index 0x6083, subindex 0x00 */
+volatile UNS32 Profile_deceleration = 0xA6AAAAA;		/* Mapped at index 0x6084, subindex 0x00 */
+volatile UNS32 Quick_stop_deceleration = 0x7FFFFFFF;		/* Mapped at index 0x6085, subindex 0x00 */
+volatile INTEGER16 Motion_profile_type = 0x0;		/* Mapped at index 0x6086, subindex 0x00 */
+volatile UNS32 Torque_Slope = 0xFFFFFFFF;		/* Mapped at index 0x6087, subindex 0x00 */
+volatile UNS32 GearRatio_MotorRev = 0x1;		/* Mapped at index 0x6091, subindex 0x01 */
+volatile UNS32 GearRatio_ShaftRev = 0x1;		/* Mapped at index 0x6091, subindex 0x02 */
+volatile INTEGER8 Homing_method = 0x1;		/* Mapped at index 0x6098, subindex 0x00 */
+volatile UNS32 Homing_speeds_Speed_for_switch_search = 0x1AAAAB;		/* Mapped at index 0x6099, subindex 0x01 */
+volatile UNS32 Homing_speeds_Speed_for_zero_search = 0x2AAAB;		/* Mapped at index 0x6099, subindex 0x02 */
+volatile UNS32 Homing_acceleration = 0xA6AAAAA;		/* Mapped at index 0x609A, subindex 0x00 */
+volatile INTEGER32 Interpolated_data_record_the_first_parameter_of_ip_function = 0x0;		/* Mapped at index 0x60C1, subindex 0x01 */
+volatile UNS8 Interpolation_time_period_ip_time_units = 0x1;		/* Mapped at index 0x60C2, subindex 0x01 */
+volatile INTEGER8 Interpolation_time_period_ip_time_index = -3;		/* Mapped at index 0x60C2, subindex 0x02 */
+volatile UNS32 Max_acceleration = 0x7FFFFFFF;		/* Mapped at index 0x60C5, subindex 0x00 */
+volatile UNS32 Max_deceleration = 0x7FFFFFFF;		/* Mapped at index 0x60C6, subindex 0x00 */
+volatile UNS16 MAX_positive_torque_limit = 0xBB8;		/* Mapped at index 0x60E0, subindex 0x00 */
+volatile UNS16 MAX_negative_torque_limit = 0xBB8;		/* Mapped at index 0x60E1, subindex 0x00 */
+volatile UNS8 Actual_pos_calculate_method = 0x0;		/* Mapped at index 0x60E6, subindex 0x00 */
+volatile INTEGER32 Following_error_actual_value = 0x0;		/* Mapped at index 0x60F4, subindex 0x00 */
+volatile INTEGER32 Position_demand_value = 0x0;		/* Mapped at index 0x60FC, subindex 0x00 */
+volatile UNS32 Digital_inputs = 0x0;		/* Mapped at index 0x60FD, subindex 0x00 */
+volatile UNS32 Digital_outputs_Physical_outputs = 0x0;		/* Mapped at index 0x60FE, subindex 0x01 */
+volatile UNS32 Digital_outputs_empty = 0x0;		/* Mapped at index 0x60FE, subindex 0x02 */
+volatile INTEGER32 Target_velocity = 0x0;		/* Mapped at index 0x60FF, subindex 0x00 */
+volatile UNS32 Supported_drive_modes = 0x6D;		/* Mapped at index 0x6502, subindex 0x00 */
 /**************************************************************************/
 /* Declaration of value range types                                       */
 /**************************************************************************/
@@ -632,7 +631,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1005 :   SYNC COB ID. */
-                    UNS32 canfestival_master_obj1005 = 0x00000080;	/* 128 */
+                    UNS32 canfestival_master_obj1005 = 0x40000080;	/* 128 */
                     ODCallback_t _Index1005_callbacks[] = 
 										 {
 											 NULL,
@@ -719,7 +718,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1017 :   Producer Heartbeat Time. */
-                    UNS16 canfestival_master_obj1017 = 0x0;	/* 0 */
+                    UNS16 canfestival_master_obj1017 = 0x3e8;	/* 1s */
                     ODCallback_t _Index1017_callbacks[] = 
                      {
                        NULL,
@@ -799,7 +798,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1402 :   Receive PDO 3 Parameter. */
                     UNS8 _highestSubIndex_obj1402 = 2; /* number of subindex - 1*/
-                    UNS32 _obj1402_COB_ID_used_by_PDO = 0x00000408;	/* 2147484672 */
+                    UNS32 _obj1402_COB_ID_used_by_PDO = 0x80000408;	/* 2147484672 */
                     UNS8 _obj1402_Transmission_Type = 0xFF;	/* 255 */
                     subindex _Index1402[] = 
                      {
@@ -820,29 +819,35 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1600 :   Receive PDO 1 Mapping. */
-                    UNS8 _highestSubIndex_obj1600 = 8; /* number of subindex - 1*/
+                    UNS8 _highestSubIndex_obj1600 = 3; /* number of subindex - 1*/
                     UNS32 _obj1600[] = 
                     {
-                      0x60400010,	/* 1614807056 */
-                      0x60FF0020,	/* 1627324448 */
-                      0x60600008,	/* 1616904200 */
-                      0x0,	/* 0 */
-                      0x0,	/* 0 */
-                      0x0,	/* 0 */
-                      0x0,	/* 0 */
-                      0x0	/* 0 */
+                      0x60410010,	/* 1614807056 */
+                      0x606C0020,	/* 1627324448 */
+                      0x200B1910,	/* 1616904200 */
                     };
+                    // UNS32 _obj1600[] = 
+                    // {
+                    //   0x60400010,	/* 1614807056 */
+                    //   0x60FF0020,	/* 1627324448 */
+                    //   0x60600008,	/* 1616904200 */
+                    //   0x0,	/* 0 */
+                    //   0x0,	/* 0 */
+                    //   0x0,	/* 0 */
+                    //   0x0,	/* 0 */
+                    //   0x0	/* 0 */
+                    // };
                     subindex _Index1600[] = 
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj1600 },
                        { RW, uint32, sizeof (UNS32), (void*)&_obj1600[0] },
                        { RW, uint32, sizeof (UNS32), (void*)&_obj1600[1] },
                        { RW, uint32, sizeof (UNS32), (void*)&_obj1600[2] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1600[3] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1600[4] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1600[5] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1600[6] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1600[7] }
+                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1600[3] },
+                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1600[4] },
+                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1600[5] },
+                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1600[6] },
+                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1600[7] }
                      };
 
 /* index 0x1601 :   Receive PDO 2 Mapping. */
@@ -926,7 +931,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 /* index 0x1800 :   Transmit PDO 1 Parameter. */
                     UNS8 _highestSubIndex_obj1800 = 5; /* number of subindex - 1*/
                     UNS32 _obj1800_COB_ID_used_by_PDO = 0x00000188;	/* 1073742208 */
-                    UNS8 _obj1800_Transmission_Type = 0x1;	/* 1 */
+                    UNS8 _obj1800_Transmission_Type = 0xFF;	/* 1 */
                     UNS16 _obj1800_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 _obj1800_Compatibility_Entry = 0x0;	/* 0 */
                     UNS16 _obj1800_Event_Timer = 0x0;	/* 0 */
@@ -1028,29 +1033,37 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1A00 :   Transmit PDO 1 Mapping. */
-                    UNS8 _highestSubIndex_obj1A00 = 8; /* number of subindex - 1*/
-                    UNS32 _obj1A00[] = 
+                    UNS8 _highestSubIndex_obj1A00 = 2; /* number of subindex - 1*/
+                     UNS32 _obj1A00[] = 
                     {
-                      0x60410010,	/* 1614872592 */
-                      0x60FD0020,	/* 1627193376 */
-                      0x60610008,	/* 1616969736 */
-                      0x0,	/* 0 */
-                      0x0,	/* 0 */
-                      0x0,	/* 0 */
-                      0x0,	/* 0 */
-                      0x0	/* 0 */
+                      // 0x60410010,	/* 1614872592 */
+                      // 0x606C0020,	/* 1627193376 */
+                      // 0x200B1910,	/* 1616969736 */
+                      0x60400010,
+                      0x60FF0020,
                     };
+                    // UNS32 _obj1A00[] = 
+                    // {
+                    //   0x60410010,	/* 1614872592 */
+                    //   0x60FF0020,	/* 1627193376 */
+                    //   0x200B1910,	/* 1616969736 */
+                    //   0x0,	/* 0 */
+                    //   0x0,	/* 0 */
+                    //   0x0,	/* 0 */
+                    //   0x0,	/* 0 */
+                    //   0x0	/* 0 */
+                    // };
                     subindex _Index1A00[] = 
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj1A00 },
                        { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[0] },
                        { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[1] },
                        { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[2] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[3] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[4] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[5] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[6] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[7] }
+                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[3] },
+                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[4] },
+                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[5] },
+                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[6] },
+                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[7] }
                      };
 
 /* index 0x1A01 :   Transmit PDO 2 Mapping. */

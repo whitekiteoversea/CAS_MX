@@ -235,7 +235,7 @@ proceedPDO (CO_Data * d, Message * m)
                         /*1->8 => 1 ; 9->16 =>2, ... */
                         ByteSize = (UNS32)(1 + ((Size - 1) >> 3));
 
-                        printf("CANOpen: pMappingParameter is 0x%x \r\n", *pMappingParameter);
+                        // printf("CANOpen: pMappingParameter is 0x%x \r\n", *pMappingParameter);
                         objDict = setODentry (d, (UNS16) ((*pMappingParameter) >> 16),
                                                  (UNS8) (((*pMappingParameter) >> 8) & 0xFF), tmp, &ByteSize, 0);
 
@@ -479,9 +479,10 @@ sendOnePDOevent (CO_Data * d, UNS8 pdoNum)
 {
   UNS16 offsetObjdict;
   Message pdo;
+
+  // canopen状态机错误 or PDO更新类型错误 or 处于禁止发送时间
   if (!d->CurrentCommunicationState.csPDO ||
-      (d->PDO_status[pdoNum].transmit_type_parameter & PDO_INHIBITED))
-    {
+      (d->PDO_status[pdoNum].transmit_type_parameter & PDO_INHIBITED)) {
       return 0;
     }
 
@@ -491,26 +492,19 @@ sendOnePDOevent (CO_Data * d, UNS8 pdoNum)
            *((UNS8 *) d->objdict[offsetObjdict].pSubindex[2].pObject));
   
   memset(&pdo, 0, sizeof(pdo));
-  if (buildPDO (d, pdoNum, &pdo))
-    {
+  if (buildPDO (d, pdoNum, &pdo)) {
       MSG_ERR (0x3907, " Couldn't build TPDO number : ",
-               pdoNum);
+                pdoNum);
       return 0;
-    }
+  }
 
   /*Compare new and old PDO */
   if (d->PDO_status[pdoNum].last_message.cob_id == pdo.cob_id
       && d->PDO_status[pdoNum].last_message.len == pdo.len
-      && memcmp(d->PDO_status[pdoNum].last_message.data,
-					pdo.data, 8) == 0
-    )
-    {
+      && memcmp(d->PDO_status[pdoNum].last_message.data, pdo.data, 8) == 0) {
       /* No changes -> go to next pdo */
       return 0;
-    }
-  else
-    {
-
+  } else {
       TIMEVAL EventTimerDuration;
       TIMEVAL InhibitTimerDuration;
 
@@ -524,16 +518,14 @@ sendOnePDOevent (CO_Data * d, UNS8 pdoNum)
         pObject;
 
       /* Start both event_timer and inhibit_timer */
-      if (EventTimerDuration)
-        {
+      if (EventTimerDuration) {
           DelAlarm (d->PDO_status[pdoNum].event_timer);
           d->PDO_status[pdoNum].event_timer =
             SetAlarm (d, pdoNum, &PDOEventTimerAlarm,
                       MS_TO_TIMEVAL (EventTimerDuration), 0);
-        }
+      }
 
-      if (InhibitTimerDuration)
-        {
+      if (InhibitTimerDuration) {
           DelAlarm (d->PDO_status[pdoNum].inhibit_timer);
           d->PDO_status[pdoNum].inhibit_timer =
             SetAlarm (d, pdoNum, &PDOInhibitTimerAlarm,
@@ -542,7 +534,7 @@ sendOnePDOevent (CO_Data * d, UNS8 pdoNum)
           /* and inhibit TPDO */
           d->PDO_status[pdoNum].transmit_type_parameter |=
             PDO_INHIBITED;
-        }
+      }
 
       sendPdo(d, pdoNum, &pdo);
     }
@@ -752,38 +744,37 @@ TPDO_Communication_Parameter_Callback (CO_Data * d,
   return 0;
 }
 
-void
-PDOInit (CO_Data * d)
+void PDOInit (CO_Data * d) 
 {
-  /* For each TPDO mapping parameters */
-  UNS16 pdoIndex = 0x1800;      /* OD index of TDPO */
+    /* For each TPDO mapping parameters */
+    UNS16 pdoIndex = 0x1800;      /* OD index of TPDO */
 
-  UNS16 offsetObjdict = d->firstIndex->PDO_TRS;
-  UNS16 lastIndex = d->lastIndex->PDO_TRS;
-  if (offsetObjdict)
-    while (offsetObjdict <= lastIndex)
-      {
-        /* Assign callbacks to sensible TPDO mapping subindexes */
-        UNS32 errorCode;
-        ODCallback_t *CallbackList;
-        /* Find callback list */
-        scanIndexOD (d, pdoIndex, &errorCode, &CallbackList);
-        if (errorCode == OD_SUCCESSFUL && CallbackList)
-          {
-            /*Assign callbacks to corresponding subindex */
-            /* Transmission type */
-            CallbackList[2] = &TPDO_Communication_Parameter_Callback;
-            /* Inhibit time */
-            CallbackList[3] = &TPDO_Communication_Parameter_Callback;
-            /* Event timer */
-            CallbackList[5] = &TPDO_Communication_Parameter_Callback;
-          }
-        pdoIndex++;
-        offsetObjdict++;
-      }
+    UNS16 offsetObjdict = d->firstIndex->PDO_TRS;
+    UNS16 lastIndex = d->lastIndex->PDO_TRS;
 
-  /* Trigger a non-sync event */
-  _sendPDOevent (d, 0);
+    if (offsetObjdict) {
+        while (offsetObjdict <= lastIndex) {
+            /* Assign callbacks to sensible TPDO mapping subindexes */
+            UNS32 errorCode;
+            ODCallback_t *CallbackList;
+            /* Find callback list */
+            scanIndexOD (d, pdoIndex, &errorCode, &CallbackList);
+            if (errorCode == OD_SUCCESSFUL && CallbackList) {
+                /*Assign callbacks to corresponding subindex */
+                /* Transmission type */
+                CallbackList[2] = &TPDO_Communication_Parameter_Callback;
+                /* Inhibit time */
+                CallbackList[3] = &TPDO_Communication_Parameter_Callback;
+                /* Event timer */
+                CallbackList[5] = &TPDO_Communication_Parameter_Callback;
+            }
+            pdoIndex++;
+            offsetObjdict++;
+        }
+    }
+
+    /* Trigger a non-sync event */
+    _sendPDOevent (d, 0);
 }
 
 void

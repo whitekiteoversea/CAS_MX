@@ -46,10 +46,10 @@ uint8_t HAL_CAN_Std_Transmit(CAN_HandleTypeDef *hcan, const void* buf, uint32_t 
     while (len != 0)
     {
         hdr.DLC = len > 8 ? 8 : len;		
-				if (HAL_CAN_AddTxMessage(hcan, &hdr, ((uint8_t *)buf) + offset, &txmailbox) != HAL_OK) {
-					return 1;
-				}
-        offset += hdr.DLC;
+		if (HAL_CAN_AddTxMessage(hcan, &hdr, ((uint8_t *)buf) + offset, &txmailbox) != HAL_OK) {
+			return 1;
+		}
+		offset += hdr.DLC;
         len -= hdr.DLC;
     }
     return 0;

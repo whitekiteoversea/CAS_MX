@@ -144,6 +144,8 @@ void SDOTimeoutAlarm(CO_Data* d, UNS32 id)
 		return ;
 	}
 	nodeId = (UNS8) *((UNS32*) d->objdict[offset+d->transfers[id].CliServNbr].pSubindex[3].pObject);
+
+	printf ("CANOpen: SDOAbort Occur! Index is 0x%x, subIndex is 0x%x\r\n", d->transfers[id].index, d->transfers[id].subIndex);
 	MSG_ERR(0x1A01, "SDO timeout. SDO response not received.", 0);
 	MSG_WAR(0x2A02, "server node id : ", nodeId);
 	MSG_WAR(0x2A02, "         index : ", d->transfers[id].index);
@@ -420,20 +422,20 @@ UNS8 failedSDO (CO_Data* d, UNS8 CliServNbr, UNS8 whoami, UNS16 index,
 	UNS8 line;
 	err = getSDOlineOnUse( d, CliServNbr, whoami, &line );
 	if (!err) /* If a line on use have been found.*/
-		MSG_WAR(0x3A20, "FailedSDO : line found : ", line);
+		MSG_ERR(0x3A20, "FailedSDO : line found : ", line);
 	if ((! err) && (whoami == SDO_SERVER)) {
 		resetSDOline( d, line );
-		MSG_WAR(0x3A21, "FailedSDO : line released : ", line);
+		MSG_ERR(0x3A21, "FailedSDO : line released : ", line);
 	}
 	if ((! err) && (whoami == SDO_CLIENT)) {
 		StopSDO_TIMER(line);
 		d->transfers[line].state = SDO_ABORTED_INTERNAL;
 		d->transfers[line].abortCode = abortCode;
 	}
-	MSG_WAR(0x3A22, "Sending SDO abort ", 0);
+	MSG_ERR(0x3A22, "Sending SDO abort ", 0);
 	err = sendSDOabort(d, whoami, CliServNbr, index, subIndex, abortCode);
 	if (err) {
-		MSG_WAR(0x3A23, "Unable to send the SDO abort", 0);
+		MSG_ERR(0x3A23, "Unable to send the SDO abort", 0);
 		return 0xFF;
 	}
 	return 0;
@@ -1273,8 +1275,7 @@ UNS8 proceedSDO (CO_Data* d, Message *m)
 					/* Release the line */
 					resetSDOline(d, line);
 				}
-			} /* end if SERVER*/
-			else {
+			} else {
 				/* I am CLIENT */
 				/* It is the response for the previous initiate download request. */
 				/* We should find a line opened for this. */

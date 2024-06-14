@@ -1215,6 +1215,8 @@ void bspInit(void)
 	network_init();
 #endif
 
+printf("************NEW BOOT!******************\n\r");
+
   // 4. BISS-C Sensor Data Acquire (pass)
 
 #if HAL_BISSC_ENABLE
@@ -1231,6 +1233,7 @@ void bspInit(void)
 
   // 6. CANOpen NMI Init
 #if HAL_CANOPEN_ENABLE
+	HAL_Delay(2000);  
   canOpenInit();
   // Enable Driver Node
   //canopen_start_node(&masterObjdict_Data, can_var.slaveCANID);
@@ -1241,7 +1244,6 @@ void bspInit(void)
   #endif
 	
 	HAL_Delay(500);  
-  printf("************NEW BOOT!******************\n\r");
   printf("CAS: %d ms All Function Initial Finished! \n\r", gTime.l_time_ms);
 }
 
@@ -1267,8 +1269,8 @@ void userAppLoop(void)
                                                                                             motionStatus.g_Distance, \
                                                                                             motionStatus.g_Speed);
       printf("%d ms: TPDO2: g_Distance is is %d pulse, g_Speed Feedback is : %d rpm, \n\r", gTime.l_time_ms,  \
-                                                                                            Position_actual_value_user, \
-                                                                                            Velocity_actual_value);
+                                                                                            (int)Position_actual_value_user, \
+                                                                                            (int)Velocity_actual_value);
       
       
       gStatus.l_time_heartbeat = 0;

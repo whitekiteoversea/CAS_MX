@@ -151,16 +151,16 @@ uint8_t canSend(CAN_PORT notused, Message *message)
 	uint8_t ret = 0;
 	CAN_TxHeaderTypeDef Header;
 
-	/* 组装CAN数据包 */
-	Header.IDE = CAN_ID_STD;
+	Header.IDE = CAN_ID_STD;  					// 标准帧还是扩展帧
 	Header.DLC = len;							/* 数据长度 */
-	Header.StdId = message->cob_id;						/* 标识符 */
-	//Header.ExtId = 0;
-	Header.RTR = (message->rtr == CAN_RTR_DATA) ? 0 : 2;	/* 数据帧 */
-		
-	if (HAL_CAN_AddTxMessage(&hcan2, &Header, message->data, &TransmitMailbox) != HAL_OK) {
-			printf ("CANOpen: CAN2 Send Fail! \n\r");
-			return 1; //Error
+	Header.StdId = message->cob_id;			    /* 标识符 */
+	Header.ExtId = 0x0;									
+  	Header.TransmitGlobalTime = DISABLE;
+	Header.RTR = (message->rtr == CAN_RTR_DATA) ? 0 : 2;	/* 数据帧 or 远程帧*/
+	
+	ret = HAL_CAN_AddTxMessage(&hcan2, &Header, message->data, &TransmitMailbox);
+	if (ret != HAL_OK) {
+		printf ("CANOpen: CAN2 Send Fail! ErrorCode is 0x%x\n\r", ret);
 	}
 	return ret;
 }

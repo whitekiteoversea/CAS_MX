@@ -216,7 +216,7 @@
   * @{
   */
 
-#if defined(CAN1)
+//#if defined(CAN1)
 
 /** @defgroup CAN CAN
   * @brief CAN driver modules
@@ -2457,7 +2457,7 @@ HAL_StatusTypeDef HAL_CAN_ResetError(CAN_HandleTypeDef *hcan)
   * @}
   */
 
-#endif /* CAN1 */
+//#endif /* CAN1 */
 
 /**
   * @}
