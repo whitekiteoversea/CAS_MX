@@ -46,6 +46,87 @@ typedef struct {
   volatile unsigned int g_time_ms;
 } GLOBALTIME;
 
+// SpeedMode
+typedef union {
+struct {
+  uint16_t servo_rdyToSwitchON : 1;       // 伺服准备好
+  uint16_t servo_allowToSwitchON : 1;     // 可以开启伺服运行
+  uint16_t servo_OperationEnabled : 1;    // 伺服运行
+  uint16_t servo_Fault : 1;               // 故障
+  uint16_t servo_VoltageEnabled: 1;       // 主回路电已接通
+  uint16_t servo_quickStopActivated : 1;  // 快速停车已生效
+  uint16_t servo_SWitchONDisabled : 1;    // 伺服不可运行
+  uint16_t servo_warning : 1;             // 警告
+  uint16_t servo_mSpecific1 : 1;          // 厂家自定义
+  uint16_t servo_remoteControl : 1;       // 远程控制
+  uint16_t servo_targetReached : 1;       // 目标已到达  
+  uint16_t servo_internalLimitActice : 1; // 位置反馈超限
+
+  //bit 12-14 rely on OperationMode
+
+  /* 速度模式下为
+    uint16_t servo_speedIsZero : 1;        // 速度是否为0
+    uint16_t servo_NA : 1;
+    uint16_t servo_mSpecific2 : 1;
+
+    位置模式下为：
+    uint16_t servo_setPointAck : 1;        // 1：不可更新目标位置
+    uint16_t servo_followingError : 1;     // 1： 位置误差超限
+    uint16_t servo_mSpecific2 : 1;
+
+    转矩模式下未使用
+  */
+  uint16_t modeRelyDefined1 : 1;        
+  uint16_t modeRelyDefined2 : 1;
+  uint16_t modeRelyDefined3 : 1;
+
+  uint16_t servo_HomeFounded : 1;        //原点回零完成
+}motorStatusWord;
+uint16_t Value; 
+} STATUS_WORD;
+
+typedef union {
+struct {
+  uint16_t servo_rdyToSwitchON : 1;       // 可开启伺服运行
+  uint16_t servo_enableVoltage : 1;       // 接通主回路电
+  uint16_t servo_quickStop : 1;           // 快速停机
+  uint16_t servo_enableOperation : 1;     // 伺服运行
+  uint16_t reserved1 : 4;                 //快速停机 
+  uint16_t servo_Halt : 1;                // 暂停
+  uint16_t  reserved2 : 8;
+}motorControlWord;
+uint16_t Value; 
+} CONTROL_WORD_SPEED;
+
+//Torque Mode
+typedef union {
+struct {
+  uint16_t servo_rdyToSwitchON : 1;       // 可开启伺服运行
+  uint16_t servo_enableVoltage : 1;       // 接通主回路电
+  uint16_t servo_quickStop : 1;           // 快速停机
+  uint16_t servo_enableOperation : 1;     // 伺服运行
+   uint16_t reserved1 : 4;                 //快速停机 
+  uint16_t servo_Halt : 1;                // 暂停
+  uint16_t  reserved2 : 8;
+}motorControlWord;
+uint16_t Value; 
+} CONTROL_WORD_TORQUE;
+
+typedef union {
+struct {
+  uint16_t servo_rdyToSwitchON : 1;        // 可开启伺服运行
+  uint16_t servo_enableVoltage : 1;        // 接通主回路电
+  uint16_t servo_quickStop : 1;            // 快速停机
+  uint16_t servo_enableOperation : 1;      // 伺服运行
+  uint16_t servo_newSetPoint : 1;          // 触发新目标位置 
+  uint16_t servo_changeSetImmediately : 1; // 目标位置是否立即更新
+  uint16_t servo_absORrel : 1;             // 0：绝对位置指令 1：相对位置指令
+  uint16_t servo_halt : 1;                 // 1：暂停
+  uint16_t reserved2 : 8;
+} motorControlWord;
+uint16_t Value; 
+} CONTROL_WORD_POSITION;
+
 typedef struct {
   volatile unsigned char comRecvCnt;        // Single time consecutive receive cnt
   volatile uint8_t g_RTU_Startflag;         // RTU 10ms计时开始
@@ -94,8 +175,15 @@ typedef struct {
 	int32_t g_Distance; 	// um
 	int32_t g_Speed; 			// rpm
   int16_t g_phaseAmp;   // A
-
 	uint32_t g_InitialPosi; //um
+
+  volatile uint8_t g_curOperationMode; // 当前工作模式
+  // 驱动器状态字
+  volatile STATUS_WORD motorStatusWord;     
+ // 驱动器控制字
+  volatile CONTROL_WORD_SPEED motorCMD_speed;    
+  volatile CONTROL_WORD_TORQUE motorCMD_torque;     
+  volatile CONTROL_WORD_POSITION motorCMD_position;     
 
 } MOTIONVAR;
 

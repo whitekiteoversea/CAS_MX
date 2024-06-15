@@ -955,9 +955,9 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1802 :   Transmit PDO 3 Parameter. */
                     UNS8 _highestSubIndex_obj1802 = 5; /* number of subindex - 1*/
-                    UNS32 _obj1802_COB_ID_used_by_PDO = 0xC0000408;	/* 3221226368 */
-                    UNS8 _obj1802_Transmission_Type = 0xFF;	/* 255 */
-                    UNS16 _obj1802_Inhibit_Time = 0x3E8;	/* 1000 */
+                    UNS32 _obj1802_COB_ID_used_by_PDO = 0x00000408;	/* 3221226368 */
+                    UNS8 _obj1802_Transmission_Type = 0x64;	/* 255 */
+                    UNS16 _obj1802_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 _obj1802_Compatibility_Entry = 0x0;	/* 0 */
                     UNS16 _obj1802_Event_Timer = 0x0;	/* 0 */
                     ODCallback_t _Index1802_callbacks[] = 
@@ -1020,29 +1020,17 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     };
 
 /* index 0x1A01 :   Transmit PDO 2 Mapping. */
-                    UNS8 _highestSubIndex_obj1A01 = 8; /* number of subindex - 1*/
+                    UNS8 _highestSubIndex_obj1A01 = 2; /* number of subindex - 1*/
                     UNS32 _obj1A01[] = 
                     {
-                      0x60640020,	/* 1617166368 */
-                      0x606C0020,	/* 1617690656 */
-                      0x0,	/* 0 */
-                      0x0,	/* 0 */
-                      0x0,	/* 0 */
-                      0x0,	/* 0 */
-                      0x0,	/* 0 */
-                      0x0	/* 0 */
+                      0x60600008,	/* 当前工作模式 */
+                      0x60640020	/* 实时位置 */
                     };
                     subindex _Index1A01[] = 
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj1A01 },
                        { RW, uint32, sizeof (UNS32), (void*)&_obj1A01[0] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A01[1] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A01[2] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A01[3] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A01[4] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A01[5] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A01[6] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A01[7] }
+                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A01[1] }
                      };
 
 /* index 0x1A02 :   Transmit PDO 3 Mapping. */

@@ -1247,6 +1247,9 @@ printf("************NEW BOOT!******************\n\r");
   printf("CAS: %d ms All Function Initial Finished! \n\r", gTime.l_time_ms);
 }
 
+
+#define DRIVER_STATUS_TEST_ENABLE (1)
+
 void userAppLoop(void) 
 {
     unsigned short startupCheckRes = 0x00;
@@ -1256,23 +1259,29 @@ void userAppLoop(void)
     unsigned char sensorData = 0;
     uint8_t cnt = 0;
     uint8_t prx = 0;
-    
     uint8_t SG_Data[8] = {0}; 
     uint64_t sensor26bit = 0;
+
+    short FilterSpeed = 0;  // 除错处理后的实时速度
 
     // RS485 MODBUS RTU Request Code
     uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
 
     if (gStatus.l_time_heartbeat == 1) {
       printf("%d ms HeartBeat Msg \n\r", gTime.l_time_ms);
-      //printf("%d ms: TPDO2: g_Distance is is %d pulse, g_Speed Feedback is : %d rpm, \n\r", gTime.l_time_ms,  \
-                                                                                            motionStatus.g_Distance, \
-                                                                                            motionStatus.g_Speed);
-      printf("%d ms: TPDO2: g_Distance is is %d pulse, g_Speed Feedback is : %d rpm, \n\r", gTime.l_time_ms,  \
-                                                                                            (int)Position_actual_value_user, \
-                                                                                            (int)Velocity_actual_value);
+
+
+#ifdef DRIVER_STATUS_TEST_ENABLE
+      // when motor is still, sensor will genarate Wrong Data of Speed 
+      if (Velocity_actual_value > MAX_ALLOWED_SPEED_RPM || Velocity_actual_value < MIN_ALLOWED_SPEED_RPM) {
+          motionStatus.g_Speed = 0;
+      }
+      motionStatus.g_posi = Position_actual_value_user;
+      printf("%d ms: TPDO2: g_Distance is %d pulse, realTimefilterSpeed Feedback is : %d rpm, \n\r", gTime.l_time_ms,  \
+                                                                                                     motionStatus.g_posi, \
+                                                                                                     motionStatus.g_Speed);
       
-      
+#endif
       gStatus.l_time_heartbeat = 0;
     }
 
