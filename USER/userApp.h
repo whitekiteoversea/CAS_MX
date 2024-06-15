@@ -13,8 +13,6 @@
 #undef RTR
 #include "can.h"
 #include "pid.h"
-//#include "oled.h"
-//#include "bmp.h"
 
 #include "canfestival_timer.h"
 #include "canfestival_can.h"
@@ -43,7 +41,7 @@
 
 #define HAL_W5500_ENABLE         			 (0)
 
-#define HAL_CANOPEN_ENABLE                   (1)
+#define HAL_CANOPEN_ENABLE                   (0)
 #define CAN2_SENDTEST_ON         			 (0)
 #define CANOPEN_NONBLOACK_DELAY_ENABLE       (0)
 
@@ -51,6 +49,7 @@
 #define HAL_DAC_ENABLE           			 (0)
 #define HAL_EEPROM_ENABLE        			 (0)
 
+#define HAL_LCD_ENABLE                       (1)
 
 extern uint8_t gDATABUF[DATA_BUF_SIZE];  
 

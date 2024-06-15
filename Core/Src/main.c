@@ -1053,7 +1053,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1|SPI1_CS_Pin|SPI3_CS_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOH, GPIO_PIN_2, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOH, GPIO_PIN_2, GPIO_PIN_SET); // PH2 RESET 置高
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_1|SPI2_CS_Pin, GPIO_PIN_RESET);
@@ -1150,7 +1150,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOI, GPIO_PIN_1, GPIO_PIN_SET); // NRES = 1
   HAL_GPIO_WritePin(GPIOI, GPIO_PIN_3, GPIO_PIN_RESET); // GETSENS = 0
 
-	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET); 
+	HAL_GPIO_WritePin(GPIOC, GPIO_PIN_1, GPIO_PIN_RESET); // LCD Write instruction select 
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_1, GPIO_PIN_SET);  
 
 /* USER CODE END MX_GPIO_Init_2 */
@@ -1181,7 +1181,9 @@ void bspInit(void)
   // MX_I2C2_Init();
   MX_SPI1_Init();
   MX_SPI2_Init();
+#if HAL_LCD_ENABLE
   MX_SPI3_Init();
+#endif
   MX_SPI4_Init();
   // MX_SPI5_Init();
   MX_TIM1_Init();
@@ -1213,6 +1215,11 @@ void bspInit(void)
 	HAL_Delay(300);  // wait for W5500 initial 
 	network_register();
 	network_init();
+#endif
+
+#if HAL_LCD_ENABLE
+  LCD_Init();
+	LCD_Fill(0, 0, LCD_W-1, LCD_H-1, YELLOW);
 #endif
 
 printf("************NEW BOOT!******************\n\r");
@@ -1247,9 +1254,6 @@ printf("************NEW BOOT!******************\n\r");
   printf("CAS: %d ms All Function Initial Finished! \n\r", gTime.l_time_ms);
 }
 
-
-#define DRIVER_STATUS_TEST_ENABLE (1)
-
 void userAppLoop(void) 
 {
     unsigned short startupCheckRes = 0x00;
@@ -1262,25 +1266,22 @@ void userAppLoop(void)
     uint8_t SG_Data[8] = {0}; 
     uint64_t sensor26bit = 0;
 
-    short FilterSpeed = 0;  // 除错处理后的实时速度
-
     // RS485 MODBUS RTU Request Code
     uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
 
     if (gStatus.l_time_heartbeat == 1) {
       printf("%d ms HeartBeat Msg \n\r", gTime.l_time_ms);
 
-
-#ifdef DRIVER_STATUS_TEST_ENABLE
+#if HAL_CANOPEN_ENABLE
+      motionStatus.g_curOperationMode = Modes_of_operation;
+      motionStatus.g_Speed = Velocity_actual_value;
       // when motor is still, sensor will genarate Wrong Data of Speed 
       if (Velocity_actual_value > MAX_ALLOWED_SPEED_RPM || Velocity_actual_value < MIN_ALLOWED_SPEED_RPM) {
-          motionStatus.g_Speed = 0;
+           motionStatus.g_Speed = 0;
       }
-      motionStatus.g_posi = Position_actual_value_user;
-      printf("%d ms: TPDO2: g_Distance is %d pulse, realTimefilterSpeed Feedback is : %d rpm, \n\r", gTime.l_time_ms,  \
-                                                                                                     motionStatus.g_posi, \
-                                                                                                     motionStatus.g_Speed);
-      
+      printf("%d ms: TPDO2: Current Work Operation is 0x%d, realTimefilterSpeed Feedback is : %d rpm, \n\r", gTime.l_time_ms,  \
+                                                                                            motionStatus.g_curOperationMode, \
+                                                                                            motionStatus.g_Speed);
 #endif
       gStatus.l_time_heartbeat = 0;
     }

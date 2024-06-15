@@ -812,6 +812,16 @@
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\IC_MB4\mb4_1sf_driver.c</FilePath>
             </File>
+            <File>
+              <FileName>lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\ST7789\lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\ST7789\lcd_init.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

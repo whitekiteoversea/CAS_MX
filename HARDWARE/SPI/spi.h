@@ -4,7 +4,7 @@
 #include "stm32f4xx_hal.h"
 #include "mb4_1sf_driver.h"
 	 				    
-// SPI�����ٶ����� 
+// SPI Speed
 #define SPI_SPEED_2   		0
 #define SPI_SPEED_4   		1
 #define SPI_SPEED_8   		2

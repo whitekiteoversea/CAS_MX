@@ -38,6 +38,9 @@
         "charconv": "c",
         "xmemory": "c",
         "stm32f4xx_it.h": "c",
-        "sstream": "c"
+        "sstream": "c",
+        "dcf.h": "c",
+        "lcd_init.h": "c",
+        "lcd.h": "c"
     }
 }
