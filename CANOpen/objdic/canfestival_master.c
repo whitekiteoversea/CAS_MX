@@ -642,7 +642,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1006 :   Communication / Cycle Period. */
-                    UNS32 canfestival_master_obj1006 = 0x3E8;	/* 1ms SYNC */
+                    UNS32 canfestival_master_obj1006 = 0x2710;	/* 10ms SYNC */
                     ODCallback_t _Index1006_callbacks[] = 
                      {
                        NULL,
@@ -750,17 +750,6 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                        { RW, uint8, sizeof (UNS8), (void*)&_obj1029_Communication_Error }
                      };
 
-// /* index 0x1200 :   Server SDO Parameter. */  // MCU As Server
-//                     UNS8 _highestSubIndex_obj1200 = 2; /* number of subindex - 1*/
-//                     UNS32 _obj1200_COB_ID_Client_to_Server_Receive_SDO = 0x608;	/* 1536 */
-//                     UNS32 _obj1200_COB_ID_Server_to_Client_Transmit_SDO = 0x588;	/* 1408 */
-//                     subindex _Index1200[] = 
-//                      {
-//                        { RO, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj1200 },
-//                        { RO, uint32, sizeof (UNS32), (void*)&_obj1200_COB_ID_Client_to_Server_Receive_SDO },
-//                        { RO, uint32, sizeof (UNS32), (void*)&_obj1200_COB_ID_Server_to_Client_Transmit_SDO }
-//                      };
-
 /* index 0x1280 :   Client SDO 1 Parameter. */  // MCU As Client
                     UNS8 _highestSubIndex_obj1280 = 3; /* number of subindex - 1*/
                     UNS32 _obj1280_COB_ID_Client_to_Server_Transmit_SDO = 0x608;	/* 1537 */
@@ -776,7 +765,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1400 :   Receive PDO 1 Parameter. */
                     UNS8 _highestSubIndex_obj1400 = 2; /* number of subindex - 1*/
-                    UNS32 _obj1400_COB_ID_used_by_PDO = 0x208;	/* 512 */
+                    UNS32 _obj1400_COB_ID_used_by_PDO = 0x00000188;	/* 512 */
                     UNS8 _obj1400_Transmission_Type = 0x1;	/* 1 */
                     subindex _Index1400[] = 
                      {
@@ -787,7 +776,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1401 :   Receive PDO 2 Parameter. */
                     UNS8 _highestSubIndex_obj1401 = 2; /* number of subindex - 1*/
-                    UNS32 _obj1401_COB_ID_used_by_PDO = 0x80000308;	/* 768 */
+                    UNS32 _obj1401_COB_ID_used_by_PDO = 0x80000288;	/* 768 */
                     UNS8 _obj1401_Transmission_Type = 0x1;	/* 1 */
                     subindex _Index1401[] = 
                      {
@@ -798,7 +787,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1402 :   Receive PDO 3 Parameter. */
                     UNS8 _highestSubIndex_obj1402 = 2; /* number of subindex - 1*/
-                    UNS32 _obj1402_COB_ID_used_by_PDO = 0x80000408;	/* 2147484672 */
+                    UNS32 _obj1402_COB_ID_used_by_PDO = 0x80000388;	/* 2147484672 */
                     UNS8 _obj1402_Transmission_Type = 0xFF;	/* 255 */
                     subindex _Index1402[] = 
                      {
@@ -809,7 +798,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1403 :   Receive PDO 4 Parameter. */
                     UNS8 _highestSubIndex_obj1403 = 2; /* number of subindex - 1*/
-                    UNS32 _obj1403_COB_ID_used_by_PDO = 0x80000508;	/* 2147484928 */
+                    UNS32 _obj1403_COB_ID_used_by_PDO = 0x80000488;	/* 2147484928 */
                     UNS8 _obj1403_Transmission_Type = 0xFF;	/* 255 */
                     subindex _Index1403[] = 
                      {
@@ -822,32 +811,16 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 _highestSubIndex_obj1600 = 3; /* number of subindex - 1*/
                     UNS32 _obj1600[] = 
                     {
-                      0x60410010,	/* 1614807056 */
-                      0x606C0020,	/* 1627324448 */
-                      0x200B1910,	/* 1616904200 */
+                      0x60410010,	/* 状态字 */
+                      0x606C0020,	/* 实时速度*/
+                      0x200B1910	/* 相电流有效值 */  
                     };
-                    // UNS32 _obj1600[] = 
-                    // {
-                    //   0x60400010,	/* 1614807056 */
-                    //   0x60FF0020,	/* 1627324448 */
-                    //   0x60600008,	/* 1616904200 */
-                    //   0x0,	/* 0 */
-                    //   0x0,	/* 0 */
-                    //   0x0,	/* 0 */
-                    //   0x0,	/* 0 */
-                    //   0x0	/* 0 */
-                    // };
                     subindex _Index1600[] = 
                      {
                        { RW, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj1600 },
                        { RW, uint32, sizeof (UNS32), (void*)&_obj1600[0] },
                        { RW, uint32, sizeof (UNS32), (void*)&_obj1600[1] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1600[2] },
-                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1600[3] },
-                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1600[4] },
-                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1600[5] },
-                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1600[6] },
-                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1600[7] }
+                       { RW, uint32, sizeof (UNS32), (void*)&_obj1600[2] }
                      };
 
 /* index 0x1601 :   Receive PDO 2 Mapping. */
@@ -930,7 +903,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1800 :   Transmit PDO 1 Parameter. */
                     UNS8 _highestSubIndex_obj1800 = 5; /* number of subindex - 1*/
-                    UNS32 _obj1800_COB_ID_used_by_PDO = 0x00000188;	/* 1073742208 */
+                    UNS32 _obj1800_COB_ID_used_by_PDO = 0x00000208;	/* 1073742208 */
                     UNS8 _obj1800_Transmission_Type = 0xFF;	/* 1 */
                     UNS16 _obj1800_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 _obj1800_Compatibility_Entry = 0x0;	/* 0 */
@@ -956,7 +929,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1801 :   Transmit PDO 2 Parameter. */
                     UNS8 _highestSubIndex_obj1801 = 5; /* number of subindex - 1*/
-                    UNS32 _obj1801_COB_ID_used_by_PDO = 0x80000288;	/* 1073742464 */
+                    UNS32 _obj1801_COB_ID_used_by_PDO = 0x80000308;	/* 1073742464 */
                     UNS8 _obj1801_Transmission_Type = 0x1;	/* 1 */
                     UNS16 _obj1801_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 _obj1801_Compatibility_Entry = 0x0;	/* 0 */
@@ -982,7 +955,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1802 :   Transmit PDO 3 Parameter. */
                     UNS8 _highestSubIndex_obj1802 = 5; /* number of subindex - 1*/
-                    UNS32 _obj1802_COB_ID_used_by_PDO = 0xC0000388;	/* 3221226368 */
+                    UNS32 _obj1802_COB_ID_used_by_PDO = 0xC0000408;	/* 3221226368 */
                     UNS8 _obj1802_Transmission_Type = 0xFF;	/* 255 */
                     UNS16 _obj1802_Inhibit_Time = 0x3E8;	/* 1000 */
                     UNS8 _obj1802_Compatibility_Entry = 0x0;	/* 0 */
@@ -1008,7 +981,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1803 :   Transmit PDO 4 Parameter. */
                     UNS8 _highestSubIndex_obj1803 = 5; /* number of subindex - 1*/
-                    UNS32 _obj1803_COB_ID_used_by_PDO = 0xC0000488;	/* 3221226624 */
+                    UNS32 _obj1803_COB_ID_used_by_PDO = 0xC0000508;	/* 3221226624 */
                     UNS8 _obj1803_Transmission_Type = 0xFF;	/* 255 */
                     UNS16 _obj1803_Inhibit_Time = 0x3E8;	/* 1000 */
                     UNS8 _obj1803_Compatibility_Entry = 0x0;	/* 0 */
@@ -1036,35 +1009,15 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 _highestSubIndex_obj1A00 = 2; /* number of subindex - 1*/
                      UNS32 _obj1A00[] = 
                     {
-                      // 0x60410010,	/* 1614872592 */
-                      // 0x606C0020,	/* 1627193376 */
-                      // 0x200B1910,	/* 1616969736 */
                       0x60400010,
-                      0x60FF0020,
+                      0x60FF0020
                     };
-                    // UNS32 _obj1A00[] = 
-                    // {
-                    //   0x60410010,	/* 1614872592 */
-                    //   0x60FF0020,	/* 1627193376 */
-                    //   0x200B1910,	/* 1616969736 */
-                    //   0x0,	/* 0 */
-                    //   0x0,	/* 0 */
-                    //   0x0,	/* 0 */
-                    //   0x0,	/* 0 */
-                    //   0x0	/* 0 */
-                    // };
                     subindex _Index1A00[] = 
-                     {
+                    {
                        { RW, uint8, sizeof (UNS8), (void*)&_highestSubIndex_obj1A00 },
                        { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[0] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[1] },
-                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[2] },
-                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[3] },
-                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[4] },
-                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[5] },
-                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[6] },
-                      //  { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[7] }
-                     };
+                       { RW, uint32, sizeof (UNS32), (void*)&_obj1A00[1] }
+                    };
 
 /* index 0x1A01 :   Transmit PDO 2 Mapping. */
                     UNS8 _highestSubIndex_obj1A01 = 8; /* number of subindex - 1*/
