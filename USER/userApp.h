@@ -41,16 +41,18 @@
 
 #define DesignedTorqueNM        (2.80)
 
+#define MOTOR_ENCODER_IDENTIFYWIDTH  (8388608)  // 23bit
+
 
 // function Switch
 #define HAL_W5500_ENABLE         			 (0)
 #define HAL_CANOPEN_ENABLE                   (1)
-#define CAN2_SENDTEST_ON         			 (0)
+#define CAN2_StateMachine_Trans_ENABLE       (1)
 #define CANOPEN_NONBLOACK_DELAY_ENABLE       (0)
 #define HAL_SDRAM_SELFTEST       			 (0)
 #define HAL_DAC_ENABLE           			 (0)
 #define HAL_EEPROM_ENABLE        			 (0)
-#define HAL_LCD_ENABLE                       (1)
+#define HAL_LCD_ENABLE                       (0)
 
 extern uint8_t gDATABUF[DATA_BUF_SIZE];  
 extern TIM_HandleTypeDef htim3;

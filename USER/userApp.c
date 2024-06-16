@@ -91,7 +91,6 @@ void systemParaInit(void)
 {
 	unsigned char ret = 0x00;	
     gStatus.telmode = IDLEMODE; 
-    gStatus.workmode = RECVSPEEDMODE; 
 	
     motionStatus.g_Distance = 0; // target Posi_um
     motionStatus.g_Speed = 0;
@@ -110,6 +109,9 @@ void systemParaInit(void)
     w5500_udp_var.SrcRecvIP[2] = 20;
     w5500_udp_var.SrcRecvIP[3] = 11;
     w5500_udp_var.SrcRecvPort = 8001;
+
+    // 预设工作模式初始化
+    motionStatus.targetWorkmode = RECVSPEEDMODE; // 默认电机控制为速度模式
 
 #if HAL_EEPROM_ENABLE
     AT24CXX_Init();
@@ -195,11 +197,11 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
                                                                                   tempFrameCnt,
                                                                                    (short)curGivenSpeed);
 #else // CANOpen
-            if ((motionStatus.g_curOperationMode == 0x03) && (motionStatus.motorStatusWord.Value & 0x3FF == 0x0237)) {
+            if ((motionStatus.g_curOperationMode == 0x03) && (motionStatus.g_DS402_SMStatus == 4)) {
                 if (((short)curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && ((short)curGivenSpeed >= MIN_ALLOWED_SPEED_RPM)) {
-                    Target_velocity = curGivenSpeed; // update speed instruction
-                    Modes_of_operation = motionStatus.g_curOperationMode;
-                    Controlword = 0x0F; // 保持Operation状态，并准备实时更新驱动器参数 
+                    Controlword = 0x0F;
+                    Target_velocity = curGivenSpeed *MOTOR_ENCODER_IDENTIFYWIDTH /60; // update speed instruction pulse per second
+                    // Modes_of_operation = 0x03; // 速度模式
                     sendOnePDOevent(&masterObjdict_Data, 0);
                     printf("UTC: %d ms CAS: %d ms, CAN1 Recv frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
                                                                                           gTime.l_time_ms,
@@ -209,7 +211,8 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
                     printf("CAS:  %d ms SpeedGiven OverFlow \n\r!", gTime.l_time_ms);
                 }
             } else {
-                printf("CAS:  %d ms OperationMode 0x%x disMatched! \n\r!", gTime.l_time_ms, motionStatus.g_curOperationMode);
+                printf("CAS:  %d ms OperationMode 0x%x disMatched or SystemStatus Wrong! \n\r!", gTime.l_time_ms, \
+                                                                                                 motionStatus.g_curOperationMode);
             }
 #endif
         break;
@@ -292,14 +295,14 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
         case CANLocalPITestCmd:
           if (CAN1_RecData[0] == 1) {
             PIDController_Reset(&pid);
-            gStatus.workmode = PIPOSIMODE;
+            motionStatus.targetWorkmode = PIPOSIMODE;
             givenExecPosiVal += 20600;
           }
-          else if (CAN1_RecData[0] == 2) {
-            gStatus.workmode = PREPOSIMODE;
+          else if (CAN1_RecData[0] == 4) {
+             motionStatus.targetWorkmode = TORQUEMODE;
           }
           else {
-            gStatus.workmode = RECVSPEEDMODE;
+             motionStatus.targetWorkmode = RECVSPEEDMODE;
           }
           printf("UTC:%d ms CAS: %d ms CAN1 Start PI Position Control, Initial posi is %d, givenPosiVal is %d\n\r", gTime.g_time_ms, 
                                                             gTime.l_time_ms,
@@ -369,12 +372,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 				if (gStatus.l_rs485_getposi_cnt >= 20) {
 					gStatus.l_rs485_getposiEnable = 1;
 					gStatus.l_rs485_getposi_cnt = 0;
-
-          // CAN2 Send TEST
-          #if CAN2_SENDTEST_ON
-            gStatus.l_can2_send_flag = 1;
-          #endif 
-
 				}
 				// NEW RTU Frame recv Start
 				if (modbusPosi.g_RTU_Startflag == 1) {
@@ -523,7 +520,8 @@ void w5500_stateMachineTask(void)
 }s
 #endif
 
-#define PRESETSDOLENG    (36)
+#define PRESETSDOLENG    (33) // Slave SDO配置
+#define SPEEDSETUPLENG   (5) // 速度模式下参数设置
 /*  dataType:
 define in objdictdef.h
 
@@ -549,100 +547,83 @@ void canOpenInit(void)
     UNS32 size = sizeof(UNS32); 
     UNS8 Config_Code[4] = {0x88, 0x01, 0x00, 0x80};
 		UNS32 abortCode =0x00;
-		UNS8 initCMDType = 0;
 
     // 这里的SDO都是配置参数，所以数据类型都是UNS8, 如果是SDO发送实时速度，才会变更为INT等
     uint16_t message_sdo[PRESETSDOLENG][10] = {
       // RPDO1
       {0x608, 0x23, 0x00, 0x14, 0x01, 0x08, 0x02, 0x00, 0x80, uint8}, // RPDO1 失能 类型：
-      {0x608, 0x2f, 0x00, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO1 传输类型 同步SYNC
+      {0x608, 0x2f, 0x00, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO1 传输类型 值变更触发
       {0x608, 0x2f, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // 清除原有映射内容
       {0x608, 0x23, 0x00, 0x16, 0x01, 0x10, 0x00, 0x40, 0x60, uint8}, // 映射为控制字 0x6040
       {0x608, 0x23, 0x00, 0x16, 0x02, 0x20, 0x00, 0xFF, 0x60, uint8}, // 映射为给定速度 0x60FF
-      {0x608, 0x23, 0x00, 0x16, 0x02, 0x08, 0x00, 0x60, 0x60, uint8}, // 映射为运动模式 0x6060     
-      {0x608, 0x2f, 0x00, 0x16, 0x00, 0x03, 0x00, 0x00, 0x00, uint8}, // 映射数量改为3
+      // {0x608, 0x23, 0x00, 0x16, 0x02, 0x08, 0x00, 0x60, 0x60, uint8}, // 映射为运动模式 0x6060  无法由PDO动态运行更改，只能初始化SDO设置   
+      {0x608, 0x2f, 0x00, 0x16, 0x00, 0x02, 0x00, 0x00, 0x00, uint8}, // 映射数量改为2
       {0x608, 0x23, 0x00, 0x14, 0x01, 0x08, 0x02, 0x00, 0x00, uint8}, // RPDO1 使能
       // RPDO2-4
-      {0x608, 0x23, 0x01, 0x18, 0x01, 0x08, 0x03, 0x00, 0x80, uint8}, // RPDO2 失能
-      {0x608, 0x2f, 0x01, 0x18, 0x02, 0x01, 0x00, 0x00, 0x00, uint8}, // RPDO2 传输类型 同步SYNC
-      {0x608, 0x23, 0x02, 0x18, 0x01, 0x08, 0x04, 0x00, 0x80, uint8}, // RPDO3 失能
-      {0x608, 0x2f, 0x02, 0x18, 0x02, 0x01, 0x00, 0x00, 0x00, uint8}, // RPDO3 传输类型 同步SYNC
-      {0x608, 0x23, 0x03, 0x18, 0x01, 0x08, 0x05, 0x00, 0x80, uint8}, // RPDO4 失能
-      {0x608, 0x2f, 0x03, 0x18, 0x02, 0x01, 0x00, 0x00, 0x00, uint8}, // RPDO4 传输类型 同步SYNC
-
+      {0x608, 0x23, 0x01, 0x14, 0x01, 0x08, 0x03, 0x00, 0x80, uint8}, // RPDO2 失能
+      {0x608, 0x2f, 0x01, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO2 传输类型
+      {0x608, 0x23, 0x02, 0x14, 0x01, 0x08, 0x04, 0x00, 0x80, uint8}, // RPDO3 失能
+      {0x608, 0x2f, 0x02, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO3 传输类型
+      {0x608, 0x23, 0x03, 0x14, 0x01, 0x08, 0x05, 0x00, 0x80, uint8}, // RPDO4 失能
+      {0x608, 0x2f, 0x03, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO4 传输类型
       // TPDO1
       {0x608, 0x23, 0x00, 0x18, 0x01, 0x88, 0x01, 0x00, 0x80, uint8}, // TPDO1 失能
-      {0x608, 0x2f, 0x00, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO1 传输类型 周期触发 100SYNC
+      {0x608, 0x2f, 0x00, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO1 传输类型 周期触发 100SYNC 1s
       {0x608, 0x2f, 0x00, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // 清除原有映射内容
       {0x608, 0x23, 0x00, 0x1A, 0x01, 0x10, 0x00, 0x41, 0x60, uint8}, // 映射为状态字 0x6041
       {0x608, 0x23, 0x00, 0x1A, 0x02, 0x20, 0x00, 0x6C, 0x60, uint8}, // 映射为实时速度 0x606C
       {0x608, 0x23, 0x00, 0x1A, 0x03, 0x10, 0x19, 0x0B, 0x20, uint8}, // 映射为相电流有效值 0x200B-19H
       {0x608, 0x2f, 0x00, 0x1A, 0x00, 0x03, 0x00, 0x00, 0x00, uint8}, // 映射数量改为3
       {0x608, 0x23, 0x00, 0x18, 0x01, 0x88, 0x01, 0x00, 0x00, uint8}, // TPDO1 使能      
-      // TDO2
-      {0x608, 0x23, 0x01, 0x14, 0x01, 0x88, 0x02, 0x00, 0x80, uint8}, // TPDO2 失能
-      {0x608, 0x2f, 0x01, 0x14, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO2 传输类型 周期触发 100 SYNC
-      {0x608, 0x2f, 0x01, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // TPDO2 映射清零
-      {0x608, 0x23, 0x01, 0x16, 0x01, 0x08, 0x00, 0x60, 0x60, uint8}, // 0x6060 当前运动模式 速度/位置/转矩
-      {0x608, 0x23, 0x01, 0x16, 0x02, 0x20, 0x00, 0x64, 0x60, uint8}, // 0x6064 编码器绝对位置
-      {0x608, 0x23, 0x01, 0x16, 0x03, 0x10, 0x00, 0x77, 0x60, uint8}, // 0x6077 实时转矩(1000为额定转矩)       
-      {0x608, 0x2f, 0x01, 0x16, 0x00, 0x03, 0x00, 0x00, 0x00, uint8}, // TPDO2 映射为3
-      {0x608, 0x23, 0x01, 0x14, 0x01, 0x88, 0x02, 0x00, 0x00, uint8}, // TPDO2 使能
+      // TDO2 
+      {0x608, 0x23, 0x01, 0x18, 0x01, 0x88, 0x02, 0x00, 0x80, uint8}, // TPDO2 失能
+      {0x608, 0x2f, 0x01, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO2 传输类型 周期触发 100 SYNC 1s
+      {0x608, 0x2f, 0x01, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // TPDO2 映射清零
+      {0x608, 0x23, 0x01, 0x1A, 0x01, 0x08, 0x00, 0x61, 0x60, uint8}, // 0x6061 当前运动模式显示 速度/位置/转矩
+      {0x608, 0x23, 0x01, 0x1A, 0x02, 0x20, 0x00, 0x64, 0x60, uint8}, // 0x6064 编码器绝对位置
+      {0x608, 0x23, 0x01, 0x1A, 0x03, 0x10, 0x00, 0x77, 0x60, uint8}, // 0x6077 实时转矩(1000为额定转矩)       
+      {0x608, 0x2f, 0x01, 0x1A, 0x00, 0x03, 0x00, 0x00, 0x00, uint8}, // TPDO2 映射为3
+      {0x608, 0x23, 0x01, 0x18, 0x01, 0x88, 0x02, 0x00, 0x00, uint8}, // TPDO2 使能
 
       // TPDO3-4
-      {0x608, 0x23, 0x02, 0x14, 0x01, 0x88, 0x03, 0x00, 0x80, uint8}, // TPDO3 失能
-      {0x608, 0x2f, 0x02, 0x14, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO3 传输类型 
-      {0x608, 0x23, 0x03, 0x14, 0x01, 0x88, 0x04, 0x00, 0x80, uint8}, // TPDO4 失能
-      {0x608, 0x2f, 0x03, 0x14, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO4 传输类型 
-			
-      // 基本初始设定
+      {0x608, 0x23, 0x02, 0x18, 0x01, 0x88, 0x03, 0x00, 0x80, uint8}, // TPDO3 失能
+      {0x608, 0x2f, 0x02, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO3 传输类型 
+      {0x608, 0x23, 0x03, 0x18, 0x01, 0x88, 0x04, 0x00, 0x80, uint8}, // TPDO4 失能
+      {0x608, 0x2f, 0x03, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO4 传输类型 
+    };
+
+    uint16_t message_speedMode_sdo[SPEEDSETUPLENG][10] = {
       {0x608, 0x23, 0xFF, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, int32},  // 给定速度为0
 			{0x608, 0x2f, 0x60, 0x60, 0x00, 0x03, 0x00, 0x00, 0x00, uint8},  // 速度模式 0x03
+      {0x608, 0x23, 0x7F, 0x60, 0x00, 0xE8, 0x03, 0x00, 0x00, uint32}, // 速度模式下最大运行速度 1000rpm
+      {0x608, 0x2b, 0x6F, 0x60, 0x00, 0x0A, 0x00, 0x00, 0x00, uint16}, // 零速检测速度阈值 10rpm
+      {0x608, 0x2b, 0x70, 0x60, 0x00, 0x64, 0x00, 0x00, 0x00, uint16} // 零速信号窗口时间(我认为是持续时间 100ms)
     };
 
     setNodeId(&masterObjdict_Data, can_var.NodeID);  // Master ID
     setState(&masterObjdict_Data, Initialisation);  
-		// 000 01 08
-
-    setState(&masterObjdict_Data, Pre_operational); //
-    setState(&masterObjdict_Data, Operational);
+    setState(&masterObjdict_Data, Pre_operational); 
+		setState(&masterObjdict_Data, Operational);
     masterSendNMTstateChange(&masterObjdict_Data, can_var.slaveCANID, NMT_Start_Node);
-    
+
     stopSYNC(&masterObjdict_Data);	
 
-    //canOpenSDOConfig();	
 		for (cnt = 0; cnt<PRESETSDOLENG; cnt++) {
 			canopen_send_sdo(message_sdo[cnt]);
       closeSDOtransfer(&masterObjdict_Data, can_var.slaveCANID, SDO_CLIENT);
       HAL_Delay(20);
 		}
+
+    // Speed Mode Var
+    for (cnt = 0;cnt<SPEEDSETUPLENG; cnt++) {
+      canopen_send_sdo(message_speedMode_sdo[cnt]);
+      closeSDOtransfer(&masterObjdict_Data, can_var.slaveCANID, SDO_CLIENT);
+      HAL_Delay(20);     
+    }
 		startSYNC(&masterObjdict_Data);
-
-    // 首次获取当前状态
-    HAL_Delay(500);
-    motionStatus.g_curOperationMode = Modes_of_operation;
-    motionStatus.motorStatusWord.Value = Statusword;
-    initCMDType = ((motionStatus.g_curOperationMode == 0x03) ? 1 :0);
-    if (initCMDType == 0x01) {// speedMode
-        motionStatus.motorCMD_speed.Value = Controlword;
-        printf("CANOpen: SlaveNode OperationMode is 0x%x, Controlword is 0x%x, Statusword is 0x%x  \r\n", motionStatus.g_curOperationMode, \
-                                                                                                  motionStatus.motorCMD_speed, \
-                                                                                                  motionStatus.motorStatusWord.Value);
-    } else {
-        printf ("CANOpen DS402: OperationMode is Not SpeedMode! \r\n");
-        printf("CANOpen: SlaveNode OperationMode is 0x%x, Statusword is 0x%x \r\n", motionStatus.g_curOperationMode, \
-                                                                                      motionStatus.motorStatusWord.Value);
 }
 
-    // 如果已经处于伺服运行状态，则设置速度为o，使能驱动器，并打开抱闸
-    // if (motionStatus.motorStatusWord.Value & 0x3FF == 0x0250) {
-    //   Controlword = 0x00; 
-    //   sendOnePDOevent(&masterObjdict_Data, 0); //更新TDO1指令
-    // } 
-
-}
-
-// SDO Transmit (对多种数据长度写入时存在问题)
+// SDO Transmit 
 uint8_t canopen_send_sdo(uint16_t *message_sdo)
 {
 	  unsigned long abortCode=0;
@@ -686,57 +667,6 @@ uint8_t canopen_send_sdo(uint16_t *message_sdo)
 __end_label:
     return ret;
 }
-
-
-/*
-// SDO config PDO
-uint8_t canOpenSDOConfig(void)
-{
-    uint8_t cnt = 0;
-    uint8_t ret = 0;
-    
-    UNS8 operationMode = 0x03; // speed mode
-    UNS32 tpdoCobID = 0x80000208; 
-    UNS32 rpdoCobID = 0x80000188; 
-    UNS16 controlWord = 0x000F;
-    INTEGER32 givenSpeed = 0x00;
-    INTEGER32 RealTimeSpeed = 0x00;
-    UNS8 transferType = 0x64; // 100 SYNC Cycle
-    UNS8 mapCnt = 0;
-    UNS32 data = 0;
-    
-    // TPDO1
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1800, 0x01, 4, uint32, &tpdoCobID);
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1800, 0x02, 1, uint8, (UNS32 *)(&transferType));
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1A00, 0x00, 1, uint8, (UNS32 *)(&mapCnt));
-    data = 0x60410010;  
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1A00, 0x01, 4, uint32, &data);  
-    data = 0x606C0020;
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1A00, 0x02, 4, uint32, &data);  
-    data = 0x200B0019;
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1A00, 0x03, 4, uint32, &data); 
-    mapCnt = 3;
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1A00, 0x00, 1, uint8, (UNS32 *)(&mapCnt));
-    tpdoCobID = 0x00000208;
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1800, 0x01, 4, uint32, &tpdoCobID); 
-
-    // RPDO1
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1400, 0x01, 4, uint32, &rpdoCobID);
-    transferType = 0x01;
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1400, 0x02, 1, uint8, (UNS32 *)(&transferType));
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1600, 0x00, 1, uint8, (UNS32 *)(&mapCnt));
-    data = 0x60400010;  
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1600, 0x01, 1, uint32, &data);  
-    data = 0x60FF0020;
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1600, 0x02, 1, uint32, &data);  
-    mapCnt = 2;
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1600, 0x00, 1, uint8, (UNS32 *)(&mapCnt));
-    rpdoCobID = 0x0000188;
-    canOpenSDOSendWithDelay(&masterObjdict_Data, can_var.slaveCANID, 0x1800, 0x01, 4, uint32, &rpdoCobID); 
-
-    return ret;
-}
-*/
 
 //Only Use before RUN
 uint8_t canOpenSDOSendWithDelay(CO_Data *d, uint8_t slaveNodeId, uint16_t sdoIndex, uint8_t subIndex, uint8_t sendNum, uint8_t sendType, uint32_t *sendContext) 

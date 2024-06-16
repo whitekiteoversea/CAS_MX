@@ -30,10 +30,13 @@ enum TELMODE {
   ETHMODE
 };
 
+// 电机工作模式
 enum WORKMODE {
-		RECVSPEEDMODE = 0,
-		PIPOSIMODE,     
-		PREPOSIMODE
+		IDLE = 0,
+		PIPOSIMODE = 1,     
+    FAULTCHECKMODE = 2,
+		RECVSPEEDMODE = 3,
+    TORQUEMODE = 4
 };
 
 // CANOpen SDO NUM
@@ -127,6 +130,16 @@ struct {
 uint16_t Value; 
 } CONTROL_WORD_POSITION;
 
+// typedef union {
+// typedef struct {
+//   uint32_t 
+
+
+// } di_status;
+// uint32_t Value;
+// } DI_STATUS;
+
+
 typedef struct {
   volatile unsigned char comRecvCnt;        // Single time consecutive receive cnt
   volatile uint8_t g_RTU_Startflag;         // RTU 10ms计时开始
@@ -146,7 +159,6 @@ typedef struct {
   volatile unsigned char l_time_heartbeat;  // 本地计时心跳
   //Work Mode
   enum TELMODE telmode;                     // 当前工作模式
-	enum WORKMODE workmode;                   // Algorithm WorkMode: Speed/Torque/Position
 
   volatile unsigned char l_can1_recv_flag; 
   volatile unsigned char l_can2_send_flag; 
@@ -179,13 +191,19 @@ typedef struct {
   float g_realTimeTorque; 
 	uint32_t g_InitialPosi; //um
 
+  volatile uint8_t g_DS402_SMStatus;  //状态字处于0x1237时，此状态为1
+
+	enum WORKMODE targetWorkmode;              // Algorithm WorkMode: Speed/Torque/Position
   volatile uint8_t g_curOperationMode; // 当前工作模式
   // 驱动器状态字
   volatile STATUS_WORD motorStatusWord;     
  // 驱动器控制字
   volatile CONTROL_WORD_SPEED motorCMD_speed;    
   volatile CONTROL_WORD_TORQUE motorCMD_torque;     
-  volatile CONTROL_WORD_POSITION motorCMD_position;     
+  volatile CONTROL_WORD_POSITION motorCMD_position;  
+//DI DO状态
+  // volatile DI_STATUS di;
+  // volatile DO_STATUS do;  
 
 } MOTIONVAR;
 

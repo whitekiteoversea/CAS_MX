@@ -41,6 +41,8 @@
         "sstream": "c",
         "dcf.h": "c",
         "lcd_init.h": "c",
-        "lcd.h": "c"
+        "lcd.h": "c",
+        "atomic": "c",
+        "memory": "c"
     }
 }
