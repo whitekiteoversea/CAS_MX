@@ -1279,9 +1279,12 @@ void userAppLoop(void)
       if (Velocity_actual_value > MAX_ALLOWED_SPEED_RPM || Velocity_actual_value < MIN_ALLOWED_SPEED_RPM) {
            motionStatus.g_Speed = 0;
       }
-      printf("%d ms: TPDO2: Current Work Operation is 0x%d, realTimefilterSpeed Feedback is : %d rpm, \n\r", gTime.l_time_ms,  \
+      motionStatus.g_realTimeTorque = ((float)Torque_Actual_Value *DesignedTorqueNM)/1000.0;
+      printf("%d ms: TPDO2: Current Work Operation is 0x%d, realTimefilterSpeed is : %d rpm, realTimeTorque is %fN.m \n\r", \
+                                                                                            gTime.l_time_ms,  \
                                                                                             motionStatus.g_curOperationMode, \
-                                                                                            motionStatus.g_Speed);
+                                                                                            motionStatus.g_Speed, \
+                                                                                            motionStatus.g_realTimeTorque);
 #endif
       gStatus.l_time_heartbeat = 0;
     }

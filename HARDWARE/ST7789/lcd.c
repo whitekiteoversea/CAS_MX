@@ -537,7 +537,7 @@ void LCD_ShowFloatNum1(u16 x,u16 y,float num,u8 len,u16 fc,u16 bc,u8 sizey)
                 length 图片长度
                 width  图片宽度
                 pic[]  图片数组    
-      返回值：  无
+      返回值：  无s
 ******************************************************************************/
 //void LCD_ShowPicture(u16 x,u16 y,u16 length,u16 width,const u8 pic[])
 //{

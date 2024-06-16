@@ -175,6 +175,8 @@ typedef struct {
 	int32_t g_Distance; 	// um
 	int32_t g_Speed; 			// rpm
   int16_t g_phaseAmp;   // A
+  //int16_t g_realTimeTorque; 
+  float g_realTimeTorque; 
 	uint32_t g_InitialPosi; //um
 
   volatile uint8_t g_curOperationMode; // 当前工作模式

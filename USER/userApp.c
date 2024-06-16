@@ -1,7 +1,6 @@
 #include "userAPP.h"
 
 // Variable
-
 GLOBALTIME gTime;
 GLOBALSTATUS gStatus;
 MOTIONVAR motionStatus;
@@ -185,7 +184,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
           curGivenSpeed <<= 8;
           curGivenSpeed |= CAN1_RecData[5];
 
-        #if HAL_DAC_ENABLE 
+#if HAL_DAC_ENABLE 
           if((curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && (curGivenSpeed >= MIN_ALLOWED_SPEED_RPM))
           {	
             tempGivenVol =  RPM2Vol_CONVERSE_COFF *curGivenSpeed + spdDownLimitVol ;
@@ -195,18 +194,24 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
                                                                                   gTime.l_time_ms,
                                                                                   tempFrameCnt,
                                                                                    (short)curGivenSpeed);
-        #else // CANOpen
-            if (((short)curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && ((short)curGivenSpeed >= MIN_ALLOWED_SPEED_RPM)) {
-                Target_velocity = curGivenSpeed; // update speed instruction
-                sendOnePDOevent(&masterObjdict_Data, 0);
-                printf("UTC: %d ms CAS: %d ms, CAN1 Recv frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
-                                                                                      gTime.l_time_ms,
-                                                                                      tempFrameCnt,
-                                                                                      (short)curGivenSpeed);
+#else // CANOpen
+            if ((motionStatus.g_curOperationMode == 0x03) && (motionStatus.motorStatusWord.Value & 0x3FF == 0x0237)) {
+                if (((short)curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && ((short)curGivenSpeed >= MIN_ALLOWED_SPEED_RPM)) {
+                    Target_velocity = curGivenSpeed; // update speed instruction
+                    Modes_of_operation = motionStatus.g_curOperationMode;
+                    Controlword = 0x0F; // 保持Operation状态，并准备实时更新驱动器参数 
+                    sendOnePDOevent(&masterObjdict_Data, 0);
+                    printf("UTC: %d ms CAS: %d ms, CAN1 Recv frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
+                                                                                          gTime.l_time_ms,
+                                                                                          tempFrameCnt,
+                                                                                          (short)curGivenSpeed);
+                } else {
+                    printf("CAS:  %d ms SpeedGiven OverFlow \n\r!", gTime.l_time_ms);
+                }
             } else {
-                printf("CAS:  %d ms SpeedGiven OverFlow \n\r!", gTime.l_time_ms);
+                printf("CAS:  %d ms OperationMode 0x%x disMatched! \n\r!", gTime.l_time_ms, motionStatus.g_curOperationMode);
             }
-        #endif
+#endif
         break;
         
 				// PreDictive Speed Mode 
@@ -515,10 +520,10 @@ void w5500_stateMachineTask(void)
 					socket(0, Sn_MR_UDP, w5500_udp_var.SrcRecvPort, 0x00);			
 			break;
 		}
-}
+}s
 #endif
 
-#define PRESETSDOLENG    (34)
+#define PRESETSDOLENG    (36)
 /*  dataType:
 define in objdictdef.h
 
@@ -544,6 +549,7 @@ void canOpenInit(void)
     UNS32 size = sizeof(UNS32); 
     UNS8 Config_Code[4] = {0x88, 0x01, 0x00, 0x80};
 		UNS32 abortCode =0x00;
+		UNS8 initCMDType = 0;
 
     // 这里的SDO都是配置参数，所以数据类型都是UNS8, 如果是SDO发送实时速度，才会变更为INT等
     uint16_t message_sdo[PRESETSDOLENG][10] = {
@@ -553,8 +559,9 @@ void canOpenInit(void)
       {0x608, 0x2f, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // 清除原有映射内容
       {0x608, 0x23, 0x00, 0x16, 0x01, 0x10, 0x00, 0x40, 0x60, uint8}, // 映射为控制字 0x6040
       {0x608, 0x23, 0x00, 0x16, 0x02, 0x20, 0x00, 0xFF, 0x60, uint8}, // 映射为给定速度 0x60FF
-      {0x608, 0x2f, 0x00, 0x16, 0x00, 0x02, 0x00, 0x00, 0x00, uint8}, // 映射数量改为2
-      {0x608, 0x23, 0x00, 0x14, 0x01, 0x08, 0x02, 0x00, 0x00, uint8},  // RPDO1 使能
+      {0x608, 0x23, 0x00, 0x16, 0x02, 0x08, 0x00, 0x60, 0x60, uint8}, // 映射为运动模式 0x6060     
+      {0x608, 0x2f, 0x00, 0x16, 0x00, 0x03, 0x00, 0x00, 0x00, uint8}, // 映射数量改为3
+      {0x608, 0x23, 0x00, 0x14, 0x01, 0x08, 0x02, 0x00, 0x00, uint8}, // RPDO1 使能
       // RPDO2-4
       {0x608, 0x23, 0x01, 0x18, 0x01, 0x08, 0x03, 0x00, 0x80, uint8}, // RPDO2 失能
       {0x608, 0x2f, 0x01, 0x18, 0x02, 0x01, 0x00, 0x00, 0x00, uint8}, // RPDO2 传输类型 同步SYNC
@@ -576,9 +583,10 @@ void canOpenInit(void)
       {0x608, 0x23, 0x01, 0x14, 0x01, 0x88, 0x02, 0x00, 0x80, uint8}, // TPDO2 失能
       {0x608, 0x2f, 0x01, 0x14, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO2 传输类型 周期触发 100 SYNC
       {0x608, 0x2f, 0x01, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // TPDO2 映射清零
-      {0x608, 0x23, 0x01, 0x16, 0x01, 0x08, 0x00, 0x60, 0x60, uint8}, // 0x6060 当前工作模式 速度/位置/转矩
-      {0x608, 0x23, 0x01, 0x16, 0x02, 0x20, 0x00, 0x64, 0x60, uint8}, // 0x6064 编码器绝对位置 
-      {0x608, 0x2f, 0x01, 0x16, 0x00, 0x02, 0x00, 0x00, 0x00, uint8}, // TPDO2 映射为2
+      {0x608, 0x23, 0x01, 0x16, 0x01, 0x08, 0x00, 0x60, 0x60, uint8}, // 0x6060 当前运动模式 速度/位置/转矩
+      {0x608, 0x23, 0x01, 0x16, 0x02, 0x20, 0x00, 0x64, 0x60, uint8}, // 0x6064 编码器绝对位置
+      {0x608, 0x23, 0x01, 0x16, 0x03, 0x10, 0x00, 0x77, 0x60, uint8}, // 0x6077 实时转矩(1000为额定转矩)       
+      {0x608, 0x2f, 0x01, 0x16, 0x00, 0x03, 0x00, 0x00, 0x00, uint8}, // TPDO2 映射为3
       {0x608, 0x23, 0x01, 0x14, 0x01, 0x88, 0x02, 0x00, 0x00, uint8}, // TPDO2 使能
 
       // TPDO3-4
@@ -610,11 +618,21 @@ void canOpenInit(void)
 		}
 		startSYNC(&masterObjdict_Data);
 
-    // 获取当前状态
+    // 首次获取当前状态
     HAL_Delay(500);
     motionStatus.g_curOperationMode = Modes_of_operation;
     motionStatus.motorStatusWord.Value = Statusword;
-    printf("CANOpen: SlaveNode OperationMode is 0x%x, Statusword is 0x%x  \r\n", motionStatus.g_curOperationMode, motionStatus.motorStatusWord.Value);
+    initCMDType = ((motionStatus.g_curOperationMode == 0x03) ? 1 :0);
+    if (initCMDType == 0x01) {// speedMode
+        motionStatus.motorCMD_speed.Value = Controlword;
+        printf("CANOpen: SlaveNode OperationMode is 0x%x, Controlword is 0x%x, Statusword is 0x%x  \r\n", motionStatus.g_curOperationMode, \
+                                                                                                  motionStatus.motorCMD_speed, \
+                                                                                                  motionStatus.motorStatusWord.Value);
+    } else {
+        printf ("CANOpen DS402: OperationMode is Not SpeedMode! \r\n");
+        printf("CANOpen: SlaveNode OperationMode is 0x%x, Statusword is 0x%x \r\n", motionStatus.g_curOperationMode, \
+                                                                                      motionStatus.motorStatusWord.Value);
+}
 
     // 如果已经处于伺服运行状态，则设置速度为o，使能驱动器，并打开抱闸
     // if (motionStatus.motorStatusWord.Value & 0x3FF == 0x0250) {
