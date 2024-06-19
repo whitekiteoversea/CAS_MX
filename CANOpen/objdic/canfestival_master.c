@@ -642,7 +642,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1006 :   Communication / Cycle Period. */
-                    UNS32 canfestival_master_obj1006 = 0x3E8;	/* 1ms SYNC */
+                    UNS32 canfestival_master_obj1006 = 10000;	/* 10ms SYNC */
                     ODCallback_t _Index1006_callbacks[] = 
                      {
                        NULL,
@@ -812,7 +812,8 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS32 _obj1600[] = 
                     {
                       0x60410010,	/* 状态字 */
-                      0x606C0020,	/* 实时速度*/
+                      //0x606C0020,	/* 实时速度*/
+                      0x606C0020,    //速度实际指令
                       0x200B1910	/* 相电流有效值 */  
                     };
                     subindex _Index1600[] = 
@@ -919,7 +920,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 
 /* index 0x1801 :   Transmit PDO 2 Parameter. */
                     UNS8 _highestSubIndex_obj1801 = 5; /* number of subindex - 1*/
-                    UNS32 _obj1801_COB_ID_used_by_PDO = 0x80000308;	/* 1073742464 */
+                    UNS32 _obj1801_COB_ID_used_by_PDO = 0x00000308;	/* 1073742464 */
                     UNS8 _obj1801_Transmission_Type = 0xFF;	/* 1 */
                     UNS16 _obj1801_Inhibit_Time = 0x0;	/* 0 */
                     UNS8 _obj1801_Compatibility_Entry = 0x0;	/* 0 */
@@ -1000,7 +1001,8 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      UNS32 _obj1A00[] = 
                     {
                       0x60400010,  // 控制字
-                      0x60FF0020  // 给定速度
+                      //0x60FF0020  // 给定速度
+                      0x60600008   // 运行模式
                     };
                     subindex _Index1A00[] = 
                     {
@@ -1013,7 +1015,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                     UNS8 _highestSubIndex_obj1A01 = 2; /* number of subindex - 1*/
                     UNS32 _obj1A01[] = 
                     {
-                      0,	
+                      0x60FF0020,	
                       0	
                     };
                     subindex _Index1A01[] = 

@@ -1294,10 +1294,11 @@ void userAppLoop(void)
             motionStatus.g_Speed = 0;
       }
       motionStatus.g_realTimeTorque = ((float)Torque_Actual_Value *DesignedTorqueNM)/1000.0;
-      printf("%d ms: TPDO2: Current Work Operation is 0x%d, realTimefilterSpeed is : %d rpm, realTimeTorque is %fN.m \n\r", \
+      printf("%d ms: TPDO2: Current Work Operation is 0x%d, realTimefilterSpeed is : %d rpm, TargetSpeed 0x60FF is %d unit, realTimeTorque is %fN.m \n\r", \
                                                                                             gTime.l_time_ms,  \
                                                                                             motionStatus.g_curOperationMode, \
                                                                                             motionStatus.g_Speed, \
+                                                                                            Target_velocity,\
                                                                                             motionStatus.g_realTimeTorque);
 #endif
 
@@ -1337,7 +1338,8 @@ void userAppLoop(void)
 		if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x021F){
       motionStatus.g_DS402_SMStatus = 5; 
       printf ("CANOpen: Status 5 Now in Fault! Plz check ERRORCODE \r\n");   
-    }
+    } 
+
 #endif
       gStatus.l_time_heartbeat = 0;
     }
