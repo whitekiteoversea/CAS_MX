@@ -10,7 +10,6 @@ MODBUSVARS modbusPosi;
 SDRAM_STO_VAR sdram_var;
 
 #if HAL_W5500_ENABLE
-
 uint8_t gDATABUF[DATA_BUF_SIZE];  
 wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
                             .ip = {192, 168, 20, 11},
@@ -69,7 +68,7 @@ void network_register(void)
     #endif
   #endif
     /* SPI Read & Write callback function */
-    reg_wizchip_spi_cbfunc(HAL_SPI4_ReadByte, HAL_SPI4_WriteByte);	//ע���д����?????
+    reg_wizchip_spi_cbfunc(HAL_SPI4_ReadByte, HAL_SPI4_WriteByte);	
 
     /* WIZCHIP SOCKET Buffer initialize */
     if (ctlwizchip(CW_INIT_WIZCHIP,(void*)memsize) == -1){
@@ -161,14 +160,20 @@ uint16_t message_speedMode_sdo[SPEEDSETUPLENG][10] = {
 
 void systemParaInit(void)
 {
-	unsigned char ret = 0x00;	
-    gStatus.telmode = IDLEMODE; 
-	
+	  unsigned char ret = 0x00;	
+    unsigned char cnt = 0;
+
+    gStatus.telmode = ETHMODE;  // 初始化为以太网控制模式，CAN仅用于单机调试
     motionStatus.g_Distance = 0; // target Posi_um
     motionStatus.g_Speed = 0;
 
-    can_var.NodeID = 0x01; // local node ID
+    can_var.CASNodeID = 0x01;
+    // CANOpen相关参数初始化后不变
+    can_var.CANOpenMasterID = 0x01; // master CAN ID
     can_var.slaveCANID = SLAVECANID; // driver can ID
+
+    // 上位机 IP 192.168.20.33 Port 8888
+    // 本地 IP 192.168.20.11 + (CANNodeID-1) Port 8001+ (CANNodeID-1) MAC 也一致更改
 
     w5500_udp_var.DstHostIP[0] = 192;
     w5500_udp_var.DstHostIP[1] = 168;
@@ -179,11 +184,31 @@ void systemParaInit(void)
     w5500_udp_var.SrcRecvIP[0] = 192;
     w5500_udp_var.SrcRecvIP[1] = 168;
     w5500_udp_var.SrcRecvIP[2] = 20;
-    w5500_udp_var.SrcRecvIP[3] = 11;
-    w5500_udp_var.SrcRecvPort = 8001;
+    w5500_udp_var.SrcRecvIP[3] = 11+can_var.CASNodeID-1;
+    w5500_udp_var.SrcRecvPort = 8001+can_var.CASNodeID-1;
+
+    w5500_udp_var.SrcMAC[0] = 0x00;
+    w5500_udp_var.SrcMAC[1] = 0x08;
+    w5500_udp_var.SrcMAC[2] = 0xDC;
+    w5500_udp_var.SrcMAC[3] = 0x11;
+    w5500_udp_var.SrcMAC[4] = 0x11;
+    w5500_udp_var.SrcMAC[5] = 0x11+can_var.CASNodeID-1;
+
+    // Update W5500 Initial Paras
+    for (cnt=0;cnt<4;cnt++) {
+      gWIZNETINFO.ip[cnt] =  w5500_udp_var.SrcRecvIP[cnt];
+    }
+
+    for (cnt=0;cnt<6;cnt++) {
+      gWIZNETINFO.mac[cnt] =  w5500_udp_var.SrcMAC[cnt];
+    }
 
     // 预设工作模式初始化
     motionStatus.targetWorkmode = RECVSPEEDMODE; // 默认电机控制为速度模式
+
+
+// 0x01 CASNodeID
+// 0x28 EEP初始化标志
 
 #if HAL_EEPROM_ENABLE
     AT24CXX_Init();
@@ -203,11 +228,11 @@ void systemParaInit(void)
         if (0x28 != ret) {
             printf("EEPROM: %d ms Second EEPROM Initialize Failed Plz check link!\r\n", gTime.l_time_ms);
         } else {
-            AT24CXX_WriteOneByte(0x01, 0x44); // first initial CAN ID = 0x01
+            AT24CXX_WriteOneByte(0x01, can_var.CASNodeID); // first initial CAN ID
         }
     } else {
-        can_var.NodeID = AT24CXX_ReadOneByte(0x01);
-        printf("EEPROM: can_var.NodeID is : 0x%x \n\r", can_var.NodeID);
+        can_var.CASNodeID = AT24CXX_ReadOneByte(0x01);  // 设置CAN1 ID
+        printf("EEPROM: can_var.CASNodeID is : 0x%x \n\r", can_var.CASNodeID);
     } 
  #endif   
 }
@@ -259,33 +284,9 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
           curGivenSpeed |= CAN1_RecData[5];
 
 #if HAL_DAC_ENABLE 
-          if((curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && (curGivenSpeed >= MIN_ALLOWED_SPEED_RPM))
-          {	
-            tempGivenVol =  RPM2Vol_CONVERSE_COFF *curGivenSpeed + spdDownLimitVol ;
-          
-            HAL_DAC8563_cmd_Write(3, 0, tempGivenVol);
-            printf("UTC: %d ms CAS: %d, frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
-                                                                                  gTime.l_time_ms,
-                                                                                  tempFrameCnt,
-                                                                                   (short)curGivenSpeed);
+        DACDriverSpeedGive(curGivenSpeed);
 #else // CANOpen
-            if ((motionStatus.g_curOperationMode == 0x03) && (motionStatus.g_DS402_SMStatus == 4)) {
-                if (((short)curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && ((short)curGivenSpeed >= MIN_ALLOWED_SPEED_RPM)) {
-                    Controlword = 0x0F;
-                    Target_velocity = curGivenSpeed *MOTOR_ENCODER_IDENTIFYWIDTH /60; // update speed instruction pulse per second
-                    Modes_of_operation = 0x03; // 速度模式
-                    sendOnePDOevent(&masterObjdict_Data, 1);  // TPDO2
-                    printf("UTC: %d ms CAS: %d ms, CAN1 Recv frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
-                                                                                          gTime.l_time_ms,
-                                                                                          tempFrameCnt,
-                                                                                          (short)curGivenSpeed);
-                } else {
-                    printf("CAS:  %d ms SpeedGiven OverFlow \n\r!", gTime.l_time_ms);
-                }
-            } else {
-                printf("CAS:  %d ms OperationMode 0x%x disMatched or SystemStatus Wrong! \n\r!", gTime.l_time_ms, \
-                                                                                                 motionStatus.g_curOperationMode);
-            }
+        canopenDriverSpeedGive(curGivenSpeed);
 #endif
         break;
         
@@ -337,7 +338,6 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
             printf("UTC:%d ms CAS: %d ms CAN1 CurPosi is %d \n\r", gTime.g_time_ms, gTime.l_time_ms, motionStatus.g_Distance);
         break;
 
-        // 
         case CANTimeSyncErrorCalCmd: 
             tempRecvPosi = CAN1_RecData[5];
             tempRecvPosi <<= 8;
@@ -348,7 +348,8 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
                 tempPosiErr = avgErrUpdate(avgPosiErr);
                 flagStatus = 0;	
 
-              if (can_var.NodeID == 0x01) {
+							// 时间隔得太久，忘了处理逻辑
+              if (can_var.CASNodeID == 0x01) {
                   snddata[2] = 0;
                   snddata[3] = 0;
                   snddata[4] = 0;
@@ -493,7 +494,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *phcan)
     if (phcan == &hcan1) {
         HAL_CAN_GetRxMessage(phcan, CAN_RX_FIFO0, &RxMessage, rxbuf);
         CAN1RecvFrame.Value = RxMessage.ExtId;
-        if ((CAN1RecvFrame.CAN_Frame_Union.NodeOrGroupID == can_var.NodeID) && (CAN1RecvFrame.CAN_Frame_Union.MasterOrSlave == 1)){
+        if ((CAN1RecvFrame.CAN_Frame_Union.NodeOrGroupID == can_var.CASNodeID) && (CAN1RecvFrame.CAN_Frame_Union.MasterOrSlave == 1)){
             for (cnt = 0; cnt < 8; cnt++) {
                 CAN1_RecData[cnt] = rxbuf[cnt];
             }
@@ -570,6 +571,8 @@ uint8_t tim3_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt)
 void w5500_stateMachineTask(void)
 {
     uint8_t ret = 0;
+    EthControlFrameSingleCAS cmdFrame; 
+		
     switch (getSn_SR(0)) {
 			case SOCK_UDP:																							    
 					if (1 == tim3_noblocked_1MS_delay(&last_timeMS, 1)) {
@@ -579,7 +582,15 @@ void w5500_stateMachineTask(void)
               
               if ((ret = getSn_RX_RSR(0)) > 0) { 
                   memset(gDATABUF, 0, ret+1);
-                  recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &w5500_udp_var.DstHostPort);			
+                  recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &w5500_udp_var.DstHostPort);		
+									
+                  // 拷贝以防被覆盖
+                  memset(&cmdFrame, 0, sizeof(cmdFrame));
+                  memcpy(&cmdFrame, gDATABUF, sizeof(cmdFrame));
+									
+                  // Decoder
+                  w5500_Decoder(cmdFrame);
+
                   printf(" %d ms %s\r\n", gTime.l_time_ms, gDATABUF);															  
                   sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  	
               }
@@ -589,7 +600,29 @@ void w5500_stateMachineTask(void)
 					socket(0, Sn_MR_UDP, w5500_udp_var.SrcRecvPort, 0x00);			
 			break;
 		}
-}s
+}
+
+// W5500 Recv deal
+uint8_t w5500_Decoder(EthControlFrameSingleCAS frame) 
+{
+    uint8_t ret = 0;
+    short speedGivenRpm = 0;
+
+    switch (frame.EType) {
+        case RECVSPEEDMODE: 
+          speedGivenRpm = frame.canpack.CANData[4];
+          speedGivenRpm <<= 8;
+          speedGivenRpm |= frame.canpack.CANData[5];
+          canopenDriverSpeedGive(speedGivenRpm);
+      
+          break;
+      default:
+        printf("W5500: Recv Error ETHCAS Pack \n\r");
+      break;
+    }
+    return ret;
+}
+
 #endif
 
 /*  dataType:
@@ -618,7 +651,7 @@ void canOpenInit(void)
     UNS8 Config_Code[4] = {0x88, 0x01, 0x00, 0x80};
 		UNS32 abortCode =0x00;
 
-    setNodeId(&masterObjdict_Data, can_var.NodeID);  // Master ID
+    setNodeId(&masterObjdict_Data, can_var.CANOpenMasterID);  // Master ID
     setState(&masterObjdict_Data, Initialisation);  
     setState(&masterObjdict_Data, Pre_operational); 
 
@@ -698,4 +731,36 @@ uint8_t canOpenSDOSendWithDelay(CO_Data *d, uint8_t slaveNodeId, uint16_t sdoInd
       break;
   }
   return ret;
+}
+
+uint8_t canopenDriverSpeedGive(short speedCmdRpm)
+{
+    uint8_t ret =0;
+    if ((motionStatus.g_curOperationMode == 0x03) && (motionStatus.g_DS402_SMStatus == 4)) {
+        if ((speedCmdRpm <= MAX_ALLOWED_SPEED_RPM) && (speedCmdRpm >= MIN_ALLOWED_SPEED_RPM)) {
+            Controlword = 0x0F;
+            Target_velocity = speedCmdRpm *MOTOR_ENCODER_IDENTIFYWIDTH /60; // update speed instruction pulse per second
+            Modes_of_operation = 0x03; // 速度模式
+            sendOnePDOevent(&masterObjdict_Data, 1);  // TPDO2
+            printf("UTC: %d ms CAS: %d ms, ETH update Speed :%d rpm\n\r", gTime.g_time_ms, gTime.l_time_ms, speedCmdRpm);
+        } else {
+            printf("CAS:  %d ms SpeedGiven OverFlow, which is 0x%d rpm\n\r!", gTime.l_time_ms, speedCmdRpm);
+        }
+    } else {
+        printf("CAS:  %d ms OperationMode 0x%x disMatched or SystemStatus Wrong! \n\r!", gTime.l_time_ms, \
+                                                                                          motionStatus.g_curOperationMode);
+    }
+    return ret;
+}
+
+uint8_t DACDriverSpeedGive(short speedCmdRpm)
+{
+    uint8_t ret =0;
+    int32_t tempGivenVol = 0;
+    if ((speedCmdRpm <= MAX_ALLOWED_SPEED_RPM) && (speedCmdRpm >= MIN_ALLOWED_SPEED_RPM)) {	
+        tempGivenVol =  RPM2Vol_CONVERSE_COFF *speedCmdRpm + spdDownLimitVol ;
+        HAL_DAC8563_cmd_Write(3, 0, tempGivenVol);
+        printf("UTC: %d ms CAS: %d, update Speed :%d rpm\n\r", gTime.g_time_ms, gTime.l_time_ms, speedCmdRpm);
+    }
+    return ret;
 }

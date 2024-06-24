@@ -45,13 +45,13 @@
 
 
 // function Switch
-#define HAL_W5500_ENABLE         			 (0)
+#define HAL_W5500_ENABLE         			 (1)
 #define HAL_CANOPEN_ENABLE                   (1)
 #define CAN2_StateMachine_Trans_ENABLE       (1)
-#define CANOPEN_NONBLOACK_DELAY_ENABLE       (0)
-#define HAL_SDRAM_SELFTEST       			 (0)
+#define CANOPEN_NONBLOACK_DELAY_ENABLE       (1)
+#define HAL_SDRAM_SELFTEST       			 (1)
 #define HAL_DAC_ENABLE           			 (0)
-#define HAL_EEPROM_ENABLE        			 (0)
+#define HAL_EEPROM_ENABLE        			 (1)
 #define HAL_LCD_ENABLE                       (0)
 
 extern uint8_t gDATABUF[DATA_BUF_SIZE];  
@@ -61,6 +61,7 @@ extern TIM_HandleTypeDef htim4;
 // toolbox function def
 void network_register(void);
 void network_init(void);			// Initialize Network information and display it
+uint8_t w5500_Decoder(EthControlFrameSingleCAS frame);
 
 void systemParaInit(void);
 void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode); // can recv info distribute
@@ -80,6 +81,10 @@ void w5500_stateMachineTask(void);
 
 uint32_t tim4_getCurrentTimeCnt(void);
 uint8_t tim4_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt);
+
+// SpeedSend ToolBox function
+uint8_t canopenDriverSpeedGive(short speedCmdRpm);
+uint8_t DACDriverSpeedGive(short speedCmdRpm);
 
 #endif
 

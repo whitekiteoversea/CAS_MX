@@ -1204,17 +1204,12 @@ void bspInit(void)
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
 	systemParaInit();
-	
+
+printf("************NEW BOOT!******************\n\r");	
   // 1. local timebase
   HAL_TIM_Base_Start_IT(&htim3);   // (pass)
 #if HAL_CANOPEN_ENABLE
   HAL_TIM_Base_Start_IT(&htim4);   //CANOpen Timer
-#endif
-  // 3. ETH Initial
-#if HAL_W5500_ENABLE
-	HAL_Delay(300);  // wait for W5500 initial 
-	network_register();
-	network_init();
 #endif
 
   // 4. BISS-C Sensor Data Acquire (pass)
@@ -1231,23 +1226,25 @@ void bspInit(void)
   HAL_Delay(500);
 #endif
 
-printf("************NEW BOOT!******************\n\r");
-
   // 6. CANOpen NMI Init
 #if HAL_CANOPEN_ENABLE
 	HAL_Delay(2000);  
   canOpenInit();
-  // Enable Driver Node
-  //canopen_start_node(&masterObjdict_Data, can_var.slaveCANID);
 #endif
 	
 #if HAL_SDRAM_SELFTEST
-	fsmc_sdram_test();s
+	//fsmc_sdram_test();
 #endif
 
 #if HAL_LCD_ENABLE
   LCD_Init();
 	LCD_Fill(0, 0, LCD_W-1, LCD_H-1, YELLOW);
+#endif
+
+#if HAL_W5500_ENABLE
+	HAL_Delay(300);  // wait for W5500 initial 
+	network_register();
+	network_init();
 #endif
 
 	HAL_Delay(500);  
@@ -1290,15 +1287,15 @@ void userAppLoop(void)
       // 这里得人为限制速度最大值，避免计算超限
       motionStatus.g_Speed = (Velocity_actual_value *60 / MOTOR_ENCODER_IDENTIFYWIDTH); //rpm
       // when motor is still, sensor will genarate Wrong Data of Speed 
-      if (Velocity_actual_value > MAX_ALLOWED_SPEED_RPM || Velocity_actual_value < MIN_ALLOWED_SPEED_RPM) {
+      if ( motionStatus.g_Speed > MAX_ALLOWED_SPEED_RPM || motionStatus.g_Speed < MIN_ALLOWED_SPEED_RPM) {
             motionStatus.g_Speed = 0;
       }
       motionStatus.g_realTimeTorque = ((float)Torque_Actual_Value *DesignedTorqueNM)/1000.0;
-      printf("%d ms: TPDO2: Current Work Operation is 0x%d, realTimefilterSpeed is : %d rpm, TargetSpeed 0x60FF is %d unit, realTimeTorque is %fN.m \n\r", \
+      printf("%d ms: TPDO2: Current Work Operation is 0x%d, realTimefilterSpeed is : %d rpm, TargetSpeed 0x60FF is %d rpm, realTimeTorque is %fN.m \n\r", \
                                                                                             gTime.l_time_ms,  \
                                                                                             motionStatus.g_curOperationMode, \
                                                                                             motionStatus.g_Speed, \
-                                                                                            Target_velocity,\
+                                                                                            (Target_velocity*MOTOR_ENCODER_IDENTIFYWIDTH/60),\
                                                                                             motionStatus.g_realTimeTorque);
 #endif
 
@@ -1357,11 +1354,10 @@ void userAppLoop(void)
    }
 
 #else
-/*  
   // deal with AMG2000 RS485 MSG
   if(modbusPosi.g_RTU_RcvFinishedflag == 1) {
     g_RS485_recvDataDeal();
-    printf("%d ms RS485: cur abs posi %d um \n\r", modbusPosi.l_recv_abs_posi_time, modbusPosi.latest_abs_posi_um);
+    // printf("%d ms RS485: cur abs posi %d um \n\r", modbusPosi.l_recv_abs_posi_time, modbusPosi.latest_abs_posi_um);
     modbusPosi.g_RTU_RcvFinishedflag = 0;
   }  
   UART_Byte_Receive(&huart6);
@@ -1370,7 +1366,6 @@ void userAppLoop(void)
     g_RS485_sendPacket(&huart6, 1, rs485_posi_acquire_data);
     gStatus.l_rs485_getposiEnable = 0;
   }
-  */
 #endif
 
 // CAN1 Protocol

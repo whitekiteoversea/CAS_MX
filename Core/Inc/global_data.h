@@ -39,9 +39,6 @@ enum WORKMODE {
     TORQUEMODE = 4
 };
 
-// CANOpen SDO NUM
-#define MAX_PRESET_SDO_NUM       (11)
-
 // 全局时间记录
 typedef struct {
   volatile unsigned int l_time_cnt_10us;
@@ -174,6 +171,7 @@ typedef struct {
 typedef struct {
   unsigned char SrcRecvIP[4];
 	unsigned short SrcRecvPort;
+  unsigned char SrcMAC[6];
 
   unsigned char DstHostIP[4];
 	unsigned short DstHostPort;
@@ -207,8 +205,13 @@ typedef struct {
 
 } MOTIONVAR;
 
+// CANOpen SDO NUM
+#define MAX_PRESET_SDO_NUM       (11)
+
 typedef struct {
-  unsigned char NodeID;
+  unsigned char CASNodeID; 
+
+  unsigned char CANOpenMasterID;
   unsigned char slaveCANID;
   volatile unsigned int canDelayTime_MS[MAX_PRESET_SDO_NUM];
 
@@ -225,6 +228,48 @@ typedef struct {
   unsigned char overWriteFlag;
   POSI_RECORD_VAR lastestPosiData;
 } SDRAM_STO_VAR;
+
+#pragma pack(1)															
+typedef union
+{
+	struct 
+	{
+		uint32_t MasterOrSlave : 1; 	//主发1 从回0
+		uint32_t CTRCode : 5; 				
+		uint32_t NodeOrGroupID : 5; 		
+		uint32_t Reserved : 21;       
+	}CAN_Frame_Union;
+	
+	uint32_t Value;
+} CAN_ID_Union;
+
+//CANFrame
+typedef struct
+{
+    CAN_ID_Union CANID;
+    uint8_t CANData[8];
+} CANFrame_STD;
+
+#define recvBufLen 3000
+
+typedef struct 
+{
+	uint32_t transTimeStamp;	//
+	uint16_t givenSpeed;  		//
+}DACSndStorage;	
+
+#pragma pack()
+
+// 速度模式下单机控制结构体，对应报文类别为
+typedef struct
+{
+    uint32_t EHeader;        //Ethernet帧头
+    uint32_t ENum;           //Ethernet帧号
+    uint32_t ELen;           //Ethernet长度 Byte
+    uint8_t EType;           //报文类型
+    CANFrame_STD canpack;
+    uint32_t FrameTailer;
+}EthControlFrameSingleCAS;
 
 // extern Var
 extern GLOBALTIME gTime;
