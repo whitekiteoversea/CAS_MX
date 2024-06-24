@@ -91,7 +91,8 @@ void network_register(void)
 #if HAL_CANOPEN_ENABLE
 
 #define PRESETSDOLENG    (37) // Slave SDO配置
-#define SPEEDSETUPLENG   (9) // 速度模式下参数设置
+#define SPEEDSETUPLENG   (9)  // 速度模式下参数设置
+#define TORQUESETUPLENG  (7)  // 转矩模式下参数设置
 
 // 这里的SDO都是配置参数，所以数据类型都是UNS8, 如果是SDO发送实时速度，才会变更为INT等
 uint16_t message_sdo[PRESETSDOLENG][10] = {
@@ -226,9 +227,10 @@ int32_t avgErrCollect(uint8_t node, int32_t sampleData)
 	return duss_result;
 }
 
-void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
+uint8_t CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
 {
     UNUSED(phcan);
+    uint8_t ret = 0;
    
     volatile u16 lastNewestSpeed = 0;
     volatile u32 curLocalTimeStamp = 0;
@@ -242,6 +244,8 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
     int32_t tempPosiErr = 0;
     int32_t tempRecvPosi = 0;
 
+    uint8_t targetOperationMode = 0;
+
     // Ext CAN ID
     CAN_ID_Union ext_ID;
     ext_ID.Value = 0;
@@ -251,13 +255,14 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
     tempFrameCnt <<= 8;
     tempFrameCnt |= CAN1_RecData[1];
     
-    switch(CTRCode)
-    {
+    switch(CTRCode) {
+        // SpeedGiven
         case CANSpeedCmd:
           curGivenSpeed = CAN1_RecData[4];
           curGivenSpeed <<= 8;
           curGivenSpeed |= CAN1_RecData[5];
 
+// 电机运动指令给定方式 DAC or CANOpen
 #if HAL_DAC_ENABLE 
           if((curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && (curGivenSpeed >= MIN_ALLOWED_SPEED_RPM))
           {	
@@ -269,16 +274,16 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
                                                                                   tempFrameCnt,
                                                                                    (short)curGivenSpeed);
 #else // CANOpen
-            if ((motionStatus.g_curOperationMode == 0x03) && (motionStatus.g_DS402_SMStatus == 4)) {
+            if ((motionStatus.g_curOperationMode == RECVSPEEDMODE) && (motionStatus.g_DS402_SMStatus == 4)) {
                 if (((short)curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && ((short)curGivenSpeed >= MIN_ALLOWED_SPEED_RPM)) {
                     Controlword = 0x0F;
                     Target_velocity = curGivenSpeed *MOTOR_ENCODER_IDENTIFYWIDTH /60; // update speed instruction pulse per second
-                    Modes_of_operation = 0x03; // 速度模式
+                    Modes_of_operation = RECVSPEEDMODE;       // 速度模式
                     sendOnePDOevent(&masterObjdict_Data, 1);  // TPDO2
                     printf("UTC: %d ms CAS: %d ms, CAN1 Recv frameNum: %d, update Speed :%d rpm\n\r", gTime.g_time_ms,
-                                                                                          gTime.l_time_ms,
-                                                                                          tempFrameCnt,
-                                                                                          (short)curGivenSpeed);
+                                                                                                      gTime.l_time_ms,
+                                                                                                      tempFrameCnt,
+                                                                                                      (short)curGivenSpeed);
                 } else {
                     printf("CAS:  %d ms SpeedGiven OverFlow \n\r!", gTime.l_time_ms);
                 }
@@ -291,10 +296,11 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
         
 				// PreDictive Speed Mode 
         case CANSpeedPreCmd:
-          curGivenSpeed = CAN1_RecData[5];
-          curGivenSpeed <<= 8;
-          curGivenSpeed |= CAN1_RecData[6];
+            curGivenSpeed = CAN1_RecData[5];
+            curGivenSpeed <<= 8;
+            curGivenSpeed |= CAN1_RecData[6];
         
+#if HAL_DAC_ENABLE 
           if (((short)curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && ((short)curGivenSpeed >= MIN_ALLOWED_SPEED_RPM)) {	
               tempGivenVol = RPM2Vol_CONVERSE_COFF *curGivenSpeed + spdDownLimitVol ;
                       
@@ -303,8 +309,29 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
                                                                         gTime.l_time_ms,
                                                                         (short)curGivenSpeed);
           }
+#else
+          ;
+#endif
         break;
-          
+        // 电机工作模式
+        case CANOperationModeCmd:
+            targetOperationMode = CAN1_RecData[4];
+            if (targetOperationMode > 4) {
+              printf ("UTC: %d ms, CAS: %d ms CAN1 Recv Error OperationMode! \r\n", gTime.g_time_ms, gTime.l_time_ms);
+                goto __recv_end;
+            }
+            // 模式变更条件
+            if (targetOperationMode != motionStatus.targetWorkmode) {
+                // 先停止，开启抱闸，再重设工作模式
+                Controlword = 0x04; // 自由停机，保持静止
+                motionStatus.targetWorkmode = targetOperationMode;
+                Modes_of_operation = motionStatus.targetWorkmode;
+                sendOnePDOevent(&masterObjdict_Data, 0);  // TPDO1
+
+                // 理论上应该设置一个延时检查点 推个标志位给主线程 or 主线程一直循环在检查 目标工作模式和实际工作模式是否匹配
+            }
+        break;
+
         case CANTimeSyncCmd:
             //update global timeStamp
             gTime.g_time_ms = CAN1_RecData[2];
@@ -325,7 +352,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
         case CANPisiAcquireCmd:
             memcpy(snddata, CAN1_RecData, 8);
 
-            snddata[5] = (motionStatus.g_Distance & 0x00FF0000) >> 16;
+            snddata[5] = (motionStatus.g_Distance & 0x00FF0000) >> 16; //um 26bit
             snddata[6] = (motionStatus.g_Distance & 0x0000FF00) >> 8;
             snddata[7] = (motionStatus.g_Distance & 0x000000FF);
 
@@ -383,9 +410,12 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
         break;
 
         default:
-          // printf("UTC:%d ms CAS: %d ms CAN1 Recv Error Context Pack\n\r", gTime.g_time_ms, gTime.l_time_ms);
+
         break;
     }
+
+__recv_end:
+    return ret;   
 }
 
 int32_t avgErrUpdate(int32_t *sampleData) 
@@ -631,12 +661,23 @@ void canOpenInit(void)
 		}
 
     // Speed Mode Var
-    for (cnt = 0;cnt<SPEEDSETUPLENG; cnt++) {
-      canopen_send_sdo(message_speedMode_sdo[cnt]);
-      closeSDOtransfer(&masterObjdict_Data, can_var.slaveCANID, SDO_CLIENT);
-      HAL_Delay(20);     
+    if (motionStatus.targetWorkmode == RECVSPEEDMODE) {
+        for (cnt = 0;cnt<SPEEDSETUPLENG; cnt++) {
+          canopen_send_sdo(message_speedMode_sdo[cnt]);
+          closeSDOtransfer(&masterObjdict_Data, can_var.slaveCANID, SDO_CLIENT);
+          HAL_Delay(20);     
+        }
+    } else if (motionStatus.targetWorkmode == TORQUEMODE) {
+          for (cnt = 0;cnt<TORQUESETUPLENG; cnt++) {
+          // canopen_send_sdo(message_speedMode_sdo[cnt]);
+          closeSDOtransfer(&masterObjdict_Data, can_var.slaveCANID, SDO_CLIENT);
+          HAL_Delay(20);     
+        }
+    } else {
+      printf("CANOpen Init WorkMode Wrong! Plz check targetWorkMode \n\r");
     }
 
+  
 		setState(&masterObjdict_Data, Operational);
     masterSendNMTstateChange(&masterObjdict_Data, can_var.slaveCANID, NMT_Start_Node);
 
@@ -698,4 +739,40 @@ uint8_t canOpenSDOSendWithDelay(CO_Data *d, uint8_t slaveNodeId, uint16_t sdoInd
       break;
   }
   return ret;
+}
+
+// LCD监视参数初始化
+void LCD_dispParaInit(void)
+{
+  uint8_t *str[] = {"Mode:", "rMode:", "Net: ", "tSpeed: ", 
+                    "tTorque: ", "Status: ","Time(ms): ",
+                    "rSpeed: ", "rTorque: "};
+  uint8_t *statusStr = "Linked!";
+
+  LCD_ShowString(0, 12, str[0], WHITE, BLACK, 12, 1); // 当前运行模式
+  LCD_ShowString(0, 28, str[1], WHITE, BLACK, 12, 1); // 反馈运行模式
+  LCD_ShowString(0, 44, str[2], WHITE, BLACK, 12, 1); // ETH连接状态
+  LCD_ShowString(0, 60, str[3], WHITE, BLACK, 12, 1); // 当前给定速度
+  LCD_ShowString(0, 76, str[4], WHITE, BLACK, 12, 1); // 当前给定转矩
+  LCD_ShowString(0, 92, str[6], WHITE, BLACK, 12, 1); // 当前电机状态字
+  LCD_ShowString(0, 135, str[7], WHITE, BLACK, 12, 1); // 本次开机运行时间
+
+  LCD_ShowString(120, 60, str[8], WHITE, BLACK, 12, 1); // 当前运行速度
+  LCD_ShowString(120, 76, str[9], WHITE, BLACK, 12, 1); // 当前给定转矩
+}
+
+void LCD_MonitorPara_Update(void)
+{
+    LCD_ShowChar(90, 12, motionStatus.targetWorkmode, WHITE, BLACK, 12, 0);      // 预设工作模式
+    LCD_ShowChar(90, 28, motionStatus.g_curOperationMode, WHITE, BLACK, 12, 0);  // 反馈工作模式
+    // LCD_ShowChar(50, 44, gStatus.telmode, WHITE, BLACK, 12, 0); // ETH连接状态 通过时间同步报文来监控
+
+    LCD_ShowIntNum(90, 60, motionStatus.g_SpeedCmd_rpm, WHITE, BLACK, 12, 0);       // 预设速度 rpm
+    // LCD_ShowInt(, 60, motionStatus.g_SpeedCmd_rpm, WHITE, BLACK, 12, 0);    
+
+    LCD_ShowFloatNum1(90, 76, motionStatus.g_TorqueCmd_NM, WHITE, BLACK, 12, 0); // 预设转矩 N.m
+
+    LCD_ShowIntNum(90, 92, motionStatus.motorStatusWord.Value, WHITE, BLACK, 12, 0);       // 状态字
+    LCD_ShowIntNum(90, 135, gTime.l_time_ms, WHITE, BLACK, 12, 0);                  // 启动后本地时间 ms
+
 }

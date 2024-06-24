@@ -1159,6 +1159,8 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void bspInit(void)
 {
+
+
   HAL_Init();
 
   /* USER CODE BEGIN Init */
@@ -1198,32 +1200,34 @@ void bspInit(void)
 #if HAL_CANOPEN_ENABLE
   MX_TIM4_Init();
 #endif
+
+#if HAL_SDRAM_ENABLE
   MX_FMC_Init();
+#endif
 
   /* Initialize interrupts */
   MX_NVIC_Init();
   /* USER CODE BEGIN 2 */
 	systemParaInit();
 	
-  // 1. local timebase
+// 1. local timebase
   HAL_TIM_Base_Start_IT(&htim3);   // (pass)
 #if HAL_CANOPEN_ENABLE
   HAL_TIM_Base_Start_IT(&htim4);   //CANOpen Timer
 #endif
-  // 3. ETH Initial
+// 3. ETH Initial
 #if HAL_W5500_ENABLE
 	HAL_Delay(300);  // wait for W5500 initial 
 	network_register();
 	network_init();
 #endif
 
-  // 4. BISS-C Sensor Data Acquire (pass)
-
+// 4. BISS-C Sensor Data Acquire 
 #if HAL_BISSC_ENABLE
 	HAL_BISSC_Setup();
 #endif
 
-  // 5. Motor Torque Controller (pass)
+// 5. Motor Torque Controller (pass)
 #if HAL_DAC_ENABLE
   HAL_SPI1_DAC8563_Init();   
   HAL_Delay(500);
@@ -1233,24 +1237,23 @@ void bspInit(void)
 
 printf("************NEW BOOT!******************\n\r");
 
-  // 6. CANOpen NMI Init
+// 6. CANOpen NMI Init
 #if HAL_CANOPEN_ENABLE
 	HAL_Delay(2000);  
   canOpenInit();
-  // Enable Driver Node
-  //canopen_start_node(&masterObjdict_Data, can_var.slaveCANID);
 #endif
 	
-#if HAL_SDRAM_SELFTEST
-	fsmc_sdram_test();s
+#if HAL_SDRAM_ENABLE
+	//fsmc_sdram_test();
 #endif
 
 #if HAL_LCD_ENABLE
   LCD_Init();
-	LCD_Fill(0, 0, LCD_W-1, LCD_H-1, YELLOW);
+	LCD_Fill(0, 0, LCD_W-1, LCD_H-1, BLACK);
+  LCD_dispParaInit();
 #endif
 
-	HAL_Delay(500);  
+	// HAL_Delay(500);  
   printf("CAS: %d ms All Function Initial Finished! \n\r", gTime.l_time_ms);
 }
 
@@ -1274,14 +1277,15 @@ void userAppLoop(void)
         printf("%d ms HeartBeat Msg \n\r", gTime.l_time_ms);
 
 #if HAL_CANOPEN_ENABLE
+      // 更新当前工作模式
       motionStatus.g_curOperationMode = Modes_of_operation_display; 
       motionStatus.motorStatusWord.Value = Statusword;
-      initCMDType = ((motionStatus.g_curOperationMode == 0x03) ? 1 : 0);
+      initCMDType = ((motionStatus.g_curOperationMode == RECVSPEEDMODE) ? 1 : 0);
       if (initCMDType == 0x01) {// speedMode
           motionStatus.motorCMD_speed.Value = Controlword;
           printf("CANOpen: SlaveNode OperationMode is 0x%x, Controlword is 0x%x, Statusword is 0x%x  \r\n", motionStatus.g_curOperationMode, \
-                                                                                                    motionStatus.motorCMD_speed, \
-                                                                                                    motionStatus.motorStatusWord.Value);
+                                                                                                            motionStatus.motorCMD_speed, \
+                                                                                                            motionStatus.motorStatusWord.Value);
       } else {
           printf ("CANOpen DS402: OperationMode is Not SpeedMode! \r\n");
           printf("CANOpen: SlaveNode OperationMode is 0x%x, Statusword is 0x%x \r\n", motionStatus.g_curOperationMode, \
@@ -1293,13 +1297,13 @@ void userAppLoop(void)
       if (Velocity_actual_value > MAX_ALLOWED_SPEED_RPM || Velocity_actual_value < MIN_ALLOWED_SPEED_RPM) {
             motionStatus.g_Speed = 0;
       }
-      motionStatus.g_realTimeTorque = ((float)Torque_Actual_Value *DesignedTorqueNM)/1000.0;
-      printf("%d ms: TPDO2: Current Work Operation is 0x%d, realTimefilterSpeed is : %d rpm, TargetSpeed 0x60FF is %d unit, realTimeTorque is %fN.m \n\r", \
+      motionStatus.g_TorqueCmd_NM = ((float)Torque_Actual_Value *DesignedTorqueNM)/1000.0;
+      printf("%d ms: TPDO2: Current Operation Mode is 0x%d, realTimefilterSpeed is : %d rpm, TargetSpeed 0x60FF is %d unit, realTimeTorque is %fN.m \n\r", \
                                                                                             gTime.l_time_ms,  \
                                                                                             motionStatus.g_curOperationMode, \
                                                                                             motionStatus.g_Speed, \
                                                                                             Target_velocity,\
-                                                                                            motionStatus.g_realTimeTorque);
+                                                                                            motionStatus.g_TorqueCmd_NM);
 #endif
 
 #if CAN2_StateMachine_Trans_ENABLE
@@ -1341,6 +1345,11 @@ void userAppLoop(void)
     } 
 
 #endif
+
+#if HAL_LCD_ENABLE
+    LCD_MonitorPara_Update(); // Update ps
+#endif
+
       gStatus.l_time_heartbeat = 0;
     }
 
@@ -1357,7 +1366,6 @@ void userAppLoop(void)
    }
 
 #else
-/*  
   // deal with AMG2000 RS485 MSG
   if(modbusPosi.g_RTU_RcvFinishedflag == 1) {
     g_RS485_recvDataDeal();
@@ -1370,7 +1378,6 @@ void userAppLoop(void)
     g_RS485_sendPacket(&huart6, 1, rs485_posi_acquire_data);
     gStatus.l_rs485_getposiEnable = 0;
   }
-  */
 #endif
 
 // CAN1 Protocol

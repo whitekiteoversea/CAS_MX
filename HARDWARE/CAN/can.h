@@ -5,9 +5,9 @@
 
 // PC CAN Node ID
 #define PCNODEID                        (0)
-#define SLAVECANID                      (8)
+#define CASNODEID                       (1)  // CAN1 Node
+#define SLAVECANID                      (8)  // CAN2 Motor Node
 
-#define REG_CAN_ENABLE             		(0)
 #define TEST_CAN_STABLITY               (0)
 
 #define CAN1_FILTER_MODE_MASK_ENABLE    (1)
@@ -17,18 +17,13 @@
 
 #define CANSpeedCmd                     (1)
 #define CANSpeedPreCmd                  (2)
+#define CANOperationModeCmd             (3)
 #define CANTimeSyncCmd                  (4)
 #define CANPisiAcquireCmd               (5)
 #define CANTimeSyncErrorCalCmd          (6)
 #define CANLocalPITestCmd               (7)
 
 #define CANDriverInfoAcquire            (10)
-
-// #define CAN1_RX0_INT_ENABLE			1		 			
-// #define CAN2_RX0_INT_ENABLE			1		 		
-
-// #define CAN_BoardCastID 0x3F
-// #define NetNodeNum 		(3)
 
 #pragma pack(1)															
 typedef union
@@ -60,39 +55,6 @@ typedef struct
 }DACSndStorage;	
 
 #pragma pack()
-
-#if REG_CAN_ENABLE      
-
-u8 CAN1_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode);//CAN��ʼ��
-u8 CAN1_Tx_Msg(u32 id,u8 ide,u8 rtr,u8 len,u8 *dat);	//��������
-u8 CAN1_Msg_Pend(u8 fifox);								//��ѯ���䱨��
-void CAN1_Rx_Msg(u8 fifox,u32 *id,u8 *ide,u8 *rtr,u8 *len,u8 *dat);//��������
-u8 CAN1_Tx_Staus(u8 mbox);  							//���ط���״̬
-u8 CAN1_Send_Msg(u8* msg,u8 len);						//��������
-u8 CAN1_Receive_Msg(u8 *buf);							//��������
-u8 canSendMsg(CAN_ID_Union canSendFrameID, u8* msg,u8 len);
-
-u8 CAN2_Mode_Init(u8 tsjw,u8 tbs2,u8 tbs1,u16 brp,u8 mode);
-void CAN2_Rx_Msg(u8 fifox,u32 *id,u8 *ide,u8 *rtr,u8 *len,u8 *dat);
-u8 CAN2_Tx_Msg(u32 id,u8 ide,u8 rtr,u8 len,u8 *dat);
-u8 CAN2_Tx_Staus(u8 mbox);
-u8 can2SendMsg(CAN_ID_Union canSendFrameID, u8* msg,u8 len);
-u8 CAN2_Receive_Msg(u8 *buf);							//��������
-u8 CAN2_Msg_Pend(u8 fifox);
-
-extern uint8_t can1RecvFlag;
-extern CAN_ID_Union CANRecvFrame;
-extern uint8_t CAN1_RecData[8];
-
-extern uint8_t can2RecvFlag;
-extern CAN_ID_Union CAN2RecvFrame;
-extern uint8_t CAN2_RecData[8];
-
-extern uint8_t canRecvSyncFlag;
-
-extern u8 canlocalCharacNode; //���ذ��ݵ�CAN�ڵ��ɫ
-
-#endif
 
 uint8_t HAL_CAN_Std_Transmit(CAN_HandleTypeDef *hcan, const void* buf, uint32_t len, uint32_t Std_ID);
 uint8_t HAL_CAN_Ext_Transmit(CAN_HandleTypeDef *hcan, const void* buf, uint32_t len, uint32_t Ext_ID);

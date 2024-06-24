@@ -44,15 +44,19 @@
 #define MOTOR_ENCODER_IDENTIFYWIDTH  (8388608)  // 23bit
 
 
+#define LCD_LINEINTERVAL            (19)
+#define LCD_BYTETYPE                (16)
+
+
 // function Switch
 #define HAL_W5500_ENABLE         			 (0)
 #define HAL_CANOPEN_ENABLE                   (1)
 #define CAN2_StateMachine_Trans_ENABLE       (1)
 #define CANOPEN_NONBLOACK_DELAY_ENABLE       (0)
-#define HAL_SDRAM_SELFTEST       			 (0)
+#define HAL_SDRAM_ENABLE       			     (1)
 #define HAL_DAC_ENABLE           			 (0)
-#define HAL_EEPROM_ENABLE        			 (0)
-#define HAL_LCD_ENABLE                       (0)
+#define HAL_EEPROM_ENABLE        			 (1)
+#define HAL_LCD_ENABLE                       (1)
 
 extern uint8_t gDATABUF[DATA_BUF_SIZE];  
 extern TIM_HandleTypeDef htim3;
@@ -63,7 +67,7 @@ void network_register(void);
 void network_init(void);			// Initialize Network information and display it
 
 void systemParaInit(void);
-void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode); // can recv info distribute
+uint8_t CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode); // can recv info distribute
 void canOpenInit(void);
 uint8_t canopen_send_sdo(uint16_t *message_sdo);
 uint8_t canOpenSDOConfig(void);
@@ -81,7 +85,12 @@ void w5500_stateMachineTask(void);
 uint32_t tim4_getCurrentTimeCnt(void);
 uint8_t tim4_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt);
 
+// LCD
+void LCD_dispParaInit(void);
+void LCD_MonitorPara_Update(void);
+
 #endif
+
 
 
 

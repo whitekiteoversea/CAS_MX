@@ -119,15 +119,17 @@ void LCD_Init(void)
 	LCD_WR_REG(0x11); 			 // Sleep out 
 	HAL_Delay(120);              // Delay 120ms 
 	//************* Start Initial Sequence **********// 
-	LCD_WR_REG(0x36);
-	if (USE_HORIZONTAL==0)
-		LCD_WR_DATA8(0x00);
-	else if (USE_HORIZONTAL==1)
-		LCD_WR_DATA8(0xC0);
-	else if (USE_HORIZONTAL==2)
-		LCD_WR_DATA8(0x70);
-	else 
-		LCD_WR_DATA8(0xA0);
+	LCD_WR_REG(0x36);  // 设置屏幕方向
+	LCD_WR_DATA8(0xA0);  
+
+	// if (USE_HORIZONTAL==0)
+	// 	LCD_WR_DATA8(0x00);
+	// else if (USE_HORIZONTAL==1)
+	// 	LCD_WR_DATA8(0xC0);
+	// else if (USE_HORIZONTAL==2)
+	// 	LCD_WR_DATA8(0x70);
+	// else 
+	// 	LCD_WR_DATA8(0xA0);
 
 	LCD_WR_REG(0x3A);
 	LCD_WR_DATA8(0x05);

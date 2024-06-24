@@ -183,13 +183,16 @@ typedef struct {
 } GLOBAL_ETH_UDP_VAR;
 
 typedef struct {
-  uint8_t g_posi[4];      // unit depends on BISS-C
-	int32_t g_Distance; 	// um
-	int32_t g_Speed; 			// rpm
-  int16_t g_phaseAmp;   // A
-  //int16_t g_realTimeTorque; 
-  float g_realTimeTorque; 
-	uint32_t g_InitialPosi; //um
+	int32_t g_Speed; 			  // rpm
+  int16_t g_SpeedCmd_rpm;
+
+  float g_TorqueCmd_NM;         // N.m
+  float g_Torque_NM;         // N.m
+
+  uint32_t g_InitialPosi;      //um
+  uint8_t g_posi[4];           // unit depends on BISS-C
+	int32_t g_Distance; 	       // um
+  int16_t g_phaseAmp_Amp;      // A
 
   volatile uint8_t g_DS402_SMStatus;  //状态字处于0x1237时，此状态为1
 
@@ -208,6 +211,7 @@ typedef struct {
 } MOTIONVAR;
 
 typedef struct {
+  unsigned char CASNodeID; // 上位机CAN ID 与ETH IP绑定 1对应192.168.20.33 2对应 192.168.20.34 以此类推
   unsigned char NodeID;
   unsigned char slaveCANID;
   volatile unsigned int canDelayTime_MS[MAX_PRESET_SDO_NUM];
