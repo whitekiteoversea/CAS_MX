@@ -1357,7 +1357,8 @@ void userAppLoop(void)
 #else
   // deal with AMG2000 RS485 MSG
   if(modbusPosi.g_RTU_RcvFinishedflag == 1) {
-    g_RS485_recvDataDeal();
+    motionStatus.g_Distance = g_RS485_recvDataDeal();
+    printf("%d ms RS485: cur abs posi %d um \n\r", modbusPosi.l_recv_abs_posi_time, modbusPosi.latest_abs_posi_um);
     modbusPosi.g_RTU_RcvFinishedflag = 0;
   }  
   UART_Byte_Receive(&huart6);

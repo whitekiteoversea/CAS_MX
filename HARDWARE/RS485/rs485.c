@@ -107,10 +107,11 @@ u32 g_RS485_recvDataDeal(void)
 				modbusPosi.l_recv_abs_posi_time = gTime.l_time_ms;
 				modbusPosi.latest_abs_posi_um = returnPosi;
 
-				if (rcvFrameCnt == 0) {
-					modbusPosi.l_init_abs_posi_time = gTime.l_time_ms;
-					modbusPosi.init_abs_posi_um = returnPosi;
-				}
+				// 由于初始缓冲区会被冲爆，所以这里的数据并不有效，需要进行进一步处理
+				// if (rcvFrameCnt == 0) {
+				// 	modbusPosi.l_init_abs_posi_time = gTime.l_time_ms;
+				// 	modbusPosi.init_abs_posi_um = returnPosi;
+				// }
 				break;
 				
 				default:

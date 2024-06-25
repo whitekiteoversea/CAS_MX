@@ -198,6 +198,8 @@ void systemParaInit(void)
     w5500_udp_var.SrcMAC[4] = 0x11;
     w5500_udp_var.SrcMAC[5] = 0x11+can_var.CASNodeID-1;
 
+    w5500_udp_var.SrcSendPort = 8000; // 统一用8000端口发送
+
     // Update W5500 Initial Paras
     for (cnt=0;cnt<4;cnt++) {
       gWIZNETINFO.ip[cnt] =  w5500_udp_var.SrcRecvIP[cnt];
@@ -584,7 +586,7 @@ void w5500_stateMachineTask(void)
               
               if ((ret = getSn_RX_RSR(0)) > 0) { 
                   memset(gDATABUF, 0, ret+1);
-                  recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &w5500_udp_var.DstHostPort);		
+                  recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &(w5500_udp_var.DstHostPort));		
 									
                   // 拷贝以防被覆盖
                   memcpy(&cmdFrame, gDATABUF, sizeof(cmdFrame));
@@ -598,6 +600,15 @@ void w5500_stateMachineTask(void)
 					socket(0, Sn_MR_UDP, w5500_udp_var.SrcRecvPort, 0x00);			
 			break;
 		}
+
+    switch (getSn_SR(1)) {
+      	case SOCK_UDP:	
+          ; // do nothing
+        break;
+        case SOCK_CLOSED:																						   
+            socket(1, Sn_MR_UDP, w5500_udp_var.SrcSendPort, 0x00);	// 这里的绑定是接收端口，但由于socket1仅用于发送，所以实际没有生效		
+        break;
+    }
 }
 
 // W5500 Recv deal
@@ -652,15 +663,17 @@ uint32_t w5500_reportStatus(CASREPORTFRAME statusPack)
 
     statusPack.ELen = sizeof(CASREPORTFRAME);
 
+    statusPack.CASNodeID = can_var.CASNodeID;
     statusPack.curWorkMode = motionStatus.g_curOperationMode;
     statusPack.localTimeMS = gTime.l_time_ms;
     statusPack.motorPosiUM = motionStatus.g_Distance;
     statusPack.motorRealTimeTorqueNM = motionStatus.g_realTimeTorque;
     statusPack.motorAveragePhaseAmp = motionStatus.g_phaseAmp;
     statusPack.statusWord = motionStatus.motorStatusWord.Value;
- 
+
+    printf ("Now motorPosi is %d um \r\n", motionStatus.g_Distance);
     memcpy(gSendBUF, &statusPack, sizeof(statusPack));
-    ret = sendto(0, gSendBUF, sizeof(statusPack), w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		
+    ret = sendto(1, gSendBUF, sizeof(statusPack), w5500_udp_var.DstHostIP, 8888);		
     return ret;
 }
 

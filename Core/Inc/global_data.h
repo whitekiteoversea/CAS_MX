@@ -173,11 +173,10 @@ typedef struct {
 	unsigned short SrcRecvPort;
   unsigned char SrcMAC[6];
 
+  unsigned char SrcSendPort;  // No USED
+
   unsigned char DstHostIP[4];
 	unsigned short DstHostPort;
-
-  // unsigned char *DstHostIP[2][4];
-	// unsigned short DstHostPort[2];
 } GLOBAL_ETH_UDP_VAR;
 
 typedef struct {
@@ -258,8 +257,6 @@ typedef struct
 	uint16_t givenSpeed;  		//
 }DACSndStorage;	
 
-#pragma pack()
-
 // 速度模式下单机控制结构体，对应报文类别为
 typedef struct {
     uint32_t EHeader;        //Ethernet帧头
@@ -284,6 +281,8 @@ typedef struct {
     short motorAveragePhaseAmp;  //平均相电流
     uint32_t FrameTailer;
 } CASREPORTFRAME;
+
+#pragma pack()
 
 // extern Var
 extern GLOBALTIME gTime;
