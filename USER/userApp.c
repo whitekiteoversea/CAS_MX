@@ -793,10 +793,16 @@ uint8_t canOpenSDOSendWithDelay(CO_Data *d, uint8_t slaveNodeId, uint16_t sdoInd
 uint8_t canopenDriverSpeedGive(short speedCmdRpm)
 {
     uint8_t ret =0;
+    int64_t sendSpeed = 0;
+
     if ((motionStatus.g_curOperationMode == RECVSPEEDMODE) && (motionStatus.g_DS402_SMStatus == 4)) {
         if ((speedCmdRpm <= MAX_ALLOWED_SPEED_RPM) && (speedCmdRpm >= MIN_ALLOWED_SPEED_RPM)) {
             Controlword = 0x0F;
-            Target_velocity = speedCmdRpm *MOTOR_ENCODER_IDENTIFYWIDTH /60; // update speed instruction pulse per second
+            sendSpeed = speedCmdRpm;
+            sendSpeed *= MOTOR_ENCODER_IDENTIFYWIDTH;
+            sendSpeed = sendSpeed /60;
+
+            Target_velocity = (int)sendSpeed; // update speed instruction pulse per second
             Modes_of_operation = RECVSPEEDMODE; // 速度模式
             sendOnePDOevent(&masterObjdict_Data, 1);  // TPDO2
             printf("UTC: %d ms CAS: %d ms, ETH update Speed :%d rpm\n\r", gTime.g_time_ms, gTime.l_time_ms, speedCmdRpm);
