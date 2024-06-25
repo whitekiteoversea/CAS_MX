@@ -52,7 +52,7 @@
 #define HAL_SDRAM_SELFTEST       			 (1)
 #define HAL_DAC_ENABLE           			 (0)
 #define HAL_EEPROM_ENABLE        			 (1)
-#define HAL_LCD_ENABLE                       (0)
+#define HAL_LCD_ENABLE                       (1)
 
 extern uint8_t gDATABUF[DATA_BUF_SIZE];  
 extern TIM_HandleTypeDef htim3;
@@ -62,6 +62,7 @@ extern TIM_HandleTypeDef htim4;
 void network_register(void);
 void network_init(void);			// Initialize Network information and display it
 uint8_t w5500_Decoder(EthControlFrameSingleCAS frame);
+uint32_t w5500_reportStatus(CASREPORTFRAME statusPack);
 
 void systemParaInit(void);
 void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode); // can recv info distribute

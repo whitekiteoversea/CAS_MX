@@ -11,6 +11,8 @@ SDRAM_STO_VAR sdram_var;
 
 #if HAL_W5500_ENABLE
 uint8_t gDATABUF[DATA_BUF_SIZE];  
+uint8_t gSendBUF[DATA_BUF_SIZE];
+
 wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
                             .ip = {192, 168, 20, 11},
                             .sn = {255,255,255,0},
@@ -172,6 +174,8 @@ void systemParaInit(void)
     can_var.CANOpenMasterID = 0x01; // master CAN ID
     can_var.slaveCANID = SLAVECANID; // driver can ID
 
+	#if HAL_W5500_ENABLE
+	
     // 上位机 IP 192.168.20.33 Port 8888
     // 本地 IP 192.168.20.11 + (CANNodeID-1) Port 8001+ (CANNodeID-1) MAC 也一致更改
 
@@ -202,6 +206,8 @@ void systemParaInit(void)
     for (cnt=0;cnt<6;cnt++) {
       gWIZNETINFO.mac[cnt] =  w5500_udp_var.SrcMAC[cnt];
     }
+
+#endif
 
     // 预设工作模式初始化
     motionStatus.targetWorkmode = RECVSPEEDMODE; // 默认电机控制为速度模式
@@ -276,37 +282,33 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
     tempFrameCnt <<= 8;
     tempFrameCnt |= CAN1_RecData[1];
     
-    switch(CTRCode)
-    {
-        case CANSpeedCmd:
+    switch(CTRCode) {
+        case CANSpeedCmd:  // 0x01
           curGivenSpeed = CAN1_RecData[4];
           curGivenSpeed <<= 8;
           curGivenSpeed |= CAN1_RecData[5];
 
-#if HAL_DAC_ENABLE 
-        DACDriverSpeedGive(curGivenSpeed);
-#else // CANOpen
+#if HAL_CANOPEN_ENABLE 
         canopenDriverSpeedGive(curGivenSpeed);
+#else 
+        DACDriverSpeedGive(curGivenSpeed);
 #endif
         break;
         
 				// PreDictive Speed Mode 
-        case CANSpeedPreCmd:
-          curGivenSpeed = CAN1_RecData[5];
-          curGivenSpeed <<= 8;
-          curGivenSpeed |= CAN1_RecData[6];
-        
-          if (((short)curGivenSpeed <= MAX_ALLOWED_SPEED_RPM) && ((short)curGivenSpeed >= MIN_ALLOWED_SPEED_RPM)) {	
-              tempGivenVol = RPM2Vol_CONVERSE_COFF *curGivenSpeed + spdDownLimitVol ;
-                      
-              HAL_DAC8563_cmd_Write(3, 0, tempGivenVol);
-              printf("UTC: %d ms CAS: %d, update Speed :%d rpm, t\n\r",  gTime.g_time_ms,
-                                                                        gTime.l_time_ms,
-                                                                        (short)curGivenSpeed);
-          }
+        case CANSpeedPreCmd:  // 0x02
+            curGivenSpeed = CAN1_RecData[5];
+            curGivenSpeed <<= 8;
+            curGivenSpeed |= CAN1_RecData[6];
+
+#if HAL_CANOPEN_ENABLE 
+        canopenDriverSpeedGive(curGivenSpeed);
+#else 
+        DACDriverSpeedGive(curGivenSpeed);
+#endif
         break;
           
-        case CANTimeSyncCmd:
+        case CANTimeSyncCmd:  //0x04
             //update global timeStamp
             gTime.g_time_ms = CAN1_RecData[2];
             gTime.g_time_ms <<= 8;
@@ -323,7 +325,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
 
         break;
       
-        case CANPisiAcquireCmd:
+        case CANPisiAcquireCmd: // 0x05
             memcpy(snddata, CAN1_RecData, 8);
 
             snddata[5] = (motionStatus.g_Distance & 0x00FF0000) >> 16;
@@ -585,14 +587,10 @@ void w5500_stateMachineTask(void)
                   recvfrom(0, gDATABUF, ret, w5500_udp_var.DstHostIP, &w5500_udp_var.DstHostPort);		
 									
                   // 拷贝以防被覆盖
-                  memset(&cmdFrame, 0, sizeof(cmdFrame));
                   memcpy(&cmdFrame, gDATABUF, sizeof(cmdFrame));
 									
                   // Decoder
                   w5500_Decoder(cmdFrame);
-
-                  printf(" %d ms %s\r\n", gTime.l_time_ms, gDATABUF);															  
-                  sendto(0, gDATABUF,ret, w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		  	
               }
           }
 			break;
@@ -607,19 +605,62 @@ uint8_t w5500_Decoder(EthControlFrameSingleCAS frame)
 {
     uint8_t ret = 0;
     short speedGivenRpm = 0;
+    CASREPORTFRAME statusPack;
 
     switch (frame.EType) {
-        case RECVSPEEDMODE: 
-          speedGivenRpm = frame.canpack.CANData[4];
-          speedGivenRpm <<= 8;
-          speedGivenRpm |= frame.canpack.CANData[5];
-          canopenDriverSpeedGive(speedGivenRpm);
+        case CANSpeedCmd: // 0x01
+            speedGivenRpm = frame.canpack.CANData[4];
+            speedGivenRpm <<= 8;
+            speedGivenRpm |= frame.canpack.CANData[5];
+            canopenDriverSpeedGive(speedGivenRpm);
+        break;
       
+        case CANOperationModeCmd: // 0x3
+          if (motionStatus.g_curOperationMode != frame.canpack.CANData[4]) {
+            ;//电机快速停机，再切换工作模式后重启，安全系数待定
+          }
+          
+        break;
+
+        case CANTimeSyncCmd: // 0x04
+          ;
+        break;
+
+        case CANPisiAcquireCmd: // 0x05
+            w5500_reportStatus(statusPack);
+        break;
+        
+        case CANDriverInfoAcquire: // SDRAM数据获取
+
+
           break;
-      default:
-        printf("W5500: Recv Error ETHCAS Pack \n\r");
-      break;
+        default:
+           printf("W5500: Recv Error ETHCAS Pack \n\r");
+        break;
     }
+    return ret;
+}
+
+// 借用 0x05 位置数据上报
+uint32_t w5500_reportStatus(CASREPORTFRAME statusPack)
+{
+    uint32_t ret = 0;
+
+    statusPack.EHeader = 0xAA55;
+    statusPack.FrameTailer = 0x55AA;
+    statusPack.EType = CANPisiAcquireCmd;
+
+    statusPack.ELen = sizeof(CASREPORTFRAME);
+
+    statusPack.curWorkMode = motionStatus.g_curOperationMode;
+    statusPack.localTimeMS = gTime.l_time_ms;
+    statusPack.motorPosiUM = motionStatus.g_Distance;
+    statusPack.motorRealTimeTorqueNM = motionStatus.g_realTimeTorque;
+    statusPack.motorAveragePhaseAmp = motionStatus.g_phaseAmp;
+    statusPack.statusWord = motionStatus.motorStatusWord.Value;
+ 
+    memcpy(gSendBUF, &statusPack, sizeof(statusPack));
+    ret = sendto(0, gSendBUF, sizeof(statusPack), w5500_udp_var.DstHostIP, w5500_udp_var.DstHostPort);		
     return ret;
 }
 
@@ -642,6 +683,9 @@ define in objdictdef.h
 #define time_of_day     0x0C
 #define time_difference 0x0D
 */
+
+#if HAL_CANOPEN_ENABLE
+
 void canOpenInit(void)
 {
     UNS8 cnt = 0;
@@ -664,7 +708,7 @@ void canOpenInit(void)
 		}
 
     // Speed Mode Var
-    for (cnt = 0;cnt<SPEEDSETUPLENG; cnt++) {
+    for (cnt =0;cnt<SPEEDSETUPLENG; cnt++) {
       canopen_send_sdo(message_speedMode_sdo[cnt]);
       closeSDOtransfer(&masterObjdict_Data, can_var.slaveCANID, SDO_CLIENT);
       HAL_Delay(20);     
@@ -736,11 +780,11 @@ uint8_t canOpenSDOSendWithDelay(CO_Data *d, uint8_t slaveNodeId, uint16_t sdoInd
 uint8_t canopenDriverSpeedGive(short speedCmdRpm)
 {
     uint8_t ret =0;
-    if ((motionStatus.g_curOperationMode == 0x03) && (motionStatus.g_DS402_SMStatus == 4)) {
+    if ((motionStatus.g_curOperationMode == RECVSPEEDMODE) && (motionStatus.g_DS402_SMStatus == 4)) {
         if ((speedCmdRpm <= MAX_ALLOWED_SPEED_RPM) && (speedCmdRpm >= MIN_ALLOWED_SPEED_RPM)) {
             Controlword = 0x0F;
             Target_velocity = speedCmdRpm *MOTOR_ENCODER_IDENTIFYWIDTH /60; // update speed instruction pulse per second
-            Modes_of_operation = 0x03; // 速度模式
+            Modes_of_operation = RECVSPEEDMODE; // 速度模式
             sendOnePDOevent(&masterObjdict_Data, 1);  // TPDO2
             printf("UTC: %d ms CAS: %d ms, ETH update Speed :%d rpm\n\r", gTime.g_time_ms, gTime.l_time_ms, speedCmdRpm);
         } else {
@@ -752,6 +796,8 @@ uint8_t canopenDriverSpeedGive(short speedCmdRpm)
     }
     return ret;
 }
+
+#endif
 
 uint8_t DACDriverSpeedGive(short speedCmdRpm)
 {

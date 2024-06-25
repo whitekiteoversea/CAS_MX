@@ -276,7 +276,6 @@ void HAL_BISSC_Setup(void)
 	uint8_t rData = 0;
 	uint8_t curStatus = 0x00;
 	
-	HAL_Delay(500); // wait for sensor initial >350ms
 	mb4_read_status(&curStatus, 1);
 	printf("BISS-C: 0xF0 Status is 0x%x \n\r", curStatus);
 	
@@ -284,11 +283,11 @@ void HAL_BISSC_Setup(void)
 	mb4_write_registers(0xED, txData, 1); //CFGCH1=0x01 (BiSS C)
 
 	txData[0] = 0x09; 
-	mb4_write_registers(0xF5, txData, 1); //CFGIF=0x02  (RS422) Internal Clock Enabled
+	mb4_write_registers(0xF5, txData, 1); //CFGIF=0x02  (RS422) Internal Clock Enabled CLKINI = 1
 
 	//Single-Cycle Data: Data channel configuration
-	txData[0] = 0x61;
-	mb4_write_registers(0xC0, txData, 1); //ENSCD1=1, SCDLEN1=0x21 (26+2+6 bit)  从机0协议配置
+	txData[0] = 0x5B;
+	mb4_write_registers(0xC0, txData, 1); //ENSCD1=1, SCDLEN1=0x21 (26+2 bit)  从机0协议配置
 
 	txData[0] = 0x06;
 	mb4_write_registers(0xC1, txData, 1); //SELCRCS1=0x00, SCRCLEN1=0x06 (6-bit CRC polynomial 0x43)
@@ -319,9 +318,10 @@ void HAL_BISSC_Setup(void)
 }
 
 // 获取传感器过程数据
-void HAL_SG_SenSorAcquire(uint8_t *SG_Data) 
+uint8_t HAL_SG_SenSorAcquire(uint8_t *SG_Data) 
 {
 	uint8_t cnt = 0;
+	uint8_t ret =0;
 	uint8_t curStatus = 0;
 	uint8_t TxData[8] = {0};
 	uint8_t RxData[8] = {0};
@@ -333,8 +333,9 @@ void HAL_SG_SenSorAcquire(uint8_t *SG_Data)
 	printf("BISS-C: Read 0xF0 Value: %x \n\r", curStatus);
 
 	//Read Status Information register 0xF0, wait for end of transmission EOT=1
-	while (( StatusInformationF0 & 0x01) == 0) {
-		mb4_read_registers(0xF0, &StatusInformationF0, 1);
+	mb4_read_registers(0xF0, &StatusInformationF0, 1);
+	if (( StatusInformationF0 & 0x01) == 0) {
+		goto __end_label; // 状态不对则跳过本次获取
 	}
 
 	//Read and reset SVALID flags in Status Information register 0xF1
@@ -362,6 +363,8 @@ void HAL_SG_SenSorAcquire(uint8_t *SG_Data)
 		printf("Data Not Ready! 0xF0 Status is 0x%x \n\r", StatusInformationF0);
 	}
 	//If Status not ok, check data channel configuration 
+__end_label:
+		return ret;
 }
 
 void HAL_CTLRegsWrite_Slave0(uint8_t reg_addr, uint8_t reg_data)

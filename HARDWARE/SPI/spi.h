@@ -116,22 +116,10 @@ uint8_t BISSC_F0Status_Display(uint8_t status);
 #ifdef HAL_BISSC_ENABLE
 
 /* SPI2 BISS-C相关函数*/
-
-// HAL_StatusTypeDef HAL_SPI2_WriteCmd(uint8_t cmd, uint8_t addr, uint8_t data);
-// HAL_StatusTypeDef HAL_SPI2_ReadCmd(uint8_t cmd, uint8_t addr);
-
 void HAL_BISSC_Setup(void);
-void HAL_SG_SenSorAcquire(uint8_t *SG_Data); 
+uint8_t HAL_SG_SenSorAcquire(uint8_t *SG_Data); 
 void HAL_CTLRegsWrite_Slave0(uint8_t reg_addr, uint8_t reg_data); // 写寄存器
 uint8_t HAL_CTLRegs_Read_Slave0(uint8_t readAddr);
-
-// 为适配原厂代码 二次封装对寄存器的读写命令，省去cmd参数
-// HAL_StatusTypeDef WriteMaster(uint8_t addr, uint8_t data);
-// HAL_StatusTypeDef ReadMaster(uint8_t addr);
-
-// HAL_StatusTypeDef HAL_SPI2_BISSC_Config(void);
-// HAL_StatusTypeDef HAL_SPI2_BISSC_RegsConfigRead(void);
-// HAL_StatusTypeDef HAL_SPI2_BISSC_RegsConfigWrite(void);
 
 #endif
 

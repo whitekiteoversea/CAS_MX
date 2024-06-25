@@ -261,8 +261,7 @@ typedef struct
 #pragma pack()
 
 // 速度模式下单机控制结构体，对应报文类别为
-typedef struct
-{
+typedef struct {
     uint32_t EHeader;        //Ethernet帧头
     uint32_t ENum;           //Ethernet帧号
     uint32_t ELen;           //Ethernet长度 Byte
@@ -270,6 +269,21 @@ typedef struct
     CANFrame_STD canpack;
     uint32_t FrameTailer;
 }EthControlFrameSingleCAS;
+
+typedef struct {
+    uint32_t EHeader;        // Ethernet帧头
+    uint32_t ENum;           // Ethernet帧号
+    uint32_t ELen;           // Ethernet长度 Byte
+    uint8_t EType;           // 报文类型
+    uint8_t CASNodeID;       // 数据来源
+    uint8_t curWorkMode;     // 当前工作模式
+    uint16_t statusWord;     // 状态字
+    uint32_t localTimeMS;    // 上报时间 
+    uint32_t motorPosiUM;    // 当前绝对位置
+    short motorRealTimeTorqueNM; //实时转矩
+    short motorAveragePhaseAmp;  //平均相电流
+    uint32_t FrameTailer;
+} CASREPORTFRAME;
 
 // extern Var
 extern GLOBALTIME gTime;

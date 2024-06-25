@@ -1215,6 +1215,7 @@ printf("************NEW BOOT!******************\n\r");
   // 4. BISS-C Sensor Data Acquire (pass)
 
 #if HAL_BISSC_ENABLE
+  HAL_Delay(600);
 	HAL_BISSC_Setup();
 #endif
 
@@ -1357,7 +1358,6 @@ void userAppLoop(void)
   // deal with AMG2000 RS485 MSG
   if(modbusPosi.g_RTU_RcvFinishedflag == 1) {
     g_RS485_recvDataDeal();
-    // printf("%d ms RS485: cur abs posi %d um \n\r", modbusPosi.l_recv_abs_posi_time, modbusPosi.latest_abs_posi_um);
     modbusPosi.g_RTU_RcvFinishedflag = 0;
   }  
   UART_Byte_Receive(&huart6);

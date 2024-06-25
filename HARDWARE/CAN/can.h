@@ -20,6 +20,7 @@
 
 #define CANSpeedCmd                     (1)
 #define CANSpeedPreCmd                  (2)
+#define CANOperationModeCmd             (3)
 #define CANTimeSyncCmd                  (4)
 #define CANPisiAcquireCmd               (5)
 #define CANTimeSyncErrorCalCmd          (6)
