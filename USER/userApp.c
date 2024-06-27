@@ -430,57 +430,52 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
    static unsigned int heartbeatChangedMs = 0; 
    unsigned int cmpVal = POSI_CHECK_PERIOD_1MS;
+
 	 if (htim == &htim3) {
-		 #if HAL_W5500_ENABLE
-				tim3_timeBaseCnt_10US++;
-		 #endif
+      #if HAL_W5500_ENABLE
+          tim3_timeBaseCnt_10US++;
+      #endif
       // 10us timecnt
       if (gTime.l_time_cnt_10us < 360000000 ) { // 60min reset local timing
-        gTime.l_time_cnt_10us++;
+          gTime.l_time_cnt_10us++;
       } else {
-        gTime.l_time_cnt_10us = 0;
-        gTime.l_time_ms = 0;
-        gStatus.l_time_overflow++;
+          gTime.l_time_cnt_10us = 0;
+          gTime.l_time_ms = 0;
+          gStatus.l_time_overflow++;
       }
       // 1ms timecnt
-      if (gTime.l_time_cnt_10us % 100 == 0 && (gTime.l_time_cnt_10us > 0)) {
-        gTime.l_time_ms++;
-				// 20ms  posi acquire
-				if (gStatus.l_rs485_getposi_cnt >= 20) {
-					gStatus.l_rs485_getposiEnable = 1;
-					gStatus.l_rs485_getposi_cnt = 0;
-				}
-				// NEW RTU Frame recv Start
-				if (modbusPosi.g_RTU_Startflag == 1) {
-					modbusPosi.g_10ms_Cnt++;
-					cmpVal = MODBUS_INTERNAL_1MS;
-					//消息间隔超过10ms
-					if (modbusPosi.g_10ms_Cnt >= 10) {
-						 modbusPosi.g_10ms_Cnt = 0;
-						 modbusPosi.g_RTU_Startflag = 0;
-					
-						//RTU接收完成标识
-						 modbusPosi.g_RTU_RcvFinishedflag = 1;
-					}
-				}
-				gStatus.l_rs485_getposi_cnt++; // 1ms ++
-      }
+        if (gTime.l_time_cnt_10us % 100 == 0 && (gTime.l_time_cnt_10us > 0)) {
+            gTime.l_time_ms++;
+            gStatus.l_bissc_sensor_acquire = 1;
+            // 20ms  posi acquire
+            if (gStatus.l_rs485_getposi_cnt >= 20) {
+                gStatus.l_rs485_getposiEnable = 1;
+                gStatus.l_rs485_getposi_cnt = 0;
+            }
+            // NEW RTU Frame recv Start
+            if (modbusPosi.g_RTU_Startflag == 1) {
+                modbusPosi.g_10ms_Cnt++;
+                cmpVal = MODBUS_INTERNAL_1MS;
+                //消息间隔超过10ms
+                if (modbusPosi.g_10ms_Cnt >= 10) {
+                    modbusPosi.g_10ms_Cnt = 0;
+                    modbusPosi.g_RTU_Startflag = 0;
+                    modbusPosi.g_RTU_RcvFinishedflag = 1;
+                }
+            }
+            gStatus.l_rs485_getposi_cnt++; // 1ms ++
+        }
 
-      // 1s update local time and Sensor
-      if ((gTime.l_time_ms % 1000 == 0) && ((gTime.l_time_ms > 0)) && (0 != gTime.l_time_ms-heartbeatChangedMs)) {
-        gStatus.l_time_heartbeat = 1;
-        heartbeatChangedMs = gTime.l_time_ms;
-      }
-      
-      // 10s test
-      if (gTime.l_time_cnt_10us % 1000000 == 0) {
-        gStatus.l_bissc_sensor_acquire = 1;
-      }
+         // 1s update local time and Sensor
+        if ((gTime.l_time_ms % 1000 == 0) && ((gTime.l_time_ms > 0)) && (0 != gTime.l_time_ms-heartbeatChangedMs)) {
+            gStatus.l_time_heartbeat = 1;
+            heartbeatChangedMs = gTime.l_time_ms;
+        }
     } else if (htim == &htim4) {
-      tim4_timeBaseCnt_1MS++;
-      TimeDispatch(); // canfestival software timer 
+        tim4_timeBaseCnt_1MS++;
+        TimeDispatch(); // canfestival software timer 
     } else {
-      printf("%d ms Unknown TIMER Interupt! \r\n", gTime.l_time_ms);
+        printf("%d ms Unknown TIMER Interupt! \r\n", gTime.l_time_ms);
     }
 }
 
@@ -815,6 +810,88 @@ uint8_t canopenDriverSpeedGive(short speedCmdRpm)
     }
     return ret;
 }
+
+uint8_t canopenStateMachine(void)
+{
+    uint8_t ret = 0;
+
+    if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x0250) {
+      Controlword = 0x06;
+      Target_velocity = 0x00;
+      Modes_of_operation = motionStatus.targetWorkmode;
+      sendOnePDOevent(&masterObjdict_Data, 0);
+      motionStatus.g_DS402_SMStatus = 1;
+      printf ("CANOpen: Status 1  servo No Fault plz send Controlword 0x06\r\n");
+    }
+
+    if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x0231) {
+      Controlword = 0x07;
+      Target_velocity = 0x00;
+      Modes_of_operation = motionStatus.targetWorkmode;
+      sendOnePDOevent(&masterObjdict_Data, 0);
+      motionStatus.g_DS402_SMStatus = 2;
+      printf ("CANOpen: Status 2 Servo Ready, plz send Controlword 0x07\r\n");
+    }
+
+    if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x0233) {
+      Controlword = 0x0F;
+      Target_velocity = 0x00;
+      Modes_of_operation = motionStatus.targetWorkmode;
+      sendOnePDOevent(&masterObjdict_Data, 0);
+			motionStatus.g_DS402_SMStatus = 3;
+      printf ("CANOpen: Status 3 Waiting For Enable Servo, plz send Controlword 0x0F \r\n");
+    }
+
+    if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x0237) {
+      motionStatus.g_DS402_SMStatus = 4;
+      printf ("CANOpen: Status 4 Servo RUN \r\n");
+    } 
+
+		if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x0217){
+      motionStatus.g_DS402_SMStatus = 0; 
+      printf ("CANOpen: Status 0 QuickStop \r\n");   
+    }
+
+		if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x021F){
+      motionStatus.g_DS402_SMStatus = 5; 
+      printf ("CANOpen: Status 5 Now in Fault! Plz check ERRORCODE \r\n");   
+    } 
+
+    return ret;
+}
+
+void canopenStatusMonitor(void) 
+{
+  		uint8_t initCMDType = 0;
+    
+      motionStatus.g_curOperationMode = Modes_of_operation_display; 
+      motionStatus.motorStatusWord.Value = Statusword;
+      initCMDType = ((motionStatus.g_curOperationMode == 0x03) ? 1 : 0);
+      if (initCMDType == 0x01) {// speedMode
+          motionStatus.motorCMD_speed.Value = Controlword;
+          printf("CANOpen: SlaveNode OperationMode is 0x%x, Controlword is 0x%x, Statusword is 0x%x  \r\n", motionStatus.g_curOperationMode, \
+                                                                                                    motionStatus.motorCMD_speed, \
+                                                                                                    motionStatus.motorStatusWord.Value);
+      } else {
+          printf ("CANOpen DS402: OperationMode is Not SpeedMode! \r\n");
+          printf("CANOpen: SlaveNode OperationMode is 0x%x, Statusword is 0x%x \r\n", motionStatus.g_curOperationMode, \
+                                                                                        motionStatus.motorStatusWord.Value);
+      } 
+      // 这里得人为限制速度最大值，避免计算超限
+      motionStatus.g_Speed = (Velocity_actual_value *60 / MOTOR_ENCODER_IDENTIFYWIDTH); //rpm
+      // when motor is still, sensor will genarate Wrong Data of Speed 
+      if ( motionStatus.g_Speed > MAX_ALLOWED_SPEED_RPM || motionStatus.g_Speed < MIN_ALLOWED_SPEED_RPM) {
+            motionStatus.g_Speed = 0;
+      }
+      motionStatus.g_realTimeTorque = ((float)Torque_Actual_Value *DesignedTorqueNM)/1000.0;
+      printf("%d ms: TPDO2: Current Work Operation is 0x%d, realTimefilterSpeed is : %d rpm, TargetSpeed 0x60FF is %d rpm, realTimeTorque is %fN.m \n\r", \
+                                                                                            gTime.l_time_ms,  \
+                                                                                            motionStatus.g_curOperationMode, \
+                                                                                            motionStatus.g_Speed, \
+                                                                                            (Target_velocity*MOTOR_ENCODER_IDENTIFYWIDTH/60),\
+                                                                                            motionStatus.g_realTimeTorque);
+}
+
 
 #endif
 

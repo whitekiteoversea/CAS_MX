@@ -45,13 +45,12 @@
 
 
 // function Switch
-#define HAL_W5500_ENABLE         			 (1)
-#define HAL_CANOPEN_ENABLE                   (1)
-#define CAN2_StateMachine_Trans_ENABLE       (1)
-#define CANOPEN_NONBLOACK_DELAY_ENABLE       (1)
-#define HAL_SDRAM_SELFTEST       			 (1)
+#define HAL_W5500_ENABLE         			 (0)
+#define HAL_CANOPEN_ENABLE                   (0)
+#define CANOPEN_NONBLOACK_DELAY_ENABLE       (0)
+#define HAL_SDRAM_SELFTEST       			 (0)
 #define HAL_DAC_ENABLE           			 (0)
-#define HAL_EEPROM_ENABLE        			 (1)
+#define HAL_EEPROM_ENABLE        			 (0)
 #define HAL_LCD_ENABLE                       (0)  // CANOpen与LCD相冲
 
 extern uint8_t gDATABUF[DATA_BUF_SIZE];  
@@ -86,6 +85,8 @@ uint8_t tim4_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt);
 // SpeedSend ToolBox function
 uint8_t canopenDriverSpeedGive(short speedCmdRpm);
 uint8_t DACDriverSpeedGive(short speedCmdRpm);
+uint8_t canopenStateMachine(void);
+void canopenStatusMonitor(void);
 
 #endif
 

@@ -17,8 +17,8 @@
 #define spdDownLimitVol (32820)
 #define spdUpLimitVol   (43742)
 
-#define HAL_ENABLE          (0)  
-#define HAL_BISSC_ENABLE    (0)
+#define HAL_DAC_ENABLE      (0)  
+#define HAL_BISSC_ENABLE    (1)
 
 // SPI1 DAC8563 GPIO Operations
 #define	GPIO_SPI_DAC8563_SYNC_SET  	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET)
@@ -83,9 +83,9 @@ enum BISSC_CMD {
 
 #endif
 
-void SPI5_Init(void);			 //��ʼ��SPI��
-void SPI5_SetSpeed(u8 SpeedSet); //����SPI�ٶ�   
-u8 SPI5_ReadWriteByte(u8 TxData);//SPI���߶�дһ���ֽ�
+void SPI5_Init(void);			 
+void SPI5_SetSpeed(u8 SpeedSet);   
+u8 SPI5_ReadWriteByte(u8 TxData);
 
 /* SPI1 DAC8563 相关函数*/
 void SPI1_SetSpeed(u8 SpeedSet);
@@ -117,8 +117,8 @@ uint8_t BISSC_F0Status_Display(uint8_t status);
 
 /* SPI2 BISS-C相关函数*/
 void HAL_BISSC_Setup(void);
-uint8_t HAL_SG_SenSorAcquire(uint8_t *SG_Data); 
-void HAL_CTLRegsWrite_Slave0(uint8_t reg_addr, uint8_t reg_data); // 写寄存器
+uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data); 
+void HAL_CTLRegsWrite_Slave0(uint8_t reg_addr, uint8_t reg_data); 
 uint8_t HAL_CTLRegs_Read_Slave0(uint8_t readAddr);
 
 #endif
