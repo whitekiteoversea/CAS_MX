@@ -98,6 +98,7 @@ static void MX_NVIC_Init(void);
 
 void bspInit(void);
 void userAppLoop(void);
+void BISSC_ReStore(uint8_t *errCnt);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -1216,6 +1217,7 @@ printf("************NEW BOOT!******************\n\r");
 #if HAL_BISSC_ENABLE
   HAL_Delay(500);
 	HAL_BISSC_Setup();
+  gStatus.l_bissc_sw = 1; // 开启BISS-C轮询数据获取
 #endif
 
   // 5. Motor Torque Controller (pass)
@@ -1254,6 +1256,7 @@ void userAppLoop(void)
 {
     uint32_t sensorData = 0;
     static uint32_t sensorCnt = 0;
+    static uint8_t errorCnt = 0;  // 决定何时重置SPI1
     uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
 
     if (gStatus.l_time_heartbeat == 1) {
@@ -1272,17 +1275,23 @@ void userAppLoop(void)
         if (gStatus.l_bissc_sensor_acquire == 1) { // 左侧电机
             HAL_SG_SenSorAcquire(&sensorData);
             if (can_var.CASNodeID == 0x01) {
-              if ((sensorData >= POSIRANGESTART_LEFT) && (sensorData <= POSIRANGEEND_LEFT)) {
-                  printf("BISS-C: %d ms %d Frame Acquire PosiData %d um \n\r", gTime.l_time_ms, sensorCnt, sensorData);
-              } else {
-                  // HAL_BISSC_reStartAGS();
-                  printf("BISS-C: %d ms %d Frame Acquire PosiData Error! \n\r", gTime.l_time_ms, sensorCnt);
-              }
+                if ((sensorData >= POSIRANGESTART_LEFT) && (sensorData <= POSIRANGEEND_LEFT)) {
+                    printf("BISS-C: %d ms %d Frame Acquire PosiData %d um \n\r", gTime.l_time_ms, sensorCnt, sensorData);
+                } else {
+                    errorCnt++;
+                    printf ("BISS-C: Before ReStore is %d ms \r\n", gTime.l_time_ms);
+                    BISSC_ReStore(&errorCnt); 
+                    printf ("BISS-C: After ReStore is %d ms \r\n", gTime.l_time_ms);
+                    printf("BISS-C: %d ms %d Frame Acquire PosiData Error! \n\r", gTime.l_time_ms, sensorCnt);
+                }
             } else if (can_var.CASNodeID == 0x02) { //右侧电机
-              if ((sensorData >= POSIRANGESTART_RIGHT) && (sensorData <= POSIRANGEEND_RIGHT)) {
-                  // HAL_BISSC_reStartAGS();
+                if ((sensorData >= POSIRANGESTART_RIGHT) && (sensorData <= POSIRANGEEND_RIGHT)) {
                   printf("BISS-C: %d ms %d Frame Acquire PosiData %d um \n\r", gTime.l_time_ms, sensorCnt, sensorData);
               } else {
+                  errorCnt++;
+                  printf ("BISS-C: Before ReStore is %d ms \r\n", gTime.l_time_ms);
+                  BISSC_ReStore(&errorCnt); 
+                  printf ("BISS-C: After ReStore is %d ms \r\n", gTime.l_time_ms);
                   printf("BISS-C: %d ms %d Frame Acquire PosiData Error! \n\r", gTime.l_time_ms, sensorCnt);
               }
             } else if (can_var.CASNodeID == 0x03) {  //横梁电机
@@ -1318,6 +1327,20 @@ void userAppLoop(void)
       w5500_stateMachineTask();
     #endif
 }
+ // BISSC错误恢复
+void BISSC_ReStore(uint8_t *errCnt) {
+    if (*errCnt > 200) { // 连续 200ms无法获取到有效位置数据
+        gStatus.l_bissc_sw = 0;
+        HAL_SPI_DeInit(&hspi1); // 排除是SPI1挂了还是AMG2000传来的数据确实有问题
+        HAL_Delay_us(100);
+        HAL_SPI_Init(&hspi1);
+        HAL_BISSC_Setup();
+        gStatus.l_bissc_sw = 1; // 开启BISS-C轮询数据获取
+        *errCnt=0;
+      }
+}
+
+
 /* USER CODE END 4 */
 
 /**

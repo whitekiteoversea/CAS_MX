@@ -127,16 +127,6 @@ struct {
 uint16_t Value; 
 } CONTROL_WORD_POSITION;
 
-// typedef union {
-// typedef struct {
-//   uint32_t 
-
-
-// } di_status;
-// uint32_t Value;
-// } DI_STATUS;
-
-
 typedef struct {
   volatile unsigned char comRecvCnt;        // Single time consecutive receive cnt
   volatile uint8_t g_RTU_Startflag;         // RTU 10ms计时开始
@@ -165,6 +155,8 @@ typedef struct {
   // Modbus RTU
   volatile unsigned char l_rs485_getposi_cnt;   // 控制获取最新位置的频率计数
   volatile unsigned char l_rs485_getposiEnable;  // 触发定时获取最新位置  
+
+  volatile unsigned char l_bissc_sw;  // BISSC轮询开关 1默认开启 0暂时关掉
 } GLOBALSTATUS;
 
 // ETH Mode Parameter

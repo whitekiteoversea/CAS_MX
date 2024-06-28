@@ -282,10 +282,8 @@ void HAL_BISSC_Setup(void)
 	
 	txData[0] = 0x01;
 	mb4_write_registers(0xED, txData, 1); //CFGCH1=0x01 (BiSS C)
-	HAL_Delay_us(40);
 	txData[0] = 0x09; 
 	mb4_write_registers(0xF5, txData, 1); //CFGIF=0x02  (RS422) + internal clock Source CLKIN =1
-	HAL_Delay_us(40);
 
 #if BISS_ENABLE_CRC
 	//Single-Cycle Data: Data channel configuration
@@ -305,7 +303,6 @@ void HAL_BISSC_Setup(void)
 	//Single-Cycle Data: Data channel configuration
 	txData[0] = 0x61;
 	mb4_write_registers(0xC0, txData, 1); // bit6:ENSCD1=1, bit5-0：SCD data len 26+2+6= 34, SCDLEN = 34-1 = 0x21
-	HAL_Delay_us(40);
 	// disable CRC
 	txData[0] = 0x00;
 	mb4_write_registers(0xC1, txData, 1); //SELCRCS1=0x00, SCRCLEN1=0x00 
@@ -314,31 +311,30 @@ void HAL_BISSC_Setup(void)
 	//Frame Control: Master configuration
 	txData[0] = 0x4;
 	mb4_write_registers(0xE6, txData, 1); //FREQS=0x04 (2MHz) SPI Bandwidth
-	HAL_Delay_us(40);
-	//txData[0] = 0x63; // 10KHz
 	txData[0] = 0x63;
 	mb4_write_registers(0xE8, txData, 1); //FREQAGS=10KHz 控制RS422的最小循环周期 
-	HAL_Delay_us(40);
 
 	for (readAddr = 0xC0; readAddr < 0xFC; readAddr++) {
 		mb4_read_registers(readAddr, &rData, 1);
 		printf("BISS-C: readAddr 0x%x is 0x%x \r\n", readAddr, rData);
-		HAL_Delay_us(40);
 	}
+
+	// 先BREAK
+	txData[0] = 0x80;
+	mb4_write_registers(0xF4, txData, 1);
+	HAL_Delay_us(100);
 
 	// INIT
 	txData[0] = 0x10;
 	mb4_write_registers(0xF4, txData, 1);
-	HAL_Delay_us(200);
+	HAL_Delay_us(100);
 
 	//Reset SVALID flags
 	txData[0] = 0x00;
 	mb4_write_registers(0xF1, txData, 1);
-	HAL_Delay_us(40);
 	//Start AGS
 	txData[0] = 0x01;
 	mb4_write_registers(0xF4, txData, 1);
-	HAL_Delay_us(40);
 }
 
 void HAL_BISSC_reStartAGS(void)

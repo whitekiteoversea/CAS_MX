@@ -446,7 +446,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
       // 1ms timecnt
         if (gTime.l_time_cnt_10us % 100 == 0 && (gTime.l_time_cnt_10us > 0)) {
             gTime.l_time_ms++;
-            gStatus.l_bissc_sensor_acquire = 1;
+
+            if (gStatus.l_bissc_sw == 1) {
+               gStatus.l_bissc_sensor_acquire = 1;
+            }
             // 20ms  posi acquire
             if (gStatus.l_rs485_getposi_cnt >= 20) {
                 gStatus.l_rs485_getposiEnable = 1;

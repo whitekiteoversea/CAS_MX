@@ -43,6 +43,7 @@
         "lcd_init.h": "c",
         "lcd.h": "c",
         "atomic": "c",
-        "memory": "c"
+        "memory": "c",
+        "mb4_1sf_driver.h": "c"
     }
 }
