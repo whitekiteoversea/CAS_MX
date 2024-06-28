@@ -1253,6 +1253,7 @@ printf("************NEW BOOT!******************\n\r");
 void userAppLoop(void) 
 {
     uint32_t sensorData = 0;
+    static uint32_t sensorCnt = 0;
     uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
 
     if (gStatus.l_time_heartbeat == 1) {
@@ -1268,9 +1269,28 @@ void userAppLoop(void)
 
     // BiSS-C
     #if HAL_BISSC_ENABLE
-        if (gStatus.l_bissc_sensor_acquire == 1) {
+        if (gStatus.l_bissc_sensor_acquire == 1) { // 左侧电机
             HAL_SG_SenSorAcquire(&sensorData);
-            printf("BISS-C: %d ms Acquire PosiData %d um \n\r", gTime.g_time_ms, sensorData);
+            if (can_var.CASNodeID == 0x01) {
+              if ((sensorData >= POSIRANGESTART_LEFT) && (sensorData <= POSIRANGEEND_LEFT)) {
+                  printf("BISS-C: %d ms %d Frame Acquire PosiData %d um \n\r", gTime.l_time_ms, sensorCnt, sensorData);
+              } else {
+                  // HAL_BISSC_reStartAGS();
+                  printf("BISS-C: %d ms %d Frame Acquire PosiData Error! \n\r", gTime.l_time_ms, sensorCnt);
+              }
+            } else if (can_var.CASNodeID == 0x02) { //右侧电机
+              if ((sensorData >= POSIRANGESTART_RIGHT) && (sensorData <= POSIRANGEEND_RIGHT)) {
+                  // HAL_BISSC_reStartAGS();
+                  printf("BISS-C: %d ms %d Frame Acquire PosiData %d um \n\r", gTime.l_time_ms, sensorCnt, sensorData);
+              } else {
+                  printf("BISS-C: %d ms %d Frame Acquire PosiData Error! \n\r", gTime.l_time_ms, sensorCnt);
+              }
+            } else if (can_var.CASNodeID == 0x03) {  //横梁电机
+              ; // idle
+            } else {
+              ; // idle
+            }
+            sensorCnt++;
             gStatus.l_bissc_sensor_acquire = 0;
         }
     #else

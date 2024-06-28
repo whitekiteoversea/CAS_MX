@@ -2,11 +2,6 @@
 #include "sys.h"
 #include "usart.h"
 
-#ifdef HAL_BISSC_ENABLE
-	static void HAL_BISSC_reStartAGS(void);	
-#endif
-
-
 #if HAL_DAC_ENABLE
 
 /*DAC8653
@@ -52,7 +47,7 @@ void DAC8563_Config(void)
 		DAC8563_cmd_Write(3, 0, spdDownLimitVol);
 		HAL_Delay(50);
 
-		// ʹ���ڲ��ο�����λ2��DAC������=2  
+		// 
 		DAC8563_cmd_Write(7, 0, 1);
 		HAL_Delay(20);
 }
@@ -346,7 +341,7 @@ void HAL_BISSC_Setup(void)
 	HAL_Delay_us(40);
 }
 
-static void HAL_BISSC_reStartAGS(void)
+void HAL_BISSC_reStartAGS(void)
 {
 	uint8_t txData= 0;
 	txData = 0x80;
@@ -361,19 +356,12 @@ static void HAL_BISSC_reStartAGS(void)
 uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data) 
 {
 	uint8_t cnt = 0;
-	uint8_t curStatus = 0;
 	uint8_t TxData[8] = {0};
-	uint8_t RxData[8] = {0};
 	uint8_t StatusInformationF0 = 0x00;
 	uint8_t StatusInformationF1 = 0x00;
 	uint8_t SG_Data_Tmp[5];
 	uint8_t ret = 0;
-	uint8_t rData = 0;
 	uint64_t SGGData = 0;
-
-	uint8_t readAddr = 0xC0;
-	printf("BISS-C:********************************** \r\n");
-	printf("BISS-C: NEW SGDATA REQUEIRE! \r\n");
 
 	//Read Status Information register 0xF0, wait for end of transmission EOT=1
 	mb4_read_status(&StatusInformationF0, 1);
@@ -383,7 +371,9 @@ uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data)
 	// }
 
 	mb4_read_registers(0xF1, &StatusInformationF1, 1);
-	printf("BISS-C: 0xF0 0xF1 Status are 0x%x, 0x%x\n\r", StatusInformationF0, StatusInformationF1);
+	if (StatusInformationF0 != 0xFB){
+		printf("BISS-C: 0xF0 0xF1 Status are 0x%x, 0x%x\n\r", StatusInformationF0, StatusInformationF1);
+	}
 
 	if ((StatusInformationF0 & 0x70) != 0x70 ) { // SCDERR OR AGSERR
 		printf("BISS-C: Step 2 ERR Occur! nAGSERR is %d nSCDERR is %d, reStart AGS! \n\r", ((StatusInformationF0 & 0x40) >> 6), ((StatusInformationF0 & 0x10) >> 4));
@@ -397,7 +387,7 @@ uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data)
 		HAL_BISSC_reStartAGS();
 		goto __end;
 	}
-	printf("BISS-C:  Step 4 Read 0xF1 Value: %x \n\r", StatusInformationF1);
+	// printf("BISS-C:  Step 4 Read 0xF1 Value: %x \n\r", StatusInformationF1);
 	
 	// NO Error Occur
 	if ((StatusInformationF0 & 0x70) == 0x70) {  
@@ -410,13 +400,12 @@ uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data)
 			}
 			for (cnt = 3;cnt>0; cnt--) {
 				SGGData += SG_Data_Tmp[cnt];
-				if (cnt >1){
+				if (cnt >1) {
 					SGGData <<= 8;
 				}
 			}
-			// 合规性校验
+			// 合规性校验在外面做
 			*pSG_Data = (uint32_t)SGGData;
-			// printf ("SG_Data is %d um \r\n", *pSG_Data);
 		}
 	} else {
 		printf("BISS-C: Step 7 ERROR Occur! Now StatusInformationF0 is 0x%x \n\r", StatusInformationF0);

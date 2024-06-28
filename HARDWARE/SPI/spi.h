@@ -20,6 +20,17 @@
 #define HAL_DAC_ENABLE      (0)  
 #define HAL_BISSC_ENABLE    (1)
 
+// 位置增长方向为向下
+#define POSIRANGESTART_LEFT (8697903)
+#define POSIRANGEEND_LEFT   (9203551)
+
+#define POSIRANGESTART_RIGHT (9259537)
+#define POSIRANGEEND_RIGHT   (9769376)
+
+// 从左向右递增
+#define POSIRANGESTART_XAXIS (0)
+#define POSIRANGEEND_XAXIS   (0)
+
 // SPI1 DAC8563 GPIO Operations
 #define	GPIO_SPI_DAC8563_SYNC_SET  	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET)
 #define	GPIO_SPI_DAC8563_SDIN_SET  	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_7, GPIO_PIN_SET)
@@ -120,6 +131,7 @@ void HAL_BISSC_Setup(void);
 uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data); 
 void HAL_CTLRegsWrite_Slave0(uint8_t reg_addr, uint8_t reg_data); 
 uint8_t HAL_CTLRegs_Read_Slave0(uint8_t readAddr);
+void HAL_BISSC_reStartAGS(void);
 
 #endif
 

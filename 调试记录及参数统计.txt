@@ -111,7 +111,7 @@ COB-ID+RTR+	Data(cmdByte+NodeID)
 
 
 右侧绝对量程： 9259537 um - 9769376 um
-左侧绝对量程：
+左侧绝对量程： 8697903 um - 9203551 um
 
 
 
