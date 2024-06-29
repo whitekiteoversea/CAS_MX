@@ -9,6 +9,10 @@ GLOBAL_CAN_VAR can_var;
 MODBUSVARS modbusPosi;
 SDRAM_STO_VAR sdram_var;
 
+
+uint16_t canopenStopMachineAndTransMode(uint8_t targetOperationMode);
+
+
 #if HAL_W5500_ENABLE
 uint8_t gDATABUF[DATA_BUF_SIZE];  
 uint8_t gSendBUF[DATA_BUF_SIZE];
@@ -86,78 +90,6 @@ void network_register(void)
     }
 }
 
-#endif
-
-
-#if HAL_CANOPEN_ENABLE
-
-#define PRESETSDOLENG    (37) // Slave SDO配置
-#define SPEEDSETUPLENG   (9) // 速度模式下参数设置
-
-// 这里的SDO都是配置参数，所以数据类型都是UNS8, 如果是SDO发送实时速度，才会变更为INT等
-uint16_t message_sdo[PRESETSDOLENG][10] = {
-    // RPDO1
-    {0x608, 0x23, 0x00, 0x14, 0x01, 0x08, 0x02, 0x00, 0x80, uint8}, // RPDO1 失能 类型：
-    {0x608, 0x2f, 0x00, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO1 传输类型 值变更触发
-    {0x608, 0x2f, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // 清除原有映射内容
-    {0x608, 0x23, 0x00, 0x16, 0x01, 0x10, 0x00, 0x40, 0x60, uint8}, // 映射为控制字 0x6040
-    //{0x608, 0x23, 0x00, 0x16, 0x02, 0x20, 0x00, 0xFF, 0x60, uint8}, // 映射为给定速度 0x60FF
-    {0x608, 0x23, 0x00, 0x16, 0x02, 0x08, 0x00, 0x60, 0x60, uint8}, // 映射为运动模式 0x6060  无法由PDO动态运行更改，只能初始化SDO设置   
-    {0x608, 0x2f, 0x00, 0x16, 0x00, 0x02, 0x00, 0x00, 0x00, uint8}, // 映射数量改为2
-    {0x608, 0x23, 0x00, 0x14, 0x01, 0x08, 0x02, 0x00, 0x00, uint8}, // RPDO1 使能
-    // RPDO2-4
-    {0x608, 0x23, 0x01, 0x14, 0x01, 0x08, 0x03, 0x00, 0x80, uint8}, // RPDO2 失能
-    {0x608, 0x2f, 0x01, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO2 传输类型
-    {0x608, 0x2f, 0x01, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // 清除原有映射内容
-    {0x608, 0x23, 0x01, 0x16, 0x01, 0x20, 0x00, 0xFF, 0x60, uint8}, // 映射为给定速度 0x60FF
-    {0x608, 0x2f, 0x01, 0x16, 0x00, 0x01, 0x00, 0x00, 0x00, uint8}, // 映射数量改为1
-    {0x608, 0x23, 0x01, 0x14, 0x01, 0x08, 0x03, 0x00, 0x00, uint8}, // RPDO2 使能
-
-    {0x608, 0x23, 0x02, 0x14, 0x01, 0x08, 0x04, 0x00, 0x80, uint8}, // RPDO3 失能
-    {0x608, 0x2f, 0x02, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO3 传输类型
-    {0x608, 0x23, 0x03, 0x14, 0x01, 0x08, 0x05, 0x00, 0x80, uint8}, // RPDO4 失能
-    {0x608, 0x2f, 0x03, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO4 传输类型
-    // TPDO1
-    {0x608, 0x23, 0x00, 0x18, 0x01, 0x88, 0x01, 0x00, 0x80, uint8}, // TPDO1 失能
-    {0x608, 0x2f, 0x00, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO1 传输类型 周期触发 100SYNC 1s
-    {0x608, 0x2f, 0x00, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // 清除原有映射内容
-    {0x608, 0x23, 0x00, 0x1A, 0x01, 0x10, 0x00, 0x41, 0x60, uint8}, // 映射为状态字 0x6041
-    {0x608, 0x23, 0x00, 0x1A, 0x02, 0x20, 0x00, 0x6C, 0x60, uint8}, // 映射为实时速度指令 0x606C
-    {0x608, 0x23, 0x00, 0x1A, 0x03, 0x10, 0x19, 0x0B, 0x20, uint8}, // 映射为相电流有效值 0x200B-19H
-    {0x608, 0x2f, 0x00, 0x1A, 0x00, 0x03, 0x00, 0x00, 0x00, uint8}, // 映射数量改为3
-    {0x608, 0x23, 0x00, 0x18, 0x01, 0x88, 0x01, 0x00, 0x00, uint8}, // TPDO1 使能      
-    // TDO2 
-    {0x608, 0x23, 0x01, 0x18, 0x01, 0x88, 0x02, 0x00, 0x80, uint8}, // TPDO2 失能
-    {0x608, 0x2f, 0x01, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO2 传输类型 周期触发 100 SYNC 1s
-    {0x608, 0x2f, 0x01, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // TPDO2 映射清零
-    {0x608, 0x23, 0x01, 0x1A, 0x01, 0x08, 0x00, 0x61, 0x60, uint8}, // 0x6061 当前运动模式显示 速度/位置/转矩
-    {0x608, 0x23, 0x01, 0x1A, 0x02, 0x20, 0x00, 0x64, 0x60, uint8}, // 0x6064 编码器绝对位置
-    {0x608, 0x23, 0x01, 0x1A, 0x03, 0x10, 0x00, 0x77, 0x60, uint8}, // 0x6077 实时转矩(1000为额定转矩)       
-    {0x608, 0x2f, 0x01, 0x1A, 0x00, 0x03, 0x00, 0x00, 0x00, uint8}, // TPDO2 映射为3
-    {0x608, 0x23, 0x01, 0x18, 0x01, 0x88, 0x02, 0x00, 0x00, uint8}, // TPDO2 使能
-
-    // TPDO3-4
-    {0x608, 0x23, 0x02, 0x18, 0x01, 0x88, 0x03, 0x00, 0x80, uint8}, // TPDO3 失能
-    {0x608, 0x2f, 0x02, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO3 传输类型 
-    {0x608, 0x23, 0x03, 0x18, 0x01, 0x88, 0x04, 0x00, 0x80, uint8}, // TPDO4 失能
-    {0x608, 0x2f, 0x03, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO4 传输类型 
-};
-
-uint16_t message_speedMode_sdo[SPEEDSETUPLENG][10] = {
-    {0x608, 0x23, 0xFF, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, int32},  // 给定速度为0
-    {0x608, 0x2f, 0x7E, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, uint8},  // 给定指令极性为向上 0
-    {0x608, 0x23, 0x83, 0x60, 0x00, 0xAA, 0xAA, 0x2A, 0x04, uint32},  // 轮廓加速度 500rpm/s 
-    {0x608, 0x23, 0x84, 0x60, 0x00, 0xAA, 0xAA, 0x2A, 0x04, uint32},  // 轮廓加速度 500rpm/s 
-    {0x608, 0x23, 0x85, 0x60, 0x00, 0xAA, 0xAA, 0xAA, 0x10, uint32},  // 快速停机 加速度2000rpm/s 
-    // H08.00 速度还带宽 100Hz 默认 40Hz
-    // 积分时间常数：9.89ms 默认：19.89ms
-    // 转矩指令滤波时间常数 默认 0.5ms
-    // 转矩限幅 60E0  60E1 默认是 350%额定值转矩
-    {0x608, 0x2f, 0x60, 0x60, 0x00, 0x03, 0x00, 0x00, 0x00, uint8},  // 速度模式 0x03
-    {0x608, 0x23, 0x7F, 0x60, 0x00, 0x0D, 0x8D, 0xA1, 0x08, uint32}, // 速度模式下最大运行速度 1000rpm
-    {0x608, 0x2b, 0x6F, 0x60, 0x00, 0x0A, 0x00, 0x00, 0x00, uint16}, // 零速检测速度阈值 10rpm
-    {0x608, 0x2b, 0x70, 0x60, 0x00, 0x64, 0x00, 0x00, 0x00, uint16} // 零速信号窗口时间(我认为是持续时间 100ms)
- };
 #endif
 
 void systemParaInit(void)
@@ -259,6 +191,7 @@ int32_t avgErrCollect(uint8_t node, int32_t sampleData)
 	return duss_result;
 }
 
+// CAN1接收处理
 void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
 {
     UNUSED(phcan);
@@ -285,16 +218,23 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
     tempFrameCnt |= CAN1_RecData[1];
     
     switch(CTRCode) {
-        case CANSpeedCmd:  // 0x01
-          curGivenSpeed = CAN1_RecData[4];
-          curGivenSpeed <<= 8;
-          curGivenSpeed |= CAN1_RecData[5];
-
-#if HAL_CANOPEN_ENABLE 
-        canopenDriverSpeedGive(curGivenSpeed);
-#else 
-        DACDriverSpeedGive(curGivenSpeed);
-#endif
+        case CANTargetCmd:  // 0x01
+            if (motionStatus.targetWorkmode == motionStatus.g_curOperationMode) {
+                if (motionStatus.targetWorkmode == RECVSPEEDMODE) {
+                    curGivenSpeed = CAN1_RecData[4];
+                    curGivenSpeed <<= 8;
+                    curGivenSpeed |= CAN1_RecData[5];
+                    #if HAL_CANOPEN_ENABLE 
+                            canopenDriverSpeedGive(curGivenSpeed);
+                    #else 
+                            DACDriverSpeedGive(curGivenSpeed);
+                    #endif               
+                } else if (motionStatus.targetWorkmode == TORQUEMODE) {
+                  ;
+                }
+            } else {
+                printf("CAN1: System OperationMode not eq real Motor Mode! \r\n");
+            }
         break;
         
 				// PreDictive Speed Mode 
@@ -401,7 +341,7 @@ int32_t avgErrUpdate(int32_t *sampleData)
 	return duss_result;
 }
 
-//SDRAM内存测试	    
+// SDRAM内存测试	    
 void fsmc_sdram_test()
 {  
 	u32 i=0;  	  
@@ -613,23 +553,37 @@ void w5500_stateMachineTask(void)
 uint8_t w5500_Decoder(EthControlFrameSingleCAS frame) 
 {
     uint8_t ret = 0;
-    short speedGivenRpm = 0;
+    short speedGivenRpm = 0;   // 单位rpm
+    short torqueGivenCmd = 0;  // 上面发下来的单位是0.001Nm
     CASREPORTFRAME statusPack;
+    uint8_t pcSetupOperationMode = 0;
 
     switch (frame.EType) {
-        case CANSpeedCmd: // 0x01
-            speedGivenRpm = frame.canpack.CANData[4];
-            speedGivenRpm <<= 8;
-            speedGivenRpm |= frame.canpack.CANData[5];
-            canopenDriverSpeedGive(speedGivenRpm);
+        case CANTargetCmd: // 0x01
+
+            if (motionStatus.targetWorkmode == motionStatus.g_curOperationMode) {
+                if (motionStatus.targetWorkmode == RECVSPEEDMODE) {
+                    speedGivenRpm = frame.canpack.CANData[4];
+                    speedGivenRpm <<= 8;
+                    speedGivenRpm |= frame.canpack.CANData[5];
+                    canopenDriverSpeedGive(speedGivenRpm);
+                } else if (motionStatus.targetWorkmode == TORQUEMODE) {
+                     torqueGivenCmd = frame.canpack.CANData[4];
+                    torqueGivenCmd <<= 8;
+                    torqueGivenCmd |= frame.canpack.CANData[5];
+                    canopenDriverTorqueGive(torqueGivenCmd);                 
+                }
+            } else {
+                printf("CAN1: System OperationMode not eq real Motor Mode! \r\n");
+            }
         break;
       
         case CANOperationModeCmd: // 0x3
-          if (motionStatus.g_curOperationMode != frame.canpack.CANData[4]) {
-            ;//电机快速停机，再切换工作模式后重启，安全系数待定
-          }
-          
-        break;
+            pcSetupOperationMode = frame.canpack.CANData[4];
+            if (motionStatus.g_curOperationMode != pcSetupOperationMode) {
+                canopenStopMachineAndTransMode(pcSetupOperationMode);
+            }
+          break;
 
         case CANTimeSyncCmd: // 0x04
           ;
@@ -697,6 +651,139 @@ define in objdictdef.h
 
 #if HAL_CANOPEN_ENABLE
 
+#define PRESETSDOLENG    (38) // Slave SDO配置
+#define SPEEDSETUPLENG   (9)  // 速度模式下参数设置
+#define TORQUESETUPLENG  (10) // 转矩模式下参数设置
+
+// 这里的SDO都是配置参数，所以数据类型都是UNS8, 如果是SDO发送实时速度，才会变更为INT等
+uint16_t message_sdo[PRESETSDOLENG][10] = {
+    // RPDO1
+    {0x608, 0x23, 0x00, 0x14, 0x01, 0x08, 0x02, 0x00, 0x80, uint8}, // RPDO1 失能 类型：
+    {0x608, 0x2f, 0x00, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO1 传输类型 值变更触发
+    {0x608, 0x2f, 0x00, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // 清除原有映射内容
+    {0x608, 0x23, 0x00, 0x16, 0x01, 0x10, 0x00, 0x40, 0x60, uint8}, // 映射为控制字 0x6040
+    {0x608, 0x23, 0x00, 0x16, 0x02, 0x08, 0x00, 0x60, 0x60, uint8}, // 映射为运动模式 0x6060  
+    {0x608, 0x2f, 0x00, 0x16, 0x00, 0x02, 0x00, 0x00, 0x00, uint8}, // 映射数量改为2
+    {0x608, 0x23, 0x00, 0x14, 0x01, 0x08, 0x02, 0x00, 0x00, uint8}, // RPDO1 使能
+    // RPDO2-4
+    {0x608, 0x23, 0x01, 0x14, 0x01, 0x08, 0x03, 0x00, 0x80, uint8}, // RPDO2 失能
+    {0x608, 0x2f, 0x01, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO2 传输类型
+    {0x608, 0x2f, 0x01, 0x16, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // 清除原有映射内容
+    {0x608, 0x23, 0x01, 0x16, 0x01, 0x20, 0x00, 0xFF, 0x60, uint8}, // 映射为给定速度 0x60FF
+    {0x608, 0x23, 0x01, 0x16, 0x02, 0x10, 0x00, 0x71, 0x60, uint8}, // 映射为给定转矩 0x6071
+    {0x608, 0x2f, 0x01, 0x16, 0x00, 0x02, 0x00, 0x00, 0x00, uint8}, // 映射数量改为2
+    {0x608, 0x23, 0x01, 0x14, 0x01, 0x08, 0x03, 0x00, 0x00, uint8}, // RPDO2 使能
+
+    {0x608, 0x23, 0x02, 0x14, 0x01, 0x08, 0x04, 0x00, 0x80, uint8}, // RPDO3 失能
+    {0x608, 0x2f, 0x02, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO3 传输类型
+    {0x608, 0x23, 0x03, 0x14, 0x01, 0x08, 0x05, 0x00, 0x80, uint8}, // RPDO4 失能
+    {0x608, 0x2f, 0x03, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO4 传输类型
+    // TPDO1
+    {0x608, 0x23, 0x00, 0x18, 0x01, 0x88, 0x01, 0x00, 0x80, uint8}, // TPDO1 失能
+    {0x608, 0x2f, 0x00, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO1 传输类型 周期触发 100SYNC 1s
+    {0x608, 0x2f, 0x00, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // 清除原有映射内容
+    {0x608, 0x23, 0x00, 0x1A, 0x01, 0x10, 0x00, 0x41, 0x60, uint8}, // 映射为状态字 0x6041
+    {0x608, 0x23, 0x00, 0x1A, 0x02, 0x20, 0x00, 0x6C, 0x60, uint8}, // 映射为实时速度指令 0x606C
+    {0x608, 0x23, 0x00, 0x1A, 0x03, 0x10, 0x19, 0x0B, 0x20, uint8}, // 映射为相电流有效值 0x200B-19H
+    {0x608, 0x2f, 0x00, 0x1A, 0x00, 0x03, 0x00, 0x00, 0x00, uint8}, // 映射数量改为3
+    {0x608, 0x23, 0x00, 0x18, 0x01, 0x88, 0x01, 0x00, 0x00, uint8}, // TPDO1 使能      
+    // TDO2 
+    {0x608, 0x23, 0x01, 0x18, 0x01, 0x88, 0x02, 0x00, 0x80, uint8}, // TPDO2 失能
+    {0x608, 0x2f, 0x01, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO2 传输类型 周期触发 100 SYNC 1s
+    {0x608, 0x2f, 0x01, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // TPDO2 映射清零
+    {0x608, 0x23, 0x01, 0x1A, 0x01, 0x08, 0x00, 0x61, 0x60, uint8}, // 0x6061 当前运动模式显示 速度/位置/转矩
+    {0x608, 0x23, 0x01, 0x1A, 0x02, 0x20, 0x00, 0x64, 0x60, uint8}, // 0x6064 编码器绝对位置
+    {0x608, 0x23, 0x01, 0x1A, 0x03, 0x10, 0x00, 0x77, 0x60, uint8}, // 0x6077 实时转矩(1000为额定转矩)       
+    {0x608, 0x2f, 0x01, 0x1A, 0x00, 0x03, 0x00, 0x00, 0x00, uint8}, // TPDO2 映射为3
+    {0x608, 0x23, 0x01, 0x18, 0x01, 0x88, 0x02, 0x00, 0x00, uint8}, // TPDO2 使能
+
+    // TPDO3-4
+    {0x608, 0x23, 0x02, 0x18, 0x01, 0x88, 0x03, 0x00, 0x80, uint8}, // TPDO3 失能
+    {0x608, 0x2f, 0x02, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO3 传输类型 
+    {0x608, 0x23, 0x03, 0x18, 0x01, 0x88, 0x04, 0x00, 0x80, uint8}, // TPDO4 失能
+    {0x608, 0x2f, 0x03, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO4 传输类型 
+};
+
+uint16_t message_speedMode_sdo[SPEEDSETUPLENG][10] = {
+    {0x608, 0x23, 0xFF, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, int32},  // 给定速度为0
+    {0x608, 0x2f, 0x7E, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, uint8},  // 给定指令极性为向上 0
+    {0x608, 0x23, 0x83, 0x60, 0x00, 0xAA, 0xAA, 0x2A, 0x04, uint32},  // 轮廓加速度 500rpm/s 
+    {0x608, 0x23, 0x84, 0x60, 0x00, 0xAA, 0xAA, 0x2A, 0x04, uint32},  // 轮廓加速度 500rpm/s 
+    {0x608, 0x23, 0x85, 0x60, 0x00, 0xAA, 0xAA, 0xAA, 0x10, uint32},  // 快速停机 加速度2000rpm/s 
+    // H08.00 速度还带宽 100Hz 默认 40Hz
+    // 积分时间常数：9.89ms 默认：19.89ms
+    // 转矩指令滤波时间常数 默认 0.5ms
+    // 转矩限幅 60E0  60E1 默认是 350%额定值转矩
+    {0x608, 0x2f, 0x60, 0x60, 0x00, 0x03, 0x00, 0x00, 0x00, uint8},  // 速度模式 0x03
+    {0x608, 0x23, 0x7F, 0x60, 0x00, 0x0D, 0x8D, 0xA1, 0x08, uint32}, // 速度模式下最大运行速度 1000rpm
+    {0x608, 0x2b, 0x6F, 0x60, 0x00, 0x0A, 0x00, 0x00, 0x00, uint16}, // 零速检测速度阈值 10rpm
+    {0x608, 0x2b, 0x70, 0x60, 0x00, 0x64, 0x00, 0x00, 0x00, uint16} // 零速信号窗口时间(我认为是持续时间 100ms)
+ };
+
+// 停机并切换模式 
+uint16_t canopenStopMachineAndTransMode(uint8_t targetOperationMode)
+{
+    uint16_t ret =0; 
+    uint8_t cnt = 0;
+    uint16_t message_torqueMode_sdo[TORQUESETUPLENG][10] = {
+        {0x608, 0x2b, 0x71, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, int16},  // 给定转矩为0
+        {0x608, 0x2f, 0x7E, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00, uint8},  // 给定指令极性为默认向上 0
+        {0x608, 0x23, 0xC5, 0x60, 0x00, 0xAA, 0xAA, 0x2A, 0x04, uint32},  // 轮廓加速度限制 500rpm/s 
+        {0x608, 0x23, 0xC6, 0x60, 0x00, 0xAA, 0xAA, 0x2A, 0x04, uint32},  // 轮廓加速度 500rpm/s 
+        {0x608, 0x23, 0x85, 0x60, 0x00, 0xAA, 0xAA, 0xAA, 0x10, uint32},  // 快速停机 加速度2000rpm/s 
+        // 转矩斜坡默认最大值
+        // 默认转矩限幅 3.5倍
+        {0x608, 0x23, 0x72, 0x60, 0x00, 0xAC, 0x0D, 0x00, 0x00, uint16},  // 转矩限幅 
+        {0x608, 0x23, 0xE0, 0x60, 0x00, 0xAC, 0x0D, 0x00, 0x00, uint16},  // 正向转矩最大值
+        {0x608, 0x23, 0xE1, 0x60, 0x00, 0xAC, 0x0D, 0x00, 0x00, uint16},  // 反向转矩最大值
+        // H08.00 速度还带宽 100Hz 默认 40Hz
+        // 积分时间常数：9.89ms 默认：19.89ms
+        // 转矩指令滤波时间常数 默认 0.5ms
+        // 转矩限幅 60E0  60E1 默认是 350%额定值转矩
+        {0x608, 0x2f, 0x60, 0x60, 0x00, 0x04, 0x00, 0x00, 0x00, uint8},  // 转矩模式 0x04
+        {0x608, 0x23, 0x7F, 0x60, 0x00, 0x0D, 0x8D, 0xA1, 0x08, uint32}  // 转矩模式下最大运行速度 1000rpm
+        // {0x608, 0x2b, 0x6F, 0x60, 0x00, 0x0A, 0x00, 0x00, 0x00, uint16}, // 零速检测速度阈值 10rpm
+        // {0x608, 0x2b, 0x70, 0x60, 0x00, 0x64, 0x00, 0x00, 0x00, uint16}  // 零速信号窗口时间(我认为是持续时间 100ms)
+    };
+
+    // 考虑到默认启动模式是速度，因此在修改模式前需要先canopen状态机停机
+    // 先停止状态机轮询切换
+    gStatus.l_canopenSM_sw = 0;
+
+    // 正在运行过程中,则快速停机
+    if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x0237) {
+        Controlword = 0x0002;
+        // Update OperationMode
+        if (targetOperationMode >= RECVSPEEDMODE && targetOperationMode <= TORQUEMODE) {
+            if ((motionStatus.targetWorkmode != targetOperationMode) && (Modes_of_operation != targetOperationMode)) {
+                motionStatus.targetWorkmode = targetOperationMode;
+                Modes_of_operation = targetOperationMode;
+            }
+            sendOnePDOevent(&masterObjdict_Data, 0); 
+            HAL_Delay(20);
+
+            // 初始化SDO
+            stopSYNC(&masterObjdict_Data);	
+            for (cnt =0;cnt<TORQUESETUPLENG; cnt++) {
+              canopen_send_sdo(message_torqueMode_sdo[cnt]);
+              closeSDOtransfer(&masterObjdict_Data, can_var.slaveCANID, SDO_CLIENT);
+              HAL_Delay(20);     
+            }
+            // setState(&masterObjdict_Data, Operational);
+            // masterSendNMTstateChange(&masterObjdict_Data, can_var.slaveCANID, NMT_Start_Node);
+            startSYNC(&masterObjdict_Data);
+
+            gStatus.l_canopenSM_sw = 1; // 都在while(1)里顺序执行，这个好像没啥用，先这样吧
+        } else {
+            ret = 0xFFFF; // 报错
+        }
+    } else {
+        // 在其他模式下暂时不允许切换 没有时间完善了
+    }
+    return ret;
+}
+
+// 速度模式canopen初始化
 void canOpenInit(void)
 {
     UNS8 cnt = 0;
@@ -814,10 +901,39 @@ uint8_t canopenDriverSpeedGive(short speedCmdRpm)
     return ret;
 }
 
+// 下发的实际Nm*1000，CAN发出是额定转矩的0.001倍，最小分辨率 2.80/1000 = 0.0028Nm 量化误差
+uint8_t canopenDriverTorqueGive(short torqueCmd)
+{
+    uint8_t ret =0;
+    int sendTorquePartial = 0; // 给定转矩相对于额定转矩的倍率*1000
+
+    if ((motionStatus.g_curOperationMode == TORQUEMODE) && (motionStatus.g_DS402_SMStatus == 4)) {
+        if ((torqueCmd <= (MAX_ALLOWED_TORQUE_NM*1000)) && (torqueCmd >= (MIN_ALLOWED_TORQUE_NM*1000)) {
+            Controlword = 0x0F;
+            sendTorquePartial = (torqueCmd/DesignedTorqueNM); //量化误差
+
+            Target_velocity = 0; // update speed instruction pulse per second
+            Target_Torque = (short)sendTorquePartial;
+            Modes_of_operation = TORQUEMODE; // 速度模式
+            sendOnePDOevent(&masterObjdict_Data, 1);  // TPDO2
+            printf("UTC: %d ms CAS: %d ms, ETH update Torque :%d Nm, sendTorquePartial is %d\n\r", gTime.g_time_ms, gTime.l_time_ms, (torqueCmd/1000), sendTorquePartial);
+        } else {
+            printf("CAS:  %d ms TorqueGiven OverFlow, which is 0x%d rpm\n\r!", gTime.l_time_ms, speedCmdRpm);
+        }
+    } else {
+        printf("CAS:  %d ms OperationMode 0x%x disMatched or SystemStatus Wrong! \n\r!", gTime.l_time_ms, \
+                                                                                          motionStatus.g_curOperationMode);
+    }
+    return ret;
+}
+
+
+// 只要目标工作模式正常，且状态机检测被允许开启，则目标都是驱动系统状态前往RUN
+// 速度模式下的控制自与转矩模式状态值仅 bit12不同，且仅代表速度是否为0，目前没用到，因此状态字可以不做区分
+// 且控制字其实也完全一致
 uint8_t canopenStateMachine(void)
 {
     uint8_t ret = 0;
-
     if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x0250) {
       Controlword = 0x06;
       Target_velocity = 0x00;
@@ -849,10 +965,25 @@ uint8_t canopenStateMachine(void)
       motionStatus.g_DS402_SMStatus = 4;
       printf ("CANOpen: Status 4 Servo RUN \r\n");
     } 
-
+    // 当前停机中，等待指令
 		if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x0217){
-      motionStatus.g_DS402_SMStatus = 0; 
-      printf ("CANOpen: Status 0 QuickStop \r\n");   
+        motionStatus.g_DS402_SMStatus = 0; 
+        // 没啥用
+        if (gStatus.l_canopenSM_sw == 1) {
+            if (motionStatus.targetWorkmode == RECVSPEEDMODE) {
+                Controlword = 0x0F;
+                Target_velocity = 0x00;
+                sendOnePDOevent(&masterObjdict_Data, 0);
+                printf ("CANOpen: System Setup Speed Mode in Status 0 QuickStop \r\n"); 
+            } else if (motionStatus.targetWorkmode == TORQUEMODE) {
+                Controlword = 0x0F;
+                Target_Torque = 0x00;
+                sendOnePDOevent(&masterObjdict_Data, 0);
+                printf ("CANOpen: System Setup Torque Mode in Status 0 QuickStop \r\n");
+            } else { // idle模式下，canopen状态机不进行状态转换
+                printf ("CANOpen: System Setup Idle/POSI Mode in Status 0 QuickStop \r\n"); 
+            }
+        }
     }
 
 		if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x021F){
@@ -865,34 +996,37 @@ uint8_t canopenStateMachine(void)
 
 void canopenStatusMonitor(void) 
 {
-  		uint8_t initCMDType = 0;
-    
       motionStatus.g_curOperationMode = Modes_of_operation_display; 
       motionStatus.motorStatusWord.Value = Statusword;
-      initCMDType = ((motionStatus.g_curOperationMode == 0x03) ? 1 : 0);
-      if (initCMDType == 0x01) {// speedMode
+      if (motionStatus.g_curOperationMode == RECVSPEEDMODE) {// speedMode
           motionStatus.motorCMD_speed.Value = Controlword;
           printf("CANOpen: SlaveNode OperationMode is 0x%x, Controlword is 0x%x, Statusword is 0x%x  \r\n", motionStatus.g_curOperationMode, \
-                                                                                                    motionStatus.motorCMD_speed, \
+                                                                                                    motionStatus.motorCMD_speed.Value, \
                                                                                                     motionStatus.motorStatusWord.Value);
-      } else {
-          printf ("CANOpen DS402: OperationMode is Not SpeedMode! \r\n");
-          printf("CANOpen: SlaveNode OperationMode is 0x%x, Statusword is 0x%x \r\n", motionStatus.g_curOperationMode, \
-                                                                                        motionStatus.motorStatusWord.Value);
-      } 
-      // 这里得人为限制速度最大值，避免计算超限
+
+      } else if (motionStatus.g_curOperationMode == TORQUEMODE) {
+          motionStatus.motorCMD_torque.Value = Controlword;
+          printf("CANOpen: SlaveNode OperationMode is 0x%x, Controlword is 0x%x, Statusword is 0x%x \r\n", motionStatus.g_curOperationMode, \
+                                                                                                    motionStatus.motorCMD_torque.Value, \
+                                                                                                    motionStatus.motorStatusWord.Value);
+      }
+      
       motionStatus.g_Speed = (Velocity_actual_value *60 / MOTOR_ENCODER_IDENTIFYWIDTH); //rpm
       // when motor is still, sensor will genarate Wrong Data of Speed 
       if ( motionStatus.g_Speed > MAX_ALLOWED_SPEED_RPM || motionStatus.g_Speed < MIN_ALLOWED_SPEED_RPM) {
             motionStatus.g_Speed = 0;
       }
+
+      // 2024.06.29 和速度不同 转矩的允许波动范围很大 需要考虑真正堵转 和 临时 超过额定值的情况，先不做区分，全显示吧
       motionStatus.g_realTimeTorque = ((float)Torque_Actual_Value *DesignedTorqueNM)/1000.0;
-      printf("%d ms: TPDO2: Current Work Operation is 0x%d, realTimefilterSpeed is : %d rpm, TargetSpeed 0x60FF is %d rpm, realTimeTorque is %fN.m \n\r", \
-                                                                                            gTime.l_time_ms,  \
-                                                                                            motionStatus.g_curOperationMode, \
-                                                                                            motionStatus.g_Speed, \
-                                                                                            (Target_velocity*MOTOR_ENCODER_IDENTIFYWIDTH/60),\
-                                                                                            motionStatus.g_realTimeTorque);
+
+      // 不管什么模式，监视器里面都需要监视 实时速度 实时位置 实时转矩 平均相电流（后补）
+      printf("%d ms: TPDO2: Current Work Operation is 0x%d, realTimefilterSpeed is : %d rpm, TargetSpeed is %d rpm, realTimeTorque is %fN.m \n\r", \
+                                                                                      gTime.l_time_ms,  \
+                                                                                      motionStatus.g_curOperationMode, \
+                                                                                      motionStatus.g_Speed, \
+                                                                                      (Target_velocity*MOTOR_ENCODER_IDENTIFYWIDTH/60),\
+                                                                                      motionStatus.g_realTimeTorque);
 }
 
 
@@ -908,4 +1042,42 @@ uint8_t DACDriverSpeedGive(short speedCmdRpm)
         printf("UTC: %d ms CAS: %d, update Speed :%d rpm\n\r", gTime.g_time_ms, gTime.l_time_ms, speedCmdRpm);
     }
     return ret;
+}
+
+
+uint8_t bissc_processDataAcquire(void)
+{
+    uint8_t ret = 0;
+    static uint8_t errorCnt = 0;
+    static uint32_t sensorCnt = 0;
+    uint32_t sensorData = 0;
+
+    HAL_SG_SenSorAcquire(&sensorData);
+    if (can_var.CASNodeID == 0x01) {
+        if ((sensorData >= POSIRANGESTART_LEFT) && (sensorData <= POSIRANGEEND_LEFT)) {
+            printf("BISS-C: %d ms %d Frame Acquire PosiData %d um \n\r", gTime.l_time_ms, sensorCnt, sensorData);
+        } else {
+            errorCnt++;
+            printf ("BISS-C: Before ReStore is %d ms \r\n", gTime.l_time_ms);
+            BISSC_ReStore(&errorCnt); 
+            printf ("BISS-C: After ReStore is %d ms \r\n", gTime.l_time_ms);
+            printf("BISS-C: %d ms %d Frame Acquire PosiData Error! \n\r", gTime.l_time_ms, sensorCnt);
+        }
+    } else if (can_var.CASNodeID == 0x02) { //右侧电机
+        if ((sensorData >= POSIRANGESTART_RIGHT) && (sensorData <= POSIRANGEEND_RIGHT)) {
+            printf("BISS-C: %d ms %d Frame Acquire PosiData %d um \n\r", gTime.l_time_ms, sensorCnt, sensorData);
+        } else {
+            errorCnt++;
+            printf ("BISS-C: Before ReStore is %d ms \r\n", gTime.l_time_ms);
+            BISSC_ReStore(&errorCnt); 
+            printf ("BISS-C: After ReStore is %d ms \r\n", gTime.l_time_ms);
+            printf("BISS-C: %d ms %d Frame Acquire PosiData Error! \n\r", gTime.l_time_ms, sensorCnt);
+        }
+    } else if (can_var.CASNodeID == 0x03) {  //横梁电机
+        ; // idle
+    } else {
+        ; // idle
+    }
+    sensorCnt++;
+    return ret; 
 }

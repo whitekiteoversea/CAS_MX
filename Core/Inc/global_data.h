@@ -157,6 +157,7 @@ typedef struct {
   volatile unsigned char l_rs485_getposiEnable;  // 触发定时获取最新位置  
 
   volatile unsigned char l_bissc_sw;  // BISSC轮询开关 1默认开启 0暂时关掉
+  volatile unsigned char l_canopenSM_sw; // canopen状态机开关 1默认开启 0暂时关掉
 } GLOBALSTATUS;
 
 // ETH Mode Parameter
@@ -173,11 +174,13 @@ typedef struct {
 
 typedef struct {
   uint8_t g_posi[4];      // unit depends on BISS-C
+  // 反馈值
 	int32_t g_Distance; 	// um
 	int32_t g_Speed; 			// rpm
+  int16_t g_Torque;     // N.m
   int16_t g_phaseAmp;   // A
-  //int16_t g_realTimeTorque; 
-  float g_realTimeTorque; 
+  float g_realTimeTorque; // 实时转矩
+
 	uint32_t g_InitialPosi; //um
 
   volatile uint8_t g_DS402_SMStatus;  //状态字处于0x1237时，此状态为1

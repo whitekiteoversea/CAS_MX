@@ -18,7 +18,7 @@
                  
 /* CAN Frame Type 0x00-0x1F total 32 Type*/
 
-#define CANSpeedCmd                     (1)
+#define CANTargetCmd                    (1)
 #define CANSpeedPreCmd                  (2)
 #define CANOperationModeCmd             (3)
 #define CANTimeSyncCmd                  (4)

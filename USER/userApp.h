@@ -36,6 +36,9 @@
 #define MAX_ALLOWED_SPEED_RPM   (1000)
 #define MIN_ALLOWED_SPEED_RPM   (-1000) 
 
+#define MAX_ALLOWED_TORQUE_NM   (2.80)
+#define MIN_ALLOWED_TORQUE_NM   (-2.80) 
+
 #define RPM2Vol_CONVERSE_COFF   (10.922)
 #define SPEEDGIVEN_INDEX        (0x60FF)  
 
@@ -75,6 +78,7 @@ int32_t avgErrUpdate(int32_t *sampleData);
 
 void fsmc_sdram_test(void); // SDRAM R/W TEST
 uint32_t tim3_getCurrentTimeCnt(void);
+
 // MS level nonblocking delay
 uint8_t tim3_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt);
 void w5500_stateMachineTask(void);
@@ -84,9 +88,14 @@ uint8_t tim4_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt);
 
 // SpeedSend ToolBox function
 uint8_t canopenDriverSpeedGive(short speedCmdRpm);
+uint8_t canopenDriverTorqueGive(short torqueCmd);
 uint8_t DACDriverSpeedGive(short speedCmdRpm);
 uint8_t canopenStateMachine(void);
 void canopenStatusMonitor(void);
+uint16_t canopenStopMachineAndTransMode(uint8_t targetOperationMode);
+
+
+uint8_t bissc_processDataAcquire(void);
 
 #endif
 
