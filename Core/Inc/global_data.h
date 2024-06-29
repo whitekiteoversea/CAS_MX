@@ -174,13 +174,13 @@ typedef struct {
 
 typedef struct {
   uint8_t g_posi[4];      // unit depends on BISS-C
-  // 反馈值
+  // 上报反馈值
 	int32_t g_Distance; 	// um
 	int32_t g_Speed; 			// rpm
-  int16_t g_Torque;     // N.m
+  int16_t g_Torque;     // N.m 
   int16_t g_phaseAmp;   // A
+  //log显示
   float g_realTimeTorque; // 实时转矩
-
 	uint32_t g_InitialPosi; //um
 
   volatile uint8_t g_DS402_SMStatus;  //状态字处于0x1237时，此状态为1
@@ -266,7 +266,7 @@ typedef struct {
     uint32_t EHeader;        // Ethernet帧头
     uint32_t ENum;           // Ethernet帧号
     uint32_t ELen;           // Ethernet长度 Byte
-    uint8_t EType;           // 报文类型
+    uint16_t EType;           // 报文类型
     uint8_t CASNodeID;       // 数据来源
     uint8_t curWorkMode;     // 当前工作模式
     uint16_t statusWord;     // 状态字

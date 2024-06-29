@@ -1,6 +1,7 @@
 #include "spi.h"
 #include "sys.h"
 #include "usart.h"
+#include "global_data.h"
 
 #if HAL_DAC_ENABLE
 
@@ -367,9 +368,11 @@ uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data)
 	// }
 
 	mb4_read_registers(0xF1, &StatusInformationF1, 1);
-	if (StatusInformationF0 != 0xFB){
-		printf("BISS-C: 0xF0 0xF1 Status are 0x%x, 0x%x\n\r", StatusInformationF0, StatusInformationF1);
-	}
+
+	//降低LOG数量 低警告下屏蔽
+	// if (StatusInformationF0 != 0xFB){
+	// 	printf("BISS-C: %d ms 0xF0 0xF1 Status are 0x%x, 0x%x\n\r", gTime.l_time_ms, StatusInformationF0, StatusInformationF1);
+	// }
 
 	if ((StatusInformationF0 & 0x70) != 0x70 ) { // SCDERR OR AGSERR
 		printf("BISS-C: Step 2 ERR Occur! nAGSERR is %d nSCDERR is %d, reStart AGS! \n\r", ((StatusInformationF0 & 0x40) >> 6), ((StatusInformationF0 & 0x10) >> 4));

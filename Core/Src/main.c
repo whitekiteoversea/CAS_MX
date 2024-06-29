@@ -1258,7 +1258,7 @@ void userAppLoop(void)
     uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
 
     if (gStatus.l_time_heartbeat == 1) {
-        printf("%d ms HeartBeat Msg \n\r", gTime.l_time_ms);
+        printf("%d ms HeartBeat Msg, Cuurent Posi is %d um \n\r", gTime.l_time_ms, motionStatus.g_Distance);
 
         #if HAL_CANOPEN_ENABLE
             canopenStatusMonitor(); 
@@ -1271,7 +1271,7 @@ void userAppLoop(void)
     // BiSS-C
     #if HAL_BISSC_ENABLE
         if (gStatus.l_bissc_sensor_acquire == 1) { // 左侧电机
-            bissc_processDataAcquire();
+            motionStatus.g_Distance =  bissc_processDataAcquire();
             gStatus.l_bissc_sensor_acquire = 0;
         }
     #else

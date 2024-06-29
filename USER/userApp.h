@@ -95,7 +95,7 @@ void canopenStatusMonitor(void);
 uint16_t canopenStopMachineAndTransMode(uint8_t targetOperationMode);
 
 
-uint8_t bissc_processDataAcquire(void);
+uint32_t bissc_processDataAcquire(void);
 
 #endif
 

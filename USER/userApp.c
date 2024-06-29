@@ -580,6 +580,7 @@ uint8_t w5500_Decoder(EthControlFrameSingleCAS frame)
       
         case CANOperationModeCmd: // 0x3
             pcSetupOperationMode = frame.canpack.CANData[4];
+            printf("ETH: Recv Frame to change OperationMode to %x\n\r", pcSetupOperationMode);
             if (motionStatus.g_curOperationMode != pcSetupOperationMode) {
                 canopenStopMachineAndTransMode(pcSetupOperationMode);
             }
@@ -604,7 +605,7 @@ uint8_t w5500_Decoder(EthControlFrameSingleCAS frame)
     return ret;
 }
 
-// 借用 0x05 位置数据上报
+// 借用 0x05 状态数据上报
 uint32_t w5500_reportStatus(CASREPORTFRAME statusPack)
 {
     uint32_t ret = 0;
@@ -619,11 +620,11 @@ uint32_t w5500_reportStatus(CASREPORTFRAME statusPack)
     statusPack.curWorkMode = motionStatus.g_curOperationMode;
     statusPack.localTimeMS = gTime.l_time_ms;
     statusPack.motorPosiUM = motionStatus.g_Distance;
-    statusPack.motorRealTimeTorqueNM = motionStatus.g_realTimeTorque;
+    statusPack.motorRealTimeTorqueNM = motionStatus.g_Torque; // 0.001Nm
     statusPack.motorAveragePhaseAmp = motionStatus.g_phaseAmp;
     statusPack.statusWord = motionStatus.motorStatusWord.Value;
 
-    printf ("Now motorPosi is %d um \r\n", motionStatus.g_Distance);
+    // printf ("Now motorPosi is %d um \r\n", motionStatus.g_Distance);
     memcpy(gSendBUF, &statusPack, sizeof(statusPack));
     ret = sendto(1, gSendBUF, sizeof(statusPack), w5500_udp_var.DstHostIP, 8888);		
     return ret;
@@ -733,9 +734,9 @@ uint16_t canopenStopMachineAndTransMode(uint8_t targetOperationMode)
         {0x608, 0x23, 0x85, 0x60, 0x00, 0xAA, 0xAA, 0xAA, 0x10, uint32},  // 快速停机 加速度2000rpm/s 
         // 转矩斜坡默认最大值
         // 默认转矩限幅 3.5倍
-        {0x608, 0x23, 0x72, 0x60, 0x00, 0xAC, 0x0D, 0x00, 0x00, uint16},  // 转矩限幅 
-        {0x608, 0x23, 0xE0, 0x60, 0x00, 0xAC, 0x0D, 0x00, 0x00, uint16},  // 正向转矩最大值
-        {0x608, 0x23, 0xE1, 0x60, 0x00, 0xAC, 0x0D, 0x00, 0x00, uint16},  // 反向转矩最大值
+        {0x608, 0x2b, 0x72, 0x60, 0x00, 0xAC, 0x0D, 0x00, 0x00, uint16},  // 转矩限幅 
+        {0x608, 0x2b, 0xE0, 0x60, 0x00, 0xAC, 0x0D, 0x00, 0x00, uint16},  // 正向转矩最大值
+        {0x608, 0x2b, 0xE1, 0x60, 0x00, 0xAC, 0x0D, 0x00, 0x00, uint16},  // 反向转矩最大值
         // H08.00 速度还带宽 100Hz 默认 40Hz
         // 积分时间常数：9.89ms 默认：19.89ms
         // 转矩指令滤波时间常数 默认 0.5ms
@@ -908,17 +909,17 @@ uint8_t canopenDriverTorqueGive(short torqueCmd)
     int sendTorquePartial = 0; // 给定转矩相对于额定转矩的倍率*1000
 
     if ((motionStatus.g_curOperationMode == TORQUEMODE) && (motionStatus.g_DS402_SMStatus == 4)) {
-        if ((torqueCmd <= (MAX_ALLOWED_TORQUE_NM*1000)) && (torqueCmd >= (MIN_ALLOWED_TORQUE_NM*1000)) {
+        if ((torqueCmd <= (MAX_ALLOWED_TORQUE_NM*1000)) && (torqueCmd >= (MIN_ALLOWED_TORQUE_NM*1000))) {
             Controlword = 0x0F;
             sendTorquePartial = (torqueCmd/DesignedTorqueNM); //量化误差
 
             Target_velocity = 0; // update speed instruction pulse per second
             Target_Torque = (short)sendTorquePartial;
-            Modes_of_operation = TORQUEMODE; // 速度模式
+            Modes_of_operation = TORQUEMODE; // 转矩模式
             sendOnePDOevent(&masterObjdict_Data, 1);  // TPDO2
             printf("UTC: %d ms CAS: %d ms, ETH update Torque :%d Nm, sendTorquePartial is %d\n\r", gTime.g_time_ms, gTime.l_time_ms, (torqueCmd/1000), sendTorquePartial);
         } else {
-            printf("CAS:  %d ms TorqueGiven OverFlow, which is 0x%d rpm\n\r!", gTime.l_time_ms, speedCmdRpm);
+            printf("CAS:  %d ms TorqueGiven OverFlow, which is 0x%d Nm\n\r!", gTime.l_time_ms, (torqueCmd/1000));
         }
     } else {
         printf("CAS:  %d ms OperationMode 0x%x disMatched or SystemStatus Wrong! \n\r!", gTime.l_time_ms, \
@@ -1017,8 +1018,9 @@ void canopenStatusMonitor(void)
             motionStatus.g_Speed = 0;
       }
 
+      motionStatus.g_Torque =Torque_Actual_Value *DesignedTorqueNM; // 上报转矩值
       // 2024.06.29 和速度不同 转矩的允许波动范围很大 需要考虑真正堵转 和 临时 超过额定值的情况，先不做区分，全显示吧
-      motionStatus.g_realTimeTorque = ((float)Torque_Actual_Value *DesignedTorqueNM)/1000.0;
+      motionStatus.g_realTimeTorque = ((float)(Torque_Actual_Value *DesignedTorqueNM)/1000.0);
 
       // 不管什么模式，监视器里面都需要监视 实时速度 实时位置 实时转矩 平均相电流（后补）
       printf("%d ms: TPDO2: Current Work Operation is 0x%d, realTimefilterSpeed is : %d rpm, TargetSpeed is %d rpm, realTimeTorque is %fN.m \n\r", \
@@ -1028,7 +1030,6 @@ void canopenStatusMonitor(void)
                                                                                       (Target_velocity*MOTOR_ENCODER_IDENTIFYWIDTH/60),\
                                                                                       motionStatus.g_realTimeTorque);
 }
-
 
 #endif
 
@@ -1045,9 +1046,9 @@ uint8_t DACDriverSpeedGive(short speedCmdRpm)
 }
 
 
-uint8_t bissc_processDataAcquire(void)
+uint32_t bissc_processDataAcquire(void)
 {
-    uint8_t ret = 0;
+    uint32_t retPosi = 0;
     static uint8_t errorCnt = 0;
     static uint32_t sensorCnt = 0;
     uint32_t sensorData = 0;
@@ -1055,22 +1056,21 @@ uint8_t bissc_processDataAcquire(void)
     HAL_SG_SenSorAcquire(&sensorData);
     if (can_var.CASNodeID == 0x01) {
         if ((sensorData >= POSIRANGESTART_LEFT) && (sensorData <= POSIRANGEEND_LEFT)) {
-            printf("BISS-C: %d ms %d Frame Acquire PosiData %d um \n\r", gTime.l_time_ms, sensorCnt, sensorData);
+            retPosi = sensorData;
+            HAL_Delay(200);
+            //printf("BISS-C: %d ms %d Frame Acquire PosiData %d um \n\r", gTime.l_time_ms, sensorCnt, sensorData);
         } else {
             errorCnt++;
-            printf ("BISS-C: Before ReStore is %d ms \r\n", gTime.l_time_ms);
-            BISSC_ReStore(&errorCnt); 
-            printf ("BISS-C: After ReStore is %d ms \r\n", gTime.l_time_ms);
+            BISSC_ReStore(&errorCnt); // 1ms内可以完成
             printf("BISS-C: %d ms %d Frame Acquire PosiData Error! \n\r", gTime.l_time_ms, sensorCnt);
         }
     } else if (can_var.CASNodeID == 0x02) { //右侧电机
         if ((sensorData >= POSIRANGESTART_RIGHT) && (sensorData <= POSIRANGEEND_RIGHT)) {
-            printf("BISS-C: %d ms %d Frame Acquire PosiData %d um \n\r", gTime.l_time_ms, sensorCnt, sensorData);
+            retPosi = sensorData;
+            //printf("BISS-C: %d ms %d Frame Acquire PosiData %d um \n\r", gTime.l_time_ms, sensorCnt, sensorData);
         } else {
             errorCnt++;
-            printf ("BISS-C: Before ReStore is %d ms \r\n", gTime.l_time_ms);
-            BISSC_ReStore(&errorCnt); 
-            printf ("BISS-C: After ReStore is %d ms \r\n", gTime.l_time_ms);
+           BISSC_ReStore(&errorCnt); 
             printf("BISS-C: %d ms %d Frame Acquire PosiData Error! \n\r", gTime.l_time_ms, sensorCnt);
         }
     } else if (can_var.CASNodeID == 0x03) {  //横梁电机
@@ -1079,5 +1079,5 @@ uint8_t bissc_processDataAcquire(void)
         ; // idle
     }
     sensorCnt++;
-    return ret; 
+    return retPosi; 
 }
