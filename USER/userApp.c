@@ -418,7 +418,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         // 第二 跑10KHz，实际值能到3.6KHz左右 且数据有效率在100万帧后出现显著下降 74.2% -> 73.7%
         // 最后，上位机精度也就是1ms，通信周期目前是20ms 最后压到10ms可能就到canopen精度了(时差允许范围3ms)
         // 实测1ms左右，位置获取是有1000帧的，而且有效率稳定在75.1%
-        // 最后选择了2KHz，实际总数2000帧，不过有效率降低70%，勉强满足位置环1KHz带宽
+        // 最后选择了2KHz，实际总数2000帧，有效率接近79%，勉强满足位置环1KHz带宽
 
         if (bissc_interval_cnt - bissc_interval_old >= 50) { 
             bissc_interval_old = bissc_interval_cnt;
@@ -1079,11 +1079,12 @@ uint32_t bissc_processDataAcquire(void)
     static uint8_t errorCnt = 0;
     static uint32_t sensorCnt = 0;
     uint32_t sensorData = 0;
-    //uint32_t primask = 0;
+    uint32_t primask = 0;
 
-    //primask = enter_critical();
+    // 如果要获得一次读取的时间，只能关有限中断才能进行计时
+    primask = enter_critical();
     HAL_SG_SenSorAcquire(&sensorData);
-    //exit_critical(primask);
+    exit_critical(primask);
 
     if (can_var.CASNodeID == 0x01) {
         if ((sensorData >= POSIRANGESTART_LEFT) && (sensorData <= POSIRANGEEND_LEFT)) {

@@ -315,11 +315,6 @@ void HAL_BISSC_Setup(void)
 	txData[0] = 0x63;
 	mb4_write_registers(0xE8, txData, 1); //FREQAGS=10KHz 控制RS422的最小循环周期 
 
-	// for (readAddr = 0xC0; readAddr < 0xFC; readAddr++) {
-	// 	mb4_read_registers(readAddr, &rData, 1);
-	// 	printf("BISS-C: readAddr 0x%x is 0x%x \r\n", readAddr, rData);
-	// }
-
 	// 先BREAK
 	txData[0] = 0x80;
 	mb4_write_registers(0xF4, txData, 1);
@@ -333,9 +328,6 @@ void HAL_BISSC_Setup(void)
 	//Reset SVALID flags
 	txData[0] = 0x00;
 	mb4_write_registers(0xF1, txData, 1);
-	//Start AGS
-	// txData[0] = 0x01;
-	// mb4_write_registers(0xF4, txData, 1);
 }
 
 void HAL_BISSC_StartAGS(void) 
@@ -349,10 +341,8 @@ void HAL_BISSC_reStartAGS(void)
 	uint8_t txData= 0;
 	txData = 0x80;
 	mb4_write_registers(0xF4, &txData, 1);// BREAK INSTR
-	//HAL_Delay_us(40);
 	txData = 0x01;
 	mb4_write_registers(0xF4, &txData, 1);// AGS RESET
-	// HAL_Delay_us(40);
 }
 
 // 获取传感器过程数据
@@ -382,10 +372,8 @@ uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data)
 	txData = 0;
 	mb4_write_registers(0xF1, &txData, 1);
 
-	// CRC都干掉了，这个校验还需要吗……
 	if ((StatusInformationF1 & 0x02) != 0x02) {  // CRC校验未通过 SVALID0 = 0
 		printf("BISS-C: Step 3 SVALID1 not set 1! reStart AGS! \n\r");
-		// HAL_BISSC_reStartAGS();
 		goto __end;
 	}
 
