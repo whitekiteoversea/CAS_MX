@@ -315,10 +315,10 @@ void HAL_BISSC_Setup(void)
 	txData[0] = 0x63;
 	mb4_write_registers(0xE8, txData, 1); //FREQAGS=10KHz 控制RS422的最小循环周期 
 
-	for (readAddr = 0xC0; readAddr < 0xFC; readAddr++) {
-		mb4_read_registers(readAddr, &rData, 1);
-		printf("BISS-C: readAddr 0x%x is 0x%x \r\n", readAddr, rData);
-	}
+	// for (readAddr = 0xC0; readAddr < 0xFC; readAddr++) {
+	// 	mb4_read_registers(readAddr, &rData, 1);
+	// 	printf("BISS-C: readAddr 0x%x is 0x%x \r\n", readAddr, rData);
+	// }
 
 	// 先BREAK
 	txData[0] = 0x80;
@@ -334,8 +334,14 @@ void HAL_BISSC_Setup(void)
 	txData[0] = 0x00;
 	mb4_write_registers(0xF1, txData, 1);
 	//Start AGS
-	txData[0] = 0x01;
-	mb4_write_registers(0xF4, txData, 1);
+	// txData[0] = 0x01;
+	// mb4_write_registers(0xF4, txData, 1);
+}
+
+void HAL_BISSC_StartAGS(void) 
+{
+	uint8_t txData= 0x01;
+	mb4_write_registers(0xF4, &txData, 1);
 }
 
 void HAL_BISSC_reStartAGS(void)

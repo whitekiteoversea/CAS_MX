@@ -1218,7 +1218,6 @@ printf("************NEW BOOT!******************\n\r");
 #if HAL_BISSC_ENABLE
   HAL_Delay(500);
 	HAL_BISSC_Setup();
-  gStatus.l_bissc_sw = 1; // 开启BISS-C轮询数据获取
 #endif
 
   // 5. Motor Torque Controller (pass)
@@ -1248,6 +1247,12 @@ printf("************NEW BOOT!******************\n\r");
 	HAL_Delay(300);  // wait for W5500 initial 
 	network_register();
 	network_init();
+#endif
+
+#if HAL_BISSC_ENABLE
+  HAL_BISSC_StartAGS();
+  HAL_Delay(500);
+  gStatus.l_bissc_sw = 1; // 开启BISS-C轮询数据获取
 #endif
 
   printf("CAS: %d ms All Function Initial Finished! \n\r", gTime.l_time_ms);

@@ -132,6 +132,7 @@ uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data);
 void HAL_CTLRegsWrite_Slave0(uint8_t reg_addr, uint8_t reg_data); 
 uint8_t HAL_CTLRegs_Read_Slave0(uint8_t readAddr);
 void HAL_BISSC_reStartAGS(void);
+void HAL_BISSC_StartAGS(void); 
 
 #endif
 
