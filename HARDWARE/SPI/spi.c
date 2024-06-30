@@ -349,36 +349,28 @@ void HAL_BISSC_reStartAGS(void)
 	uint8_t txData= 0;
 	txData = 0x80;
 	mb4_write_registers(0xF4, &txData, 1);// BREAK INSTR
-	HAL_Delay_us(40);
+	//HAL_Delay_us(40);
 	txData = 0x01;
 	mb4_write_registers(0xF4, &txData, 1);// AGS RESET
-	HAL_Delay_us(40);
+	// HAL_Delay_us(40);
 }
 
 // 获取传感器过程数据
 uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data) 
 {
 	uint8_t cnt = 0;
-	uint8_t TxData[8] = {0};
 	uint8_t StatusInformationF0 = 0x00;
 	uint8_t StatusInformationF1 = 0x00;
 	uint8_t SG_Data_Tmp[5];
 	uint8_t ret = 0;
 	uint64_t SGGData = 0;
+	uint8_t txData = 0;
 
 	//Read Status Information register 0xF0, wait for end of transmission EOT=1
 	mb4_read_status(&StatusInformationF0, 1);
-	// if ((StatusInformationF0 & 0x01) == 0) { 
-	// 	printf("BISS-C: Step 1 EOT != 1 \n\r");
-	// 	goto __end;
-	// }
-
-	mb4_read_registers(0xF1, &StatusInformationF1, 1);
-
-	//降低LOG数量 低警告下屏蔽
-	// if (StatusInformationF0 != 0xFB){
-	// 	printf("BISS-C: %d ms 0xF0 0xF1 Status are 0x%x, 0x%x\n\r", gTime.l_time_ms, StatusInformationF0, StatusInformationF1);
-	// }
+	if ((StatusInformationF0 & 0x01) == 0) { 
+		goto __end;
+	}
 
 	if ((StatusInformationF0 & 0x70) != 0x70 ) { // SCDERR OR AGSERR
 		printf("BISS-C: Step 2 ERR Occur! nAGSERR is %d nSCDERR is %d, reStart AGS! \n\r", ((StatusInformationF0 & 0x40) >> 6), ((StatusInformationF0 & 0x10) >> 4));
@@ -387,14 +379,15 @@ uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data)
 	}
 
 	mb4_read_registers(0xF1, &StatusInformationF1, 1);
+	txData = 0;
+	mb4_write_registers(0xF1, &txData, 1);
+
 	if ((StatusInformationF1 & 0x02) != 0x02) {  // CRC校验未通过 SVALID0 = 0
 		printf("BISS-C: Step 3 SVALID1 not set 1! reStart AGS! \n\r");
 		// HAL_BISSC_reStartAGS();
-		HAL_Delay(200);
 		goto __end;
 	}
-	// printf("BISS-C:  Step 4 Read 0xF1 Value: %x \n\r", StatusInformationF1);
-	
+
 	// NO Error Occur
 	if ((StatusInformationF0 & 0x70) == 0x70) {  
 		if ((StatusInformationF1 & 0x02) == 0) { // if SVALID1 != 1 ReStart AGS

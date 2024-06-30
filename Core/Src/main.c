@@ -98,7 +98,6 @@ static void MX_NVIC_Init(void);
 
 void bspInit(void);
 void userAppLoop(void);
-void BISSC_ReStore(uint8_t *errCnt);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -1262,14 +1261,19 @@ void userAppLoop(void)
 {
     uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
     uint32_t primask = 0;
-    float wrongrate = 0.0;
 
     if (gStatus.l_time_heartbeat == 1) {
-        printf("%d ms HeartBeat Msg, Current Posi is %d um \n\r", gTime.l_time_ms, motionStatus.g_Distance);
-        wrongrate = ((float)(gStatus.noeffectCnt)/(gStatus.effectCnt + gStatus.noeffectCnt));
-        printf("BISS-C: Analyse effect %d, noeffect %d, wrong rate %6f \n\r", gStatus.effectCnt, \
-                                                                              gStatus.noeffectCnt, \
-                                                                              wrongrate);
+        if (can_var.CASNodeID == 0x01) {
+            if ((motionStatus.g_Distance >= POSIRANGESTART_LEFT) && (motionStatus.g_Distance <= POSIRANGEEND_LEFT)) {
+                printf("%d ms HeartBeat Msg, Current Posi is %d um \n\r", gTime.l_time_ms, motionStatus.g_Distance); 
+            }
+            bissc_errorRateMonitor();
+        } else if (can_var.CASNodeID == 0x02){
+            if ((motionStatus.g_Distance >= POSIRANGESTART_RIGHT) && (motionStatus.g_Distance <= POSIRANGEEND_RIGHT)) {
+                printf("%d ms HeartBeat Msg, Current Posi is %d um \n\r", gTime.l_time_ms, motionStatus.g_Distance); 
+            }
+            bissc_errorRateMonitor();
+        }
 
         #if HAL_CANOPEN_ENABLE
             canopenStatusMonitor(); 
@@ -1310,22 +1314,6 @@ void userAppLoop(void)
       w5500_stateMachineTask();
     #endif
 }
- // BISSC错误恢复
-void BISSC_ReStore(uint8_t *errCnt) {
-    if (*errCnt > 200) { // 连续 200ms无法获取到有效位置数据
-        gStatus.l_bissc_sw = 0;
-        // HAL_SPI_DeInit(&hspi1); // 排除是SPI1挂了还是AMG2000传来的数据确实有问题
-        // HAL_Delay_us(100);
-        // HAL_SPI_Init(&hspi1);
-        // HAL_BISSC_Setup();
-
-        HAL_BISSC_reStartAGS();
-        HAL_Delay(20);
-        gStatus.l_bissc_sw = 1; // 开启BISS-C轮询数据获取
-        *errCnt=0;
-      }
-}
-
 
 /* USER CODE END 4 */
 

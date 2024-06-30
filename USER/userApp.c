@@ -411,7 +411,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             bissc_interval_cnt = 0;
             bissc_interval_old = 0;
         }
-        if (bissc_interval_cnt - bissc_interval_old >= 100) {
+
+        // 2024.07.01
+        // 之所以没有跑在10KHz获取，一方面实际TIM3定时精度不高
+        // 和外界时间比电脑30s 实际log输出TIM3计时25s
+        // 第二 跑10KHz，实际值能到3.6KHz左右 且数据有效率在100万帧后出现显著下降 74.2% -> 73.7%
+        // 最后，上位机精度也就是1ms，通信周期目前是20ms 最后压到10ms可能就到canopen精度了(时差允许范围3ms)
+        // 实测1ms左右，位置获取是有1000帧的，而且有效率稳定在75.1%
+        // 最后选择了2KHz，实际总数2000帧，不过有效率降低70%，勉强满足位置环1KHz带宽
+
+        if (bissc_interval_cnt - bissc_interval_old >= 50) { 
             bissc_interval_old = bissc_interval_cnt;
             if (gStatus.l_bissc_sw == 1) {
                gStatus.l_bissc_sensor_acquire = 1;
@@ -1080,21 +1089,18 @@ uint32_t bissc_processDataAcquire(void)
         if ((sensorData >= POSIRANGESTART_LEFT) && (sensorData <= POSIRANGEEND_LEFT)) {
             retPosi = sensorData;
             gStatus.effectCnt++;
-            //printf("BISS-C: %d ms %d Frame Acquire PosiData %d um \n\r", gTime.l_time_ms, sensorCnt, sensorData);
         } else {
             errorCnt++;
             gStatus.noeffectCnt++;
             BISSC_ReStore(&errorCnt); // 1ms内可以完成
-            printf("BISS-C: %d ms %d Frame Acquire PosiData Error! \n\r", gTime.l_time_ms, sensorCnt);
         }
     } else if (can_var.CASNodeID == 0x02) { //右侧电机
         if ((sensorData >= POSIRANGESTART_RIGHT) && (sensorData <= POSIRANGEEND_RIGHT)) {
             retPosi = sensorData;
-            //printf("BISS-C: %d ms %d Frame Acquire PosiData %d um \n\r", gTime.l_time_ms, sensorCnt, sensorData);
         } else {
             errorCnt++;
            BISSC_ReStore(&errorCnt); 
-            printf("BISS-C: %d ms %d Frame Acquire PosiData Error! \n\r", gTime.l_time_ms, sensorCnt);
+            // printf("BISS-C: %d ms %d Frame Acquire PosiData Error! \n\r", gTime.l_time_ms, sensorCnt);
         }
     } else if (can_var.CASNodeID == 0x03) {  //横梁电机
         ; // idle
@@ -1119,6 +1125,27 @@ void exit_critical(uint32_t primask)
 {
     // 恢复 PRIMASK
     __set_PRIMASK(primask);
+}
+
+void bissc_errorRateMonitor(void)
+{
+    float wrongrate = 0.0;
+    if ((gStatus.effectCnt + gStatus.noeffectCnt) > 0) {
+        wrongrate = ((float)(gStatus.noeffectCnt)/(gStatus.effectCnt + gStatus.noeffectCnt));
+        printf("BISS-C: Analyse effect %d, noeffect %d, wrong rate %6f \n\r", gStatus.effectCnt, \
+                                                                            gStatus.noeffectCnt, \
+                                                                            wrongrate);
+    }       
+}
+
+ // BISSC错误恢复
+void BISSC_ReStore(uint8_t *errCnt) {
+    if (*errCnt > 200) { // 连续 200ms无法获取到有效位置数据
+        gStatus.l_bissc_sw = 0;
+        HAL_BISSC_reStartAGS();
+        gStatus.l_bissc_sw = 1; // 开启BISS-C轮询数据获取
+        *errCnt=0;
+      }
 }
 
 /*
