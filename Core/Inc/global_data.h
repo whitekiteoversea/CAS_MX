@@ -158,6 +158,9 @@ typedef struct {
 
   volatile unsigned char l_bissc_sw;  // BISSC轮询开关 1默认开启 0暂时关掉
   volatile unsigned char l_canopenSM_sw; // canopen状态机开关 1默认开启 0暂时关掉
+
+  volatile uint32_t effectCnt;
+  volatile uint32_t noeffectCnt;
 } GLOBALSTATUS;
 
 // ETH Mode Parameter

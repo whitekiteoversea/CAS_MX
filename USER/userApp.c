@@ -369,7 +369,8 @@ void fsmc_sdram_test()
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) 
 {
    static unsigned int heartbeatChangedMs = 0; 
-   unsigned int cmpVal = POSI_CHECK_PERIOD_1MS;
+   volatile static unsigned int bissc_interval_cnt = 0;
+   volatile static unsigned int bissc_interval_old = 0;
 
 	 if (htim == &htim3) {
       #if HAL_W5500_ENABLE
@@ -387,9 +388,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
         if (gTime.l_time_cnt_10us % 100 == 0 && (gTime.l_time_cnt_10us > 0)) {
             gTime.l_time_ms++;
 
-            if (gStatus.l_bissc_sw == 1) {
-               gStatus.l_bissc_sensor_acquire = 1;
-            }
             // 20ms  posi acquire
             if (gStatus.l_rs485_getposi_cnt >= 20) {
                 gStatus.l_rs485_getposiEnable = 1;
@@ -398,7 +396,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             // NEW RTU Frame recv Start
             if (modbusPosi.g_RTU_Startflag == 1) {
                 modbusPosi.g_10ms_Cnt++;
-                cmpVal = MODBUS_INTERNAL_1MS;
                 //消息间隔超过10ms
                 if (modbusPosi.g_10ms_Cnt >= 10) {
                     modbusPosi.g_10ms_Cnt = 0;
@@ -409,11 +406,27 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             gStatus.l_rs485_getposi_cnt++; // 1ms ++
         }
 
+        // 1ms
+        if (bissc_interval_cnt >= 360000000) {
+            bissc_interval_cnt = 0;
+            bissc_interval_old = 0;
+        }
+        if (bissc_interval_cnt - bissc_interval_old >= 100) {
+            bissc_interval_old = bissc_interval_cnt;
+            if (gStatus.l_bissc_sw == 1) {
+               gStatus.l_bissc_sensor_acquire = 1;
+            }
+        }
+        bissc_interval_cnt++;
+
          // 1s update local time and Sensor
         if ((gTime.l_time_ms % 1000 == 0) && ((gTime.l_time_ms > 0)) && (0 != gTime.l_time_ms-heartbeatChangedMs)) {
             gStatus.l_time_heartbeat = 1;
             heartbeatChangedMs = gTime.l_time_ms;
         }
+
+        
+
     } else if (htim == &htim4) {
         tim4_timeBaseCnt_1MS++;
         TimeDispatch(); // canfestival software timer 
@@ -1051,22 +1064,26 @@ uint8_t DACDriverSpeedGive(short speedCmdRpm)
     return ret;
 }
 
-
 uint32_t bissc_processDataAcquire(void)
 {
     uint32_t retPosi = 0;
     static uint8_t errorCnt = 0;
     static uint32_t sensorCnt = 0;
     uint32_t sensorData = 0;
+    //uint32_t primask = 0;
 
+    //primask = enter_critical();
     HAL_SG_SenSorAcquire(&sensorData);
+    //exit_critical(primask);
+
     if (can_var.CASNodeID == 0x01) {
         if ((sensorData >= POSIRANGESTART_LEFT) && (sensorData <= POSIRANGEEND_LEFT)) {
             retPosi = sensorData;
-            HAL_Delay(200);
+            gStatus.effectCnt++;
             //printf("BISS-C: %d ms %d Frame Acquire PosiData %d um \n\r", gTime.l_time_ms, sensorCnt, sensorData);
         } else {
             errorCnt++;
+            gStatus.noeffectCnt++;
             BISSC_ReStore(&errorCnt); // 1ms内可以完成
             printf("BISS-C: %d ms %d Frame Acquire PosiData Error! \n\r", gTime.l_time_ms, sensorCnt);
         }
@@ -1087,3 +1104,38 @@ uint32_t bissc_processDataAcquire(void)
     sensorCnt++;
     return retPosi; 
 }
+
+uint32_t enter_critical(void)
+{
+    // 保存当前 PRIMASK 值
+    uint32_t regPrimask = __get_PRIMASK();
+    // 关闭系统全局中断（其实就是将 PRIMASK 设为 1）
+    __disable_irq();
+
+    return regPrimask;
+}
+
+void exit_critical(uint32_t primask)
+{
+    // 恢复 PRIMASK
+    __set_PRIMASK(primask);
+}
+
+/*
+//////////////////////////////////////////////////////
+// Keil 环境下实现（见 cmsis_armclang.h 文件）
+__STATIC_FORCEINLINE void __set_PRIMASK(uint32_t priMask)
+{
+  __ASM volatile ("MSR primask, %0" : : "r" (priMask) : "memory");
+}
+
+__STATIC_FORCEINLINE uint32_t __get_PRIMASK(void)
+{
+  uint32_t result;
+
+  __ASM volatile ("MRS %0, primask" : "=r" (result) );
+  return(result);
+}
+
+*/
+

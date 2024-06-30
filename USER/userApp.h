@@ -94,8 +94,10 @@ uint8_t canopenStateMachine(void);
 void canopenStatusMonitor(void);
 uint16_t canopenStopMachineAndTransMode(uint8_t targetOperationMode);
 
-
 uint32_t bissc_processDataAcquire(void);
+
+uint32_t enter_critical(void);
+void exit_critical(uint32_t primask);
 
 #endif
 

@@ -383,7 +383,8 @@ uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data)
 	mb4_read_registers(0xF1, &StatusInformationF1, 1);
 	if ((StatusInformationF1 & 0x02) != 0x02) {  // CRC校验未通过 SVALID0 = 0
 		printf("BISS-C: Step 3 SVALID1 not set 1! reStart AGS! \n\r");
-		HAL_BISSC_reStartAGS();
+		// HAL_BISSC_reStartAGS();
+		HAL_Delay(200);
 		goto __end;
 	}
 	// printf("BISS-C:  Step 4 Read 0xF1 Value: %x \n\r", StatusInformationF1);
@@ -487,21 +488,5 @@ uint8_t HAL_CTLRegs_Read_Slave0(uint8_t readAddr)
 
 	return SlaveRegValue;
 }
-
-uint8_t BISSC_F0Status_Display(uint8_t status)
-{
-	uint8_t ret = 0;
-	switch(status) {
-
-
-
-		default:
-		break;
-	}
-
-
-	return ret;
-}
-
 
 #endif

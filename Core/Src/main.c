@@ -1256,9 +1256,10 @@ printf("************NEW BOOT!******************\n\r");
 void userAppLoop(void) 
 {
     uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
+    uint32_t primask = 0;
 
     if (gStatus.l_time_heartbeat == 1) {
-        printf("%d ms HeartBeat Msg, Cuurent Posi is %d um \n\r", gTime.l_time_ms, motionStatus.g_Distance);
+        printf("%d ms HeartBeat Msg, Current Posi is %d um \n\r", gTime.l_time_ms, motionStatus.g_Distance);
 
         #if HAL_CANOPEN_ENABLE
             canopenStatusMonitor(); 
@@ -1272,6 +1273,8 @@ void userAppLoop(void)
     #if HAL_BISSC_ENABLE
         if (gStatus.l_bissc_sensor_acquire == 1) { // 左侧电机
             motionStatus.g_Distance =  bissc_processDataAcquire();
+
+            printf("BISS-C: Analyse effect %d, noeffect %d\n\r", gStatus.effectCnt, gStatus.noeffectCnt);
             gStatus.l_bissc_sensor_acquire = 0;
         }
     #else
@@ -1303,10 +1306,13 @@ void userAppLoop(void)
 void BISSC_ReStore(uint8_t *errCnt) {
     if (*errCnt > 200) { // 连续 200ms无法获取到有效位置数据
         gStatus.l_bissc_sw = 0;
-        HAL_SPI_DeInit(&hspi1); // 排除是SPI1挂了还是AMG2000传来的数据确实有问题
-        HAL_Delay_us(100);
-        HAL_SPI_Init(&hspi1);
-        HAL_BISSC_Setup();
+        // HAL_SPI_DeInit(&hspi1); // 排除是SPI1挂了还是AMG2000传来的数据确实有问题
+        // HAL_Delay_us(100);
+        // HAL_SPI_Init(&hspi1);
+        // HAL_BISSC_Setup();
+
+        HAL_BISSC_reStartAGS();
+        HAL_Delay(20);
         gStatus.l_bissc_sw = 1; // 开启BISS-C轮询数据获取
         *errCnt=0;
       }
