@@ -11,7 +11,8 @@ SDRAM_STO_VAR sdram_var;
 
 
 uint16_t canopenStopMachineAndTransMode(uint8_t targetOperationMode);
-
+static inline void set_BASEPRI(uint32_t basePri);
+static inline uint32_t get_BASEPRI(void);
 
 #if HAL_W5500_ENABLE
 uint8_t gDATABUF[DATA_BUF_SIZE];  
@@ -32,6 +33,19 @@ volatile uint32_t tim4_timeBaseCnt_1MS = 0;
 
 uint8_t flagStatus = 0; 																	
 int32_t avgPosiErr[2] = {0}; 		
+
+static inline void set_BASEPRI_REG(uint32_t basePri)
+{
+  register uint32_t __regBasePri         __ASM("basepri");
+  __regBasePri = (basePri & 0xff);
+}
+ 
+ 
+static inline uint32_t  get_BASEPRI_REG(void)
+{
+  register uint32_t __regBasePri         __ASM("basepri");
+  return(__regBasePri);
+}
 
 // Function
 #if HAL_W5500_ENABLE
@@ -412,15 +426,8 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             bissc_interval_old = 0;
         }
 
-        // 2024.07.01
-        // 之所以没有跑在10KHz获取，一方面实际TIM3定时精度不高
-        // 和外界时间比电脑30s 实际log输出TIM3计时25s
-        // 第二 跑10KHz，实际值能到3.6KHz左右 且数据有效率在100万帧后出现显著下降 74.2% -> 73.7%
-        // 最后，上位机精度也就是1ms，通信周期目前是20ms 最后压到10ms可能就到canopen精度了(时差允许范围3ms)
-        // 实测1ms左右，位置获取是有1000帧的，而且有效率稳定在75.1%
-        // 最后选择了2KHz，实际总数2000帧，有效率接近79%，勉强满足位置环1KHz带宽
-
-        if (bissc_interval_cnt - bissc_interval_old >= 50) { 
+        // 1ms
+        if (bissc_interval_cnt - bissc_interval_old >= 100) { 
             bissc_interval_old = bissc_interval_cnt;
             if (gStatus.l_bissc_sw == 1) {
                gStatus.l_bissc_sensor_acquire = 1;
@@ -1079,12 +1086,13 @@ uint32_t bissc_processDataAcquire(void)
     static uint8_t errorCnt = 0;
     static uint32_t sensorCnt = 0;
     uint32_t sensorData = 0;
-    uint32_t primask = 0;
+    volatile uint32_t primaskBuckup = 0;
+    uint8_t offPrority = 2; // 抢占优先级2及以下的中断
 
-    // 如果要获得一次读取的时间，只能关有限中断才能进行计时
-    primask = enter_critical();
+    primaskBuckup = get_BASEPRI_REG();
+    set_BASEPRI_REG(offPrority << 6); 
     HAL_SG_SenSorAcquire(&sensorData);
-    exit_critical(primask);
+    set_BASEPRI_REG(primaskBuckup);
 
     if (can_var.CASNodeID == 0x01) {
         if ((sensorData >= POSIRANGESTART_LEFT) && (sensorData <= POSIRANGEEND_LEFT)) {
@@ -1166,4 +1174,5 @@ __STATIC_FORCEINLINE uint32_t __get_PRIMASK(void)
 }
 
 */
+
 

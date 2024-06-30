@@ -187,19 +187,19 @@ void SystemClock_Config(void)
 static void MX_NVIC_Init(void)
 {
   /* CAN1_RX0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 1, 1);
+  HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 2, 3);
   HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
   /* TIM3_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(TIM3_IRQn, 1, 0);
   HAL_NVIC_EnableIRQ(TIM3_IRQn);
   /* TIM4_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(TIM4_IRQn, 1, 2);
+  HAL_NVIC_SetPriority(TIM4_IRQn, 2, 1);
   HAL_NVIC_EnableIRQ(TIM4_IRQn);
   /* USART6_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(USART6_IRQn, 2, 0);
+  HAL_NVIC_SetPriority(USART6_IRQn, 3, 0);
   HAL_NVIC_EnableIRQ(USART6_IRQn);
   /* CAN2_RX0_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(CAN2_RX0_IRQn, 1, 2);
+  HAL_NVIC_SetPriority(CAN2_RX0_IRQn, 2, 2);
   HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
 }
 
