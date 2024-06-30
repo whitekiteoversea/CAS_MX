@@ -566,12 +566,16 @@ uint8_t w5500_Decoder(EthControlFrameSingleCAS frame)
                     speedGivenRpm = frame.canpack.CANData[4];
                     speedGivenRpm <<= 8;
                     speedGivenRpm |= frame.canpack.CANData[5];
-                    canopenDriverSpeedGive(speedGivenRpm);
+                    #if HAL_CANOPEN_ENABLE
+                        canopenDriverSpeedGive(speedGivenRpm);
+                    #endif
                 } else if (motionStatus.targetWorkmode == TORQUEMODE) {
                      torqueGivenCmd = frame.canpack.CANData[4];
                     torqueGivenCmd <<= 8;
                     torqueGivenCmd |= frame.canpack.CANData[5];
-                    canopenDriverTorqueGive(torqueGivenCmd);                 
+                    #if HAL_CANOPEN_ENABLE
+                        canopenDriverTorqueGive(torqueGivenCmd);    
+                    #endif             
                 }
             } else {
                 printf("CAN1: System OperationMode not eq real Motor Mode! \r\n");
@@ -582,7 +586,9 @@ uint8_t w5500_Decoder(EthControlFrameSingleCAS frame)
             pcSetupOperationMode = frame.canpack.CANData[4];
             printf("ETH: Recv Frame to change OperationMode to %x\n\r", pcSetupOperationMode);
             if (motionStatus.g_curOperationMode != pcSetupOperationMode) {
-                canopenStopMachineAndTransMode(pcSetupOperationMode);
+                #if HAL_CANOPEN_ENABLE
+                    canopenStopMachineAndTransMode(pcSetupOperationMode);
+                #endif
             }
           break;
 
