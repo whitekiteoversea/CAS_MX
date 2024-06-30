@@ -1257,9 +1257,14 @@ void userAppLoop(void)
 {
     uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
     uint32_t primask = 0;
+    float wrongrate = 0.0;
 
     if (gStatus.l_time_heartbeat == 1) {
         printf("%d ms HeartBeat Msg, Current Posi is %d um \n\r", gTime.l_time_ms, motionStatus.g_Distance);
+        wrongrate = ((float)(gStatus.noeffectCnt)/(gStatus.effectCnt + gStatus.noeffectCnt));
+        printf("BISS-C: Analyse effect %d, noeffect %d, wrong rate %6f \n\r", gStatus.effectCnt, \
+                                                                              gStatus.noeffectCnt, \
+                                                                              wrongrate);
 
         #if HAL_CANOPEN_ENABLE
             canopenStatusMonitor(); 
@@ -1273,8 +1278,6 @@ void userAppLoop(void)
     #if HAL_BISSC_ENABLE
         if (gStatus.l_bissc_sensor_acquire == 1) { // 左侧电机
             motionStatus.g_Distance =  bissc_processDataAcquire();
-
-            printf("BISS-C: Analyse effect %d, noeffect %d\n\r", gStatus.effectCnt, gStatus.noeffectCnt);
             gStatus.l_bissc_sensor_acquire = 0;
         }
     #else
