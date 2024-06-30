@@ -1261,19 +1261,11 @@ void userAppLoop(void)
 {
     uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
     uint32_t primask = 0;
+    volatile uint32_t retPosi = 0;
 
     if (gStatus.l_time_heartbeat == 1) {
-        if (can_var.CASNodeID == 0x01) {
-            if ((motionStatus.g_Distance >= POSIRANGESTART_LEFT) && (motionStatus.g_Distance <= POSIRANGEEND_LEFT)) {
-                printf("%d ms HeartBeat Msg, Current Posi is %d um \n\r", gTime.l_time_ms, motionStatus.g_Distance); 
-            }
-            bissc_errorRateMonitor();
-        } else if (can_var.CASNodeID == 0x02){
-            if ((motionStatus.g_Distance >= POSIRANGESTART_RIGHT) && (motionStatus.g_Distance <= POSIRANGEEND_RIGHT)) {
-                printf("%d ms HeartBeat Msg, Current Posi is %d um \n\r", gTime.l_time_ms, motionStatus.g_Distance); 
-            }
-            bissc_errorRateMonitor();
-        }
+        printf("%d ms HeartBeat Msg, Current Posi is %d um \n\r", gTime.l_time_ms, motionStatus.g_Distance); 
+        bissc_errorRateMonitor();
 
         #if HAL_CANOPEN_ENABLE
             canopenStatusMonitor(); 
@@ -1286,8 +1278,16 @@ void userAppLoop(void)
     // BiSS-C
     #if HAL_BISSC_ENABLE
         if (gStatus.l_bissc_sensor_acquire == 1) { // 左侧电机
-            motionStatus.g_Distance =  bissc_processDataAcquire();
-            gStatus.l_bissc_sensor_acquire = 0;
+            retPosi = bissc_processDataAcquire();
+            if (can_var.CASNodeID == 0x01) {
+                if ((retPosi >= POSIRANGESTART_LEFT) && (retPosi <= POSIRANGEEND_LEFT)) {
+                    motionStatus.g_Distance = retPosi;
+                }
+            } else if (can_var.CASNodeID == 0x02){
+                if ((retPosi >= POSIRANGESTART_RIGHT) && (retPosi <= POSIRANGEEND_RIGHT)) {
+                  motionStatus.g_Distance = retPosi; 
+                }
+            }
         }
     #else
       // deal with AMG2000 RS485 MSG

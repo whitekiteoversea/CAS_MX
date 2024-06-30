@@ -382,6 +382,7 @@ uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data)
 	txData = 0;
 	mb4_write_registers(0xF1, &txData, 1);
 
+	// CRC都干掉了，这个校验还需要吗……
 	if ((StatusInformationF1 & 0x02) != 0x02) {  // CRC校验未通过 SVALID0 = 0
 		printf("BISS-C: Step 3 SVALID1 not set 1! reStart AGS! \n\r");
 		// HAL_BISSC_reStartAGS();
@@ -403,8 +404,7 @@ uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data)
 					SGGData <<= 8;
 				}
 			}
-			// 合规性校验在外面做
-			*pSG_Data = (uint32_t)SGGData;
+			*pSG_Data = (uint32_t)SGGData;// 数据合规性校验在外面做，逻辑解耦
 		}
 	} else {
 		printf("BISS-C: Step 7 ERROR Occur! Now StatusInformationF0 is 0x%x \n\r", StatusInformationF0);
