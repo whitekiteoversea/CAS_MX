@@ -434,15 +434,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             }
         }
         bissc_interval_cnt++;
-
          // 1s update local time and Sensor
         if ((gTime.l_time_ms % 1000 == 0) && ((gTime.l_time_ms > 0)) && (0 != gTime.l_time_ms-heartbeatChangedMs)) {
             gStatus.l_time_heartbeat = 1;
             heartbeatChangedMs = gTime.l_time_ms;
         }
-
-        
-
     } else if (htim == &htim4) {
         tim4_timeBaseCnt_1MS++;
         TimeDispatch(); // canfestival software timer 
