@@ -1279,6 +1279,7 @@ void userAppLoop(void)
     #if HAL_BISSC_ENABLE
         if (gStatus.l_bissc_sensor_acquire == 1) { // 左侧电机
             retPosi = bissc_processDataAcquire();
+            //printf( "retPosi is 0x%x um \r\n");
             if (can_var.CASNodeID == 0x01) {
                 if ((retPosi >= POSIRANGESTART_LEFT) && (retPosi <= POSIRANGEEND_LEFT)) {
                     motionStatus.g_Distance = retPosi;

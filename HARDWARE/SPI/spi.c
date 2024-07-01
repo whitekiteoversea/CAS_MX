@@ -315,16 +315,6 @@ void HAL_BISSC_Setup(void)
 	txData[0] = 0x63;
 	mb4_write_registers(0xE8, txData, 1); //FREQAGS=10KHz 控制RS422的最小循环周期 
 
-	// 先BREAK
-	txData[0] = 0x80;
-	mb4_write_registers(0xF4, txData, 1);
-	HAL_Delay_us(100);
-
-	// INIT
-	txData[0] = 0x10;
-	mb4_write_registers(0xF4, txData, 1);
-	HAL_Delay_us(100);
-
 	//Reset SVALID flags
 	txData[0] = 0x00;
 	mb4_write_registers(0xF1, txData, 1);

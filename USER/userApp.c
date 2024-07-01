@@ -115,7 +115,7 @@ void systemParaInit(void)
     motionStatus.g_Distance = 0; // target Posi_um
     motionStatus.g_Speed = 0;
 
-    can_var.CASNodeID = 0x01;
+    can_var.CASNodeID = 0x02;
     // CANOpen相关参数初始化后不变
     can_var.CANOpenMasterID = 0x01; // master CAN ID
     can_var.slaveCANID = SLAVECANID; // driver can ID
@@ -306,7 +306,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
                 tempPosiErr = avgErrUpdate(avgPosiErr);
                 flagStatus = 0;	
 
-							// 时间隔得太久，忘了处理逻辑
+			  // 时间隔得太久，忘了处理逻辑
               if (can_var.CASNodeID == 0x01) {
                   snddata[2] = 0;
                   snddata[3] = 0;
@@ -630,7 +630,7 @@ uint8_t w5500_Decoder(EthControlFrameSingleCAS frame)
 
           break;
         default:
-           printf("W5500: Recv Error ETHCAS Pack \n\r");
+           // printf("W5500: Recv Error ETHCAS Pack \n\r");
         break;
     }
     return ret;
@@ -1097,15 +1097,16 @@ uint32_t bissc_processDataAcquire(void)
         } else {
             errorCnt++;
             gStatus.noeffectCnt++;
-            BISSC_ReStore(&errorCnt); // 1ms内可以完成
+            BISSC_ReStore(&errorCnt); 
         }
     } else if (can_var.CASNodeID == 0x02) { //右侧电机
         if ((sensorData >= POSIRANGESTART_RIGHT) && (sensorData <= POSIRANGEEND_RIGHT)) {
             retPosi = sensorData;
+            gStatus.effectCnt++;
         } else {
             errorCnt++;
-           BISSC_ReStore(&errorCnt); 
-            // printf("BISS-C: %d ms %d Frame Acquire PosiData Error! \n\r", gTime.l_time_ms, sensorCnt);
+            gStatus.noeffectCnt++;
+            BISSC_ReStore(&errorCnt); 
         }
     } else if (can_var.CASNodeID == 0x03) {  //横梁电机
         ; // idle
