@@ -288,18 +288,13 @@ void HAL_BISSC_Setup(void)
 
 #if BISS_ENABLE_CRC
 	//Single-Cycle Data: Data channel configuration
-	txData[0] = 0x5B;
 	mb4_write_registers(0xC0, txData, 1); // bit6:ENSCD1=1, bit5-0：SCD data len 26+2= 28, SCDLEN = 0x1C
-	HAL_Delay_us(40);
 	txData[0] = 0x06;
 	mb4_write_registers(0xC1, txData, 1); //SELCRCS1=0x00, SCRCLEN1=0x06 (6-bit CRC polynomial 0x43)
-	HAL_Delay_us(40);
 	txData[0] = 0x00;
 	mb4_write_registers(0xC2, txData, 1); //SCRCSTART1(7:0)=0x00 (CRC start value)
-	HAL_Delay_us(40);
 	txData[0] = 0x00;
 	mb4_write_registers(0xC3, txData, 1); //SCRCSTART1(15:8)=0x00 (CRC start value)
-	HAL_Delay_us(40);
 #else
 	//Single-Cycle Data: Data channel configuration
 	txData[0] = 0x61;
@@ -352,42 +347,45 @@ uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data)
 		goto __end;
 	}
 
-	if ((StatusInformationF0 & 0x70) != 0x70 ) { // SCDERR OR AGSERR
-		printf("BISS-C: Step 2 ERR Occur! nAGSERR is %d nSCDERR is %d, reStart AGS! \n\r", ((StatusInformationF0 & 0x40) >> 6), ((StatusInformationF0 & 0x10) >> 4));
-		HAL_BISSC_reStartAGS();	
-		goto __end;	
-	}
-
 	mb4_read_registers(0xF1, &StatusInformationF1, 1);
 	txData = 0;
 	mb4_write_registers(0xF1, &txData, 1);
 
-	if ((StatusInformationF1 & 0x02) != 0x02) {  // CRC校验未通过 SVALID0 = 0
-		printf("BISS-C: Step 3 SVALID1 not set 1! reStart AGS! \n\r");
-		goto __end;
+	if ((StatusInformationF0 & 0x70) != 0x70 ) { // SCDERR OR AGSERR
+		printf("BISS-C: Step 2 ERR Occur! nAGSERR is %d nSCDERR is %d, reStart AGS! \n\r", ((StatusInformationF0 & 0x40) >> 6), ((StatusInformationF0 & 0x10) >> 4));
+		// 检查数据通道设置
+		HAL_BISSC_reStartAGS();
+		goto __end;	
 	}
 
-	// NO Error Occur
-	if ((StatusInformationF0 & 0x70) == 0x70) {  
-		if ((StatusInformationF1 & 0x02) == 0) { // if SVALID1 != 1 ReStart AGS
-			printf(" BISS-C:Step 5 Acquire SG Data Failed! StatusInformationF1 is %d \n\r", StatusInformationF1);
-			HAL_BISSC_reStartAGS();
-		} else { 
-			for (cnt = 0; cnt<5; cnt++) {
-				mb4_read_registers(cnt, &SG_Data_Tmp[cnt], 1);
-			}
-			for (cnt = 3;cnt>0; cnt--) {
-				SGGData += SG_Data_Tmp[cnt];
-				if (cnt >1) {
-					SGGData <<= 8;
-				}
-			}
-			*pSG_Data = (uint32_t)SGGData;// 数据合规性校验在外面做，逻辑解耦
-		}
-	} else {
-		printf("BISS-C: Step 7 ERROR Occur! Now StatusInformationF0 is 0x%x \n\r", StatusInformationF0);
+	if ((StatusInformationF1 & 0x02) == 0) { // if SVALID1 != 1 ReStart AGS
+		printf(" BISS-C:Step 5 Acquire SG Data Failed! StatusInformationF1 is %d \n\r", StatusInformationF1);
 		HAL_BISSC_reStartAGS();
+		goto __end;
+	} 
+	// 状态位检查均通过，则获取SGData结果
+	// 关于关闭CRC前后的SGGData数据位置，有以下结论：
+	// 1、IC-MB4对关闭CRC的处理方式是将对应CRC6作为数据位接收，
+	// 这会导致实际SG[0] bit5:0 是CRC6 bit 7:6 是CRC状态位，因此只倒序读SG4 bit 1-0 + SG[3-1]反而是 26bit 数据位
+	// 2、如果开启CRC校验，则26bit数据位会处于 SG[2] bit 3-0 + SG[1]+SG[0] bit 7-2 而CRC 状态位为 SG[0] bit1-0
+	// CRC6结果为 SG[7] bit 7-2
+
+	// 2024.07.02 确认AMG2000发送的CRC6计算结果有问题，IC-MB4的CRC校验不能开
+	// 这里是关闭CRC6的数据获取，如果开启CRC6则不能这样获取
+	for (cnt = 0; cnt<5; cnt++) {
+		mb4_read_registers(cnt, &SG_Data_Tmp[cnt], 1);
 	}
+	SGGData = (SG_Data_Tmp[4] & 0x03);
+	SGGData <<= 8;
+	for (cnt = 3;cnt>0; cnt--) {
+		SGGData += SG_Data_Tmp[cnt];
+		if (cnt > 1) {
+			SGGData <<= 8;
+		}
+	}
+	*pSG_Data = (uint32_t)SGGData;// 数据合规性校验在外面做，逻辑解耦
+	// printf("BISS-C: Acquire Posi is %d \r\n", *pSG_Data);
+	
 __end:
 	return ret;
 }

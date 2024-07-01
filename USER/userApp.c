@@ -1097,7 +1097,6 @@ uint32_t bissc_processDataAcquire(void)
         } else {
             errorCnt++;
             gStatus.noeffectCnt++;
-            BISSC_ReStore(&errorCnt); 
         }
     } else if (can_var.CASNodeID == 0x02) { //右侧电机
         if ((sensorData >= POSIRANGESTART_RIGHT) && (sensorData <= POSIRANGEEND_RIGHT)) {
@@ -1106,7 +1105,6 @@ uint32_t bissc_processDataAcquire(void)
         } else {
             errorCnt++;
             gStatus.noeffectCnt++;
-            BISSC_ReStore(&errorCnt); 
         }
     } else if (can_var.CASNodeID == 0x03) {  //横梁电机
         ; // idle
