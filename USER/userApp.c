@@ -7,8 +7,10 @@ MOTIONVAR motionStatus;
 GLOBAL_ETH_UDP_VAR w5500_udp_var;
 GLOBAL_CAN_VAR can_var;
 MODBUSVARS modbusPosi;
-SDRAM_STO_VAR sdram_var;
+MOTIONRECORD sdramRecord;
 
+// SDRAM数据记录数组
+MOTIONRECORD sramArray[MAXRECORDLENGTH] __attribute__((at(0XC0000000));
 
 uint16_t canopenStopMachineAndTransMode(uint8_t targetOperationMode);
 static inline void set_BASEPRI(uint32_t basePri);
@@ -16,7 +18,7 @@ static inline uint32_t get_BASEPRI(void);
 
 #if HAL_W5500_ENABLE
 uint8_t gDATABUF[DATA_BUF_SIZE];  
-uint8_t gSendBUF[DATA_BUF_SIZE];
+uint8_t gSendBUF[1400]; // 不分包单帧长度
 
 wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
                             .ip = {192, 168, 20, 11},
@@ -115,13 +117,12 @@ void systemParaInit(void)
     motionStatus.g_Distance = 0; // target Posi_um
     motionStatus.g_Speed = 0;
 
-    can_var.CASNodeID = 0x02;
+    can_var.CASNodeID = 0x01;
     // CANOpen相关参数初始化后不变
     can_var.CANOpenMasterID = 0x01; // master CAN ID
     can_var.slaveCANID = SLAVECANID; // driver can ID
 
-	#if HAL_W5500_ENABLE
-	
+#if HAL_W5500_ENABLE
     // 上位机 IP 192.168.20.33 Port 8888
     // 本地 IP 192.168.20.11 + (CANNodeID-1) Port 8001+ (CANNodeID-1) MAC 也一致更改
 
@@ -148,13 +149,20 @@ void systemParaInit(void)
 
     // Update W5500 Initial Paras
     for (cnt=0;cnt<4;cnt++) {
-      gWIZNETINFO.ip[cnt] =  w5500_udp_var.SrcRecvIP[cnt];
+    gWIZNETINFO.ip[cnt] =  w5500_udp_var.SrcRecvIP[cnt];
     }
 
     for (cnt=0;cnt<6;cnt++) {
-      gWIZNETINFO.mac[cnt] =  w5500_udp_var.SrcMAC[cnt];
+    gWIZNETINFO.mac[cnt] =  w5500_udp_var.SrcMAC[cnt];
     }
 
+#endif
+
+#if HAL_SDRAM_ENABLE
+    sdramRecord.frameNum = 0;
+    sdramRecord.g_timeSync_ms = 0;
+    sdramRecord.l_time_ms = 0;
+    sdramRecord.realTimePosi_um = 0;
 #endif
 
     // 预设工作模式初始化
@@ -626,8 +634,17 @@ uint8_t w5500_Decoder(EthControlFrameSingleCAS frame)
         break;
         
         case CANDriverInfoAcquire: // SDRAM数据获取
-
-
+            // 停止新数据记录
+            gStatus.l_sdram_record_enable = 0;
+            if (frame.subType == 0) {
+                //回复请求
+            } else if (frame.subType == 1) {
+                // 单次发送100包 1200字节+帧头帧尾
+                //w5500_sdramDataReport(sdramRecord.frameNum, );
+                // 给主循环发包标志
+                gStatus.l_w5500_send_flag = 1;
+            }
+            
           break;
         default:
            // printf("W5500: Recv Error ETHCAS Pack \n\r");
@@ -660,6 +677,60 @@ uint32_t w5500_reportStatus(CASREPORTFRAME statusPack)
     ret = sendto(1, gSendBUF, sizeof(statusPack), w5500_udp_var.DstHostIP, 8888);		
     return ret;
 }
+
+uint32_t w5500_sdramDataReport(uint32_t reportFrameNum)
+{
+    uint32_t ret =0;
+    uint8_t cnt = 0;
+    CASREPORTPACK sendPack;
+    static uint8_t subPackNum = 0;
+
+    sendPack.EHeader = 0xAA55;
+    sendPack.FrameTailer = 0x55AA;
+
+    sendPack.CASNode = can_var.CASNodeID;
+    sendPack.EType = CANDriverInfoAcquire;
+    sendPack.subType = 0x01;
+
+    // 计算总包数
+    sendPack.totalSubPackNum = reportFrameNum/SUBPACKNUM;
+    if (reportFrameNum % SUBPACKNUM > 0) {
+        sendPack.totalSubPackNum += 1;
+    }
+
+    // 排除无效触发
+    if (sendPack.totalSubPackNum = 0) {
+        printf ("W5500: No Effect SDRAM Data Upload! \r\n");
+        goto __end;
+    }
+
+    // 如果是最后一个分包
+    sendPack.ENum = SUBPACKNUM;
+    if (subPackNum == sendPack.totalSubPackNum) {
+        sendPack.ENum = reportFrameNum - SUBPACKNUM*(subPackNum-1);
+    }
+    // 分包数据填充
+    for (cnt=0;cnt<sendPack.ENum;cnt++) {
+        sendPack.sdramSubPack[cnt].g_time_ms = sramArray[subPackNum*SUBPACKNUM+cnt].g_timeSync_ms;
+        sendPack.sdramSubPack[cnt].l_time_ms = sramArray[subPackNum*SUBPACKNUM+cnt].l_time_ms;
+        sendPack.sdramSubPack[cnt].posi_um = sramArray[subPackNum*SUBPACKNUM+cnt].realTimePosi_um;
+    }
+    
+    sendPack.ELen = sizeof(CASREPORTPACK);
+    memcpy(gSendBUF, &sendPack, sizeof(sendPack));
+    ret = sendto(1, gSendBUF, sizeof(sendPack), w5500_udp_var.DstHostIP, 8888);
+
+    // 判断任务是否完成
+    if (subPackNum > sendPack.totalSubPackNum) {
+        gStatus.l_w5500_send_flag = 0;
+    } else {
+        subPackNum++;
+    }
+
+__end:
+    return ret;		
+}
+
 
 #endif
 
@@ -712,7 +783,7 @@ uint16_t message_sdo[PRESETSDOLENG][10] = {
     {0x608, 0x2f, 0x03, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO4 传输类型
     // TPDO1
     {0x608, 0x23, 0x00, 0x18, 0x01, 0x88, 0x01, 0x00, 0x80, uint8}, // TPDO1 失能
-    {0x608, 0x2f, 0x00, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO1 传输类型 周期触发 100SYNC 1s
+    {0x608, 0x2f, 0x00, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO1 传输类型 周期触发 100SYNC 1000ms
     {0x608, 0x2f, 0x00, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // 清除原有映射内容
     {0x608, 0x23, 0x00, 0x1A, 0x01, 0x10, 0x00, 0x41, 0x60, uint8}, // 映射为状态字 0x6041
     {0x608, 0x23, 0x00, 0x1A, 0x02, 0x20, 0x00, 0x6C, 0x60, uint8}, // 映射为实时速度指令 0x606C
@@ -721,7 +792,7 @@ uint16_t message_sdo[PRESETSDOLENG][10] = {
     {0x608, 0x23, 0x00, 0x18, 0x01, 0x88, 0x01, 0x00, 0x00, uint8}, // TPDO1 使能      
     // TDO2 
     {0x608, 0x23, 0x01, 0x18, 0x01, 0x88, 0x02, 0x00, 0x80, uint8}, // TPDO2 失能
-    {0x608, 0x2f, 0x01, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO2 传输类型 周期触发 100 SYNC 1s
+    {0x608, 0x2f, 0x01, 0x18, 0x02, 0x01, 0x00, 0x00, 0x00, uint8}, // TPDO2 传输类型 周期触发 1 SYNC 10ms
     {0x608, 0x2f, 0x01, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // TPDO2 映射清零
     {0x608, 0x23, 0x01, 0x1A, 0x01, 0x08, 0x00, 0x61, 0x60, uint8}, // 0x6061 当前运动模式显示 速度/位置/转矩
     {0x608, 0x23, 0x01, 0x1A, 0x02, 0x20, 0x00, 0x64, 0x60, uint8}, // 0x6064 编码器绝对位置
@@ -801,8 +872,6 @@ uint16_t canopenStopMachineAndTransMode(uint8_t targetOperationMode)
               closeSDOtransfer(&masterObjdict_Data, can_var.slaveCANID, SDO_CLIENT);
               HAL_Delay(20);     
             }
-            // setState(&masterObjdict_Data, Operational);
-            // masterSendNMTstateChange(&masterObjdict_Data, can_var.slaveCANID, NMT_Start_Node);
             startSYNC(&masterObjdict_Data);
 
             gStatus.l_canopenSM_sw = 1; // 都在while(1)里顺序执行，这个好像没啥用，先这样吧
@@ -853,7 +922,7 @@ void canOpenInit(void)
 // SDO Transmit 
 uint8_t canopen_send_sdo(uint16_t *message_sdo)
 {
-	  unsigned long abortCode=0;
+	unsigned long abortCode=0;
     uint8_t      nodeID=0;          /* ID      */
     uint16_t    index=0;           /* 索引    */
     uint8_t     subIndex=0;        /* 子索引   */
@@ -861,7 +930,7 @@ uint8_t canopen_send_sdo(uint16_t *message_sdo)
     uint32_t    count= 0;           /* 数据长度 */
     uint8_t     data[4] = {0};    
     uint8_t     i=0;
-		uint8_t 		ret = 0;
+    uint8_t 		ret = 0;
     
     switch (message_sdo[1]) {
         case 0x2f:count = 1;break;
@@ -967,12 +1036,18 @@ uint8_t canopenStateMachine(void)
 {
     uint8_t ret = 0;
     if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x0250) {
-      Controlword = 0x06;
-      Target_velocity = 0x00;
-      Modes_of_operation = motionStatus.targetWorkmode;
-      sendOnePDOevent(&masterObjdict_Data, 0);
-      motionStatus.g_DS402_SMStatus = 1;
-      printf ("CANOpen: Status 1  servo No Fault plz send Controlword 0x06\r\n");
+
+        if ((gStatus.l_sdram_record_enable == 1) { 
+            gStatus.l_sdram_record_enable = 0; // 停止数据记录
+            sdram_data_reset();
+        }
+
+        Controlword = 0x06;
+        Target_velocity = 0x00;
+        Modes_of_operation = motionStatus.targetWorkmode;
+        sendOnePDOevent(&masterObjdict_Data, 0);
+        motionStatus.g_DS402_SMStatus = 1;
+        printf ("CANOpen: Status 1  servo No Fault plz send Controlword 0x06\r\n");
     }
 
     if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x0231) {
@@ -995,28 +1070,40 @@ uint8_t canopenStateMachine(void)
 
     if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x0237) {
       motionStatus.g_DS402_SMStatus = 4;
+
+      // SDRAM数据记录
+      if (gStatus.l_sdram_record_enable == 0) {
+         gStatus.l_sdram_record_enable == 1;
+         sdram_data_reset();
+      }
+
       printf ("CANOpen: Status 4 Servo RUN \r\n");
     } 
     // 当前停机中，等待指令
 		if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x0217){
-        motionStatus.g_DS402_SMStatus = 0; 
-        // 没啥用
-        if (gStatus.l_canopenSM_sw == 1) {
-            if (motionStatus.targetWorkmode == RECVSPEEDMODE) {
-                Controlword = 0x0F;
-                Target_velocity = 0x00;
-                sendOnePDOevent(&masterObjdict_Data, 0);
-                printf ("CANOpen: System Setup Speed Mode in Status 0 QuickStop \r\n"); 
-            } else if (motionStatus.targetWorkmode == TORQUEMODE) {
-                Controlword = 0x0F;
-                Target_Torque = 0x00;
-                sendOnePDOevent(&masterObjdict_Data, 0);
-                printf ("CANOpen: System Setup Torque Mode in Status 0 QuickStop \r\n");
-            } else { // idle模式下，canopen状态机不进行状态转换
-                printf ("CANOpen: System Setup Idle/POSI Mode in Status 0 QuickStop \r\n"); 
+            motionStatus.g_DS402_SMStatus = 0;
+
+            if ((gStatus.l_sdram_record_enable == 1) { 
+                gStatus.l_sdram_record_enable = 0; // 停止数据记录
+                sdram_data_reset();
+            }
+            // 没啥用
+            if (gStatus.l_canopenSM_sw == 1) {
+                if (motionStatus.targetWorkmode == RECVSPEEDMODE) {
+                    Controlword = 0x0F;
+                    Target_velocity = 0x00;
+                    sendOnePDOevent(&masterObjdict_Data, 0);
+                    printf ("CANOpen: System Setup Speed Mode in Status 0 QuickStop \r\n"); 
+                } else if (motionStatus.targetWorkmode == TORQUEMODE) {
+                    Controlword = 0x0F;
+                    Target_Torque = 0x00;
+                    sendOnePDOevent(&masterObjdict_Data, 0);
+                    printf ("CANOpen: System Setup Torque Mode in Status 0 QuickStop \r\n");
+                } else { // idle模式下，canopen状态机不进行状态转换
+                    printf ("CANOpen: System Setup Idle/POSI Mode in Status 0 QuickStop \r\n"); 
+                }
             }
         }
-    }
 
 		if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x021F){
       motionStatus.g_DS402_SMStatus = 5; 
@@ -1151,6 +1238,32 @@ void BISSC_ReStore(uint8_t *errCnt) {
         *errCnt=0;
       }
 }
+
+void sdram_data_reset(void)
+{
+    sdramRecord.frameNum = 0;
+    sdramRecord.g_timeSync_ms = 0;
+    sdramRecord.l_time_ms = 0;
+    sdramRecord.realTimePosi_um = 0;
+}
+
+void sdram_write_recordData(uint32_t frameNum)
+{
+    uint32_t writeAddr = 0XC0000000+ frameNum*sizeof(MOTIONRECORD);
+    sramArray[writeAddr].frameNum = frameNum;
+    sramArray[writeAddr].g_timeSync_ms = gTime.g_time_ms;
+    sramArray[writeAddr].l_time_ms = gTime.l_time_ms;
+    sramArray[writeAddr].realTimePosi_um = motionStatus.g_Distance;
+}
+
+void sdram_read_recordData(uint32_t frameNum)
+{
+    sdramRecord.frameNum = sramArray[frameNum].frameNum;
+    sdramRecord.g_timeSync_ms = sramArray[frameNum].g_timeSync_ms;
+    sdramRecord.l_time_ms = sramArray[frameNum].l_time_ms;
+    sdramRecord.realTimePosi_um = sramArray[frameNum].realTimePosi_um;
+}
+
 
 /*
 //////////////////////////////////////////////////////

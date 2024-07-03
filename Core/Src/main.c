@@ -22,7 +22,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
-
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -98,6 +97,7 @@ static void MX_NVIC_Init(void);
 
 void bspInit(void);
 void userAppLoop(void);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -1233,8 +1233,8 @@ printf("************NEW BOOT!******************\n\r");
   canOpenInit();
 #endif
 	
-#if HAL_SDRAM_SELFTEST
-	//fsmc_sdram_test();
+#if HAL_SDRAM_ENABLE
+  printf ("SDRAM: Init Success! \r\n");
 #endif
 
 #if HAL_LCD_ENABLE
@@ -1279,14 +1279,33 @@ void userAppLoop(void)
     #if HAL_BISSC_ENABLE
         if (gStatus.l_bissc_sensor_acquire == 1) { // 左侧电机
             retPosi = bissc_processDataAcquire();
-            //printf( "retPosi is 0x%x um \r\n");
             if (can_var.CASNodeID == 0x01) {
                 if ((retPosi >= POSIRANGESTART_LEFT) && (retPosi <= POSIRANGEEND_LEFT)) {
                     motionStatus.g_Distance = retPosi;
+                    if (gStatus.l_sdram_record_enable == 1) {
+                        if (sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) {
+                            sdram_write_recordData(sdramRecord.frameNum);
+                            sdramRecord.frameNum++;
+                        } else { // 记录数据超限之后从头开始
+                          sdramRecord.frameNum = 0;
+                          sdram_write_recordData(sdramRecord.frameNum);
+                          sdramRecord.frameNum++;
+                          printf("SDRAM: Rrcord Data Over Range! \r\n");
+                        }
+                    }
                 }
             } else if (can_var.CASNodeID == 0x02){
                 if ((retPosi >= POSIRANGESTART_RIGHT) && (retPosi <= POSIRANGEEND_RIGHT)) {
-                  motionStatus.g_Distance = retPosi; 
+                    motionStatus.g_Distance = retPosi; 
+                    if (sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) {
+                        sdram_write_recordData(sdramRecord.frameNum);
+                        sdramRecord.frameNum++;
+                    } else { 
+                      sdramRecord.frameNum = 0;
+                      sdram_write_recordData(sdramRecord.frameNum);
+                      sdramRecord.frameNum++;
+                      printf("SDRAM: Rrcord Data Over Range! \r\n");
+                    }
                 }
             }
         }
@@ -1313,6 +1332,11 @@ void userAppLoop(void)
 
     #if HAL_W5500_ENABLE
       w5500_stateMachineTask();
+
+      if (gStatus.l_w5500_send_flag == 1) {
+          w5500_sdramDataReport(sdramRecord.frameNum);
+          // 发送默认长度以太网包
+      } 
     #endif
 }
 

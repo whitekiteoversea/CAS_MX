@@ -46,12 +46,15 @@
 
 #define MOTOR_ENCODER_IDENTIFYWIDTH  (8388608)  // 23bit
 
+#define MAXRECORDALLOWEDLENGTH         (500000)
+#define MAXRECORDLENGTH                (800000)
+
 
 // function Switch
 #define HAL_W5500_ENABLE         			 (1)
 #define HAL_CANOPEN_ENABLE                   (1)
 #define CANOPEN_NONBLOACK_DELAY_ENABLE       (1)
-#define HAL_SDRAM_SELFTEST       			 (0)
+#define HAL_SDRAM_ENABLE       			     (1)
 #define HAL_DAC_ENABLE           			 (0)
 #define HAL_EEPROM_ENABLE        			 (0)
 #define HAL_LCD_ENABLE                       (0)  // CANOpen与LCD相冲
@@ -60,11 +63,14 @@ extern uint8_t gDATABUF[DATA_BUF_SIZE];
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 
+extern MOTIONRECORD sramArray[MAXRECORDLENGTH]; // 最大数据记录长度 300s
+
 // toolbox function def
 void network_register(void);
 void network_init(void);			// Initialize Network information and display it
 uint8_t w5500_Decoder(EthControlFrameSingleCAS frame);
 uint32_t w5500_reportStatus(CASREPORTFRAME statusPack);
+uint32_t w5500_sdramDataReport(uint32_t reportFrameNum);
 
 void systemParaInit(void);
 void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode); // can recv info distribute
@@ -77,6 +83,7 @@ int32_t avgErrCollect(uint8_t node, int32_t sampleData);
 int32_t avgErrUpdate(int32_t *sampleData);
 
 void fsmc_sdram_test(void); // SDRAM R/W TEST
+void sdram_data_reset(void); // 重置SDRAM数据有效性
 uint32_t tim3_getCurrentTimeCnt(void);
 
 // MS level nonblocking delay
@@ -100,6 +107,9 @@ void BISSC_ReStore(uint8_t *errCnt);
 
 uint32_t enter_critical(void);
 void exit_critical(uint32_t primask);
+
+void sdram_write_recordData(uint32_t frameNum);
+void sdram_read_recordData(uint32_t frameNum);
 
 #endif
 

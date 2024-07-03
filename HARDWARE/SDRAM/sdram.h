@@ -5,7 +5,6 @@
 #include "global_data.h"	
 
 #define Bank5_SDRAM_ADDR    ((u32)(0XC0000000)) 	
-#define HAL_SDRAM_EANBLE    (0)
 
 //SDRAM配置参数
 #define SDRAM_MODEREG_BURST_LENGTH_1             ((u16)0x0000)

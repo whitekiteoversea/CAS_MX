@@ -46,6 +46,13 @@ typedef struct {
   volatile unsigned int g_time_ms;
 } GLOBALTIME;
 
+typedef struct {
+    uint32_t frameNum;
+    uint32_t g_timeSync_ms;
+    uint32_t l_time_ms;
+    uint32_t realTimePosi_um;
+} MOTIONRECORD;
+
 // SpeedMode
 typedef union {
 struct {
@@ -161,6 +168,9 @@ typedef struct {
 
   volatile uint32_t effectCnt;
   volatile uint32_t noeffectCnt;
+
+  volatile unsigned char l_sdram_record_enable; // SDRAM开始记录数据
+  volatile unsigned char l_w5500_send_flag;  //主循环发包标志
 } GLOBALSTATUS;
 
 // ETH Mode Parameter
@@ -220,12 +230,6 @@ typedef struct {
   unsigned int CASPosi_um;
 } POSI_RECORD_VAR;
 
-typedef struct {
-  unsigned int curSTOAddr;
-  unsigned char overWriteFlag;
-  POSI_RECORD_VAR lastestPosiData;
-} SDRAM_STO_VAR;
-
 #pragma pack(1)															
 typedef union
 {
@@ -253,7 +257,7 @@ typedef struct
 {
 	uint32_t transTimeStamp;	//
 	uint16_t givenSpeed;  		//
-}DACSndStorage;	
+} DACSndStorage;	
 
 // 速度模式下单机控制结构体，对应报文类别为
 typedef struct {
@@ -261,9 +265,10 @@ typedef struct {
     uint32_t ENum;           //Ethernet帧号
     uint32_t ELen;           //Ethernet长度 Byte
     uint8_t EType;           //报文类型
+    uint8_t subType;         //子报文类型   
     CANFrame_STD canpack;
     uint32_t FrameTailer;
-}EthControlFrameSingleCAS;
+} EthControlFrameSingleCAS;
 
 typedef struct {
     uint32_t EHeader;        // Ethernet帧头
@@ -280,6 +285,27 @@ typedef struct {
     uint32_t FrameTailer;
 } CASREPORTFRAME;
 
+typedef struct {
+    uint32_t g_time_ms;        //Ethernet帧头
+    uint32_t l_time_ms;           //Ethernet帧号
+    uint32_t posi_um;           //Ethernet长度 Byte
+} SUBPACK;
+
+#define SUBPACKNUM (100)
+
+typedef struct {
+    uint32_t EHeader;        //Ethernet帧头
+    uint32_t ENum;           //Ethernet帧号
+    uint32_t ELen;           //Ethernet长度 Byte
+    uint8_t EType;           //报文类型
+    uint8_t subType;         // 子报文类型 0：请求告知 1:传输数据
+    uint8_t CASNode;         // 上报人
+    uint8_t SubPackNum;
+    uint8_t totalSubPackNum;
+    SUBPACK sdramSubPack[SUBPACKNUM]; // 单次上传100包
+    uint32_t FrameTailer;
+} CASREPORTPACK;
+
 #pragma pack()
 
 // extern Var
@@ -289,6 +315,6 @@ extern MODBUSVARS modbusPosi;
 extern MOTIONVAR motionStatus;
 extern GLOBAL_ETH_UDP_VAR w5500_udp_var;
 extern GLOBAL_CAN_VAR can_var;
-extern SDRAM_STO_VAR sdram_var;
+extern MOTIONRECORD sdramRecord;
 
 #endif /* __MAIN_H */
