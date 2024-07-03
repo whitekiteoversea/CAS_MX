@@ -265,7 +265,6 @@ typedef struct {
     uint32_t ENum;           //Ethernet帧号
     uint32_t ELen;           //Ethernet长度 Byte
     uint8_t EType;           //报文类型
-    uint8_t subType;         //子报文类型   
     CANFrame_STD canpack;
     uint32_t FrameTailer;
 } EthControlFrameSingleCAS;
@@ -275,6 +274,7 @@ typedef struct {
     uint32_t ENum;           // Ethernet帧号
     uint32_t ELen;           // Ethernet长度 Byte
     uint16_t EType;           // 报文类型
+    uint16_t subType;           // 子报文类型
     uint8_t CASNodeID;       // 数据来源
     uint8_t curWorkMode;     // 当前工作模式
     uint16_t statusWord;     // 状态字
@@ -291,7 +291,7 @@ typedef struct {
     uint32_t posi_um;           //Ethernet长度 Byte
 } SUBPACK;
 
-#define SUBPACKNUM (100)
+#define  SUBPACKNUM    (100)
 
 typedef struct {
     uint32_t EHeader;        //Ethernet帧头
@@ -299,7 +299,7 @@ typedef struct {
     uint32_t ELen;           //Ethernet长度 Byte
     uint8_t EType;           //报文类型
     uint8_t subType;         // 子报文类型 0：请求告知 1:传输数据
-    uint8_t CASNode;         // 上报人
+    uint8_t CASNode;         // 上报CAS节点
     uint8_t SubPackNum;
     uint8_t totalSubPackNum;
     SUBPACK sdramSubPack[SUBPACKNUM]; // 单次上传100包

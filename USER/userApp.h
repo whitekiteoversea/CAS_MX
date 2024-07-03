@@ -70,7 +70,7 @@ void network_register(void);
 void network_init(void);			// Initialize Network information and display it
 uint8_t w5500_Decoder(EthControlFrameSingleCAS frame);
 uint32_t w5500_reportStatus(CASREPORTFRAME statusPack);
-uint32_t w5500_sdramDataReport(uint32_t reportFrameNum);
+uint32_t w5500_sdramDataReportTask(uint32_t reportFrameNum);
 
 void systemParaInit(void);
 void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode); // can recv info distribute

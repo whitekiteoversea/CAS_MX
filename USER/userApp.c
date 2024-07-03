@@ -592,8 +592,7 @@ uint8_t w5500_Decoder(EthControlFrameSingleCAS frame)
     uint8_t pcSetupOperationMode = 0;
 
     switch (frame.EType) {
-        case CANTargetCmd: // 0x01
-
+        case CANTargetCmd: // 向下更新控制输入
             if (motionStatus.targetWorkmode == motionStatus.g_curOperationMode) {
                 if (motionStatus.targetWorkmode == RECVSPEEDMODE) {
                     speedGivenRpm = frame.canpack.CANData[4];
@@ -611,19 +610,19 @@ uint8_t w5500_Decoder(EthControlFrameSingleCAS frame)
                     #endif             
                 }
             } else {
-                printf("CAN1: System OperationMode not eq real Motor Mode! \r\n");
+                printf("W5500: System OperationMode not eq real Motor Mode! \r\n");
             }
         break;
       
-        case CANOperationModeCmd: // 0x3
+        case CANOperationModeCmd: // 工作模式切换
             pcSetupOperationMode = frame.canpack.CANData[4];
-            printf("ETH: Recv Frame to change OperationMode to %x\n\r", pcSetupOperationMode);
+            printf("ETH: Recv Frame to change OperationMode to 0x%x\n\r", pcSetupOperationMode);
             if (motionStatus.g_curOperationMode != pcSetupOperationMode) {
                 #if HAL_CANOPEN_ENABLE
                     canopenStopMachineAndTransMode(pcSetupOperationMode);
                 #endif
             }
-          break;
+        break;
 
         case CANTimeSyncCmd: // 0x04
           ;
@@ -634,20 +633,18 @@ uint8_t w5500_Decoder(EthControlFrameSingleCAS frame)
         break;
         
         case CANDriverInfoAcquire: // SDRAM数据获取
-            // 停止新数据记录
-            gStatus.l_sdram_record_enable = 0;
-            if (frame.subType == 0) {
+            gStatus.l_sdram_record_enable = 0; // 停止新数据记录
+            if (frame.canpack.CANData[4] == 0) {
+                w5500_sdramDataRequestReport(sdramRecord.frameNum);
                 //回复请求
-            } else if (frame.subType == 1) {
-                // 单次发送100包 1200字节+帧头帧尾
-                //w5500_sdramDataReport(sdramRecord.frameNum, );
-                // 给主循环发包标志
-                gStatus.l_w5500_send_flag = 1;
+            } else if (frame.canpack.CANData[4] == 1) {
+                if (gStatus.l_w5500_send_flag != 1) {
+                    gStatus.l_w5500_send_flag = 1;
+                }
             }
-            
-          break;
+        break;
         default:
-           // printf("W5500: Recv Error ETHCAS Pack \n\r");
+
         break;
     }
     return ret;
@@ -672,62 +669,75 @@ uint32_t w5500_reportStatus(CASREPORTFRAME statusPack)
     statusPack.motorAveragePhaseAmp = motionStatus.g_phaseAmp;
     statusPack.statusWord = motionStatus.motorStatusWord.Value;
 
-    // printf ("Now motorPosi is %d um \r\n", motionStatus.g_Distance);
     memcpy(gSendBUF, &statusPack, sizeof(statusPack));
     ret = sendto(1, gSendBUF, sizeof(statusPack), w5500_udp_var.DstHostIP, 8888);		
     return ret;
 }
 
-uint32_t w5500_sdramDataReport(uint32_t reportFrameNum)
+uint32_t w5500_sdramDataRequestReport(uint32_t readyReportNum)
+{
+    uint32_t ret = 0;
+    CASREPORTFRAME statusPack;
+
+    statusPack.EHeader = 0xAA55;
+    statusPack.FrameTailer = 0x55AA;
+    statusPack.EType = CANDriverInfoAcquire;
+    statusPack.subType = 0x00; // 回复请求
+    statusPack.CASNodeID = can_var.CASNodeID;
+    
+    statusPack.ELen = sizeof(CASREPORTFRAME);
+    memcpy(gSendBUF, &statusPack, sizeof(statusPack));
+    ret = sendto(1, gSendBUF, sizeof(statusPack), w5500_udp_var.DstHostIP, 8888);		
+    return ret;
+}
+
+uint32_t w5500_sdramDataReportTask(uint32_t reportFrameNum)
 {
     uint32_t ret =0;
     uint8_t cnt = 0;
     CASREPORTPACK sendPack;
-    static uint8_t subPackNum = 0;
+    static uint8_t subPackNum = 1; // 初始第一包
 
     sendPack.EHeader = 0xAA55;
     sendPack.FrameTailer = 0x55AA;
 
     sendPack.CASNode = can_var.CASNodeID;
     sendPack.EType = CANDriverInfoAcquire;
-    sendPack.subType = 0x01;
+    sendPack.subType = 0x01;  //数据传输
 
     // 计算总包数
-    sendPack.totalSubPackNum = reportFrameNum/SUBPACKNUM;
+    sendPack.totalSubPackNum = reportFrameNum/SUBPACKNUM -1; // 902/100=9+1 0-8
     if (reportFrameNum % SUBPACKNUM > 0) {
         sendPack.totalSubPackNum += 1;
     }
 
     // 排除无效触发
-    if (sendPack.totalSubPackNum = 0) {
+    if (sendPack.totalSubPackNum == 0) {
         printf ("W5500: No Effect SDRAM Data Upload! \r\n");
         goto __end;
     }
-
-    // 如果是最后一个分包
-    sendPack.ENum = SUBPACKNUM;
-    if (subPackNum == sendPack.totalSubPackNum) {
-        sendPack.ENum = reportFrameNum - SUBPACKNUM*(subPackNum-1);
-    }
-    // 分包数据填充
-    for (cnt=0;cnt<sendPack.ENum;cnt++) {
-        sendPack.sdramSubPack[cnt].g_time_ms = sramArray[subPackNum*SUBPACKNUM+cnt].g_timeSync_ms;
-        sendPack.sdramSubPack[cnt].l_time_ms = sramArray[subPackNum*SUBPACKNUM+cnt].l_time_ms;
-        sendPack.sdramSubPack[cnt].posi_um = sramArray[subPackNum*SUBPACKNUM+cnt].realTimePosi_um;
+    
+    // 判断任务是否完成:当前分包号是否为最后一包
+    if (subPackNum > sendPack.totalSubPackNum) {
+        gStatus.l_w5500_send_flag = 0;
+        printf("W5500: Task Send Finished!\r\n");
+        goto __end;
+    } else {        
+        // 计算本报上报数据包数
+        sendPack.ENum = (sendPack.totalSubPackNum - subPackNum > 0) ? SUBPACKNUM : (reportFrameNum - SUBPACKNUM*(subPackNum-1));
+        for (cnt=0; cnt<sendPack.ENum; cnt++) {
+            sendPack.sdramSubPack[cnt].g_time_ms = sramArray[(subPackNum-1)*SUBPACKNUM+cnt].g_timeSync_ms;
+            sendPack.sdramSubPack[cnt].l_time_ms = sramArray[(subPackNum-1)*SUBPACKNUM+cnt].l_time_ms;
+            sendPack.sdramSubPack[cnt].posi_um = sramArray[(subPackNum-1)*SUBPACKNUM+cnt].realTimePosi_um;
+        }
     }
     
     sendPack.ELen = sizeof(CASREPORTPACK);
     memcpy(gSendBUF, &sendPack, sizeof(sendPack));
     ret = sendto(1, gSendBUF, sizeof(sendPack), w5500_udp_var.DstHostIP, 8888);
 
-    // 判断任务是否完成
-    if (subPackNum > sendPack.totalSubPackNum) {
-        gStatus.l_w5500_send_flag = 0;
-    } else {
-        subPackNum++;
-    }
-
 __end:
+    subPackNum++;
     return ret;		
 }
 

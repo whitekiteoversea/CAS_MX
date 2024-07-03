@@ -1334,8 +1334,7 @@ void userAppLoop(void)
       w5500_stateMachineTask();
 
       if (gStatus.l_w5500_send_flag == 1) {
-          w5500_sdramDataReport(sdramRecord.frameNum);
-          // 发送默认长度以太网包
+          w5500_sdramDataReportTask(sdramRecord.frameNum);
       } 
     #endif
 }
