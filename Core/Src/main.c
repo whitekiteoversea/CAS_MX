@@ -1283,8 +1283,9 @@ void userAppLoop(void)
                 if ((retPosi >= POSIRANGESTART_LEFT) && (retPosi <= POSIRANGEEND_LEFT)) {
                     motionStatus.g_Distance = retPosi;
                     if (gStatus.l_sdram_record_enable == 1) {
-                        if (sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) {
+                        if ((sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) && (sdramRecord.frameNum <= ALLOWEDLENGTH)) {
                             sdram_write_recordData(sdramRecord.frameNum);
+                            // printf("SDRAM : sdramRecord.frameNum is %d \r\n", sdramRecord.frameNum);
                             sdramRecord.frameNum++;
                         } else { // 记录数据超限之后从头开始
                           sdramRecord.frameNum = 0;

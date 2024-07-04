@@ -46,6 +46,10 @@
 
 #define MOTOR_ENCODER_IDENTIFYWIDTH  (8388608)  // 23bit
 
+// 目前测试只有2MByte 0xC0000000 - 0xC1FFFFF0 可以写，再写就触发HardFault
+// 未确认是硬件还是程序初始化问题，先做软件保护
+#define ALLOWEDLENGTH                  (131071)
+
 #define MAXRECORDALLOWEDLENGTH         (500000)
 #define MAXRECORDLENGTH                (800000)
 
