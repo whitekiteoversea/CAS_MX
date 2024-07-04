@@ -304,7 +304,7 @@ typedef struct {
     uint8_t totalSubPackNum;
     SUBPACK sdramSubPack[SUBPACKNUM]; // 单次上传100包
     uint32_t FrameTailer;
-} CASREPORTPACK;
+} CASREPORTSDRAMPACK;
 
 #pragma pack()
 

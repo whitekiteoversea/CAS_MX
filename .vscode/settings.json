@@ -45,5 +45,6 @@
         "atomic": "c",
         "memory": "c",
         "mb4_1sf_driver.h": "c"
-    }
+    },
+    "cmake.sourceDirectory": "C:/Users/WhiteKite2020/Desktop/CAS_MX/Drivers/CMSIS/DSP/Examples/ARM/arm_bayes_example"
 }

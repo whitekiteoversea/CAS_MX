@@ -89,6 +89,7 @@ uint32_t tim3_getCurrentTimeCnt(void);
 // MS level nonblocking delay
 uint8_t tim3_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt);
 void w5500_stateMachineTask(void);
+uint32_t w5500_sdramDataRequestReport(uint32_t readyReportNum);
 
 uint32_t tim4_getCurrentTimeCnt(void);
 uint8_t tim4_noblocked_1MS_delay(uint32_t *lastTimeMS, uint16_t delay1MS_cnt);

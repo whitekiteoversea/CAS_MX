@@ -10,7 +10,7 @@ MODBUSVARS modbusPosi;
 MOTIONRECORD sdramRecord;
 
 // SDRAM数据记录数组
-MOTIONRECORD sramArray[MAXRECORDLENGTH] __attribute__((at(0XC0000000));
+MOTIONRECORD sramArray[MAXRECORDLENGTH] __attribute__((at(0XC0000000)));
 
 uint16_t canopenStopMachineAndTransMode(uint8_t targetOperationMode);
 static inline void set_BASEPRI(uint32_t basePri);
@@ -695,7 +695,7 @@ uint32_t w5500_sdramDataReportTask(uint32_t reportFrameNum)
 {
     uint32_t ret =0;
     uint8_t cnt = 0;
-    CASREPORTPACK sendPack;
+    CASREPORTSDRAMPACK sendPack;
     static uint8_t subPackNum = 1; // 初始第一包
 
     sendPack.EHeader = 0xAA55;
@@ -732,7 +732,7 @@ uint32_t w5500_sdramDataReportTask(uint32_t reportFrameNum)
         }
     }
     
-    sendPack.ELen = sizeof(CASREPORTPACK);
+    sendPack.ELen = sizeof(CASREPORTSDRAMPACK);
     memcpy(gSendBUF, &sendPack, sizeof(sendPack));
     ret = sendto(1, gSendBUF, sizeof(sendPack), w5500_udp_var.DstHostIP, 8888);
 
@@ -1047,7 +1047,7 @@ uint8_t canopenStateMachine(void)
     uint8_t ret = 0;
     if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x0250) {
 
-        if ((gStatus.l_sdram_record_enable == 1) { 
+        if (gStatus.l_sdram_record_enable == 1) { 
             gStatus.l_sdram_record_enable = 0; // 停止数据记录
             sdram_data_reset();
         }
@@ -1083,37 +1083,36 @@ uint8_t canopenStateMachine(void)
 
       // SDRAM数据记录
       if (gStatus.l_sdram_record_enable == 0) {
-         gStatus.l_sdram_record_enable == 1;
+         gStatus.l_sdram_record_enable = 1;
          sdram_data_reset();
       }
-
       printf ("CANOpen: Status 4 Servo RUN \r\n");
     } 
     // 当前停机中，等待指令
 		if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x0217){
-            motionStatus.g_DS402_SMStatus = 0;
+				motionStatus.g_DS402_SMStatus = 0;
 
-            if ((gStatus.l_sdram_record_enable == 1) { 
-                gStatus.l_sdram_record_enable = 0; // 停止数据记录
-                sdram_data_reset();
-            }
-            // 没啥用
-            if (gStatus.l_canopenSM_sw == 1) {
-                if (motionStatus.targetWorkmode == RECVSPEEDMODE) {
-                    Controlword = 0x0F;
-                    Target_velocity = 0x00;
-                    sendOnePDOevent(&masterObjdict_Data, 0);
-                    printf ("CANOpen: System Setup Speed Mode in Status 0 QuickStop \r\n"); 
-                } else if (motionStatus.targetWorkmode == TORQUEMODE) {
-                    Controlword = 0x0F;
-                    Target_Torque = 0x00;
-                    sendOnePDOevent(&masterObjdict_Data, 0);
-                    printf ("CANOpen: System Setup Torque Mode in Status 0 QuickStop \r\n");
-                } else { // idle模式下，canopen状态机不进行状态转换
-                    printf ("CANOpen: System Setup Idle/POSI Mode in Status 0 QuickStop \r\n"); 
-                }
-            }
-        }
+				if (gStatus.l_sdram_record_enable == 1) { 
+						gStatus.l_sdram_record_enable = 0; // 停止数据记录
+						sdram_data_reset();
+				}
+				// 没啥用
+				if (gStatus.l_canopenSM_sw == 1) {
+						if (motionStatus.targetWorkmode == RECVSPEEDMODE) {
+								Controlword = 0x0F;
+								Target_velocity = 0x00;
+								sendOnePDOevent(&masterObjdict_Data, 0);
+								printf ("CANOpen: System Setup Speed Mode in Status 0 QuickStop \r\n"); 
+						} else if (motionStatus.targetWorkmode == TORQUEMODE) {
+								Controlword = 0x0F;
+								Target_Torque = 0x00;
+								sendOnePDOevent(&masterObjdict_Data, 0);
+								printf ("CANOpen: System Setup Torque Mode in Status 0 QuickStop \r\n");
+						} else { // idle模式下，canopen状态机不进行状态转换
+								printf ("CANOpen: System Setup Idle/POSI Mode in Status 0 QuickStop \r\n"); 
+						}
+				}
+    }
 
 		if ((motionStatus.motorStatusWord.Value & 0x3FF) == 0x021F){
       motionStatus.g_DS402_SMStatus = 5; 
