@@ -1285,7 +1285,6 @@ void userAppLoop(void)
                     if (gStatus.l_sdram_record_enable == 1) {
                         if ((sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) && (sdramRecord.frameNum <= ALLOWEDLENGTH)) {
                             sdram_write_recordData(sdramRecord.frameNum);
-                            // printf("SDRAM : sdramRecord.frameNum is %d \r\n", sdramRecord.frameNum);
                             sdramRecord.frameNum++;
                         } else { // 记录数据超限之后从头开始
                           sdramRecord.frameNum = 0;
@@ -1332,11 +1331,13 @@ void userAppLoop(void)
     }
 
     #if HAL_W5500_ENABLE
-      w5500_stateMachineTask();
+        w5500_stateMachineTask();
 
-      if (gStatus.l_w5500_send_flag == 1) {
-          w5500_sdramDataReportTask(sdramRecord.frameNum);
-      } 
+        if (gStatus.l_w5500_send_flag == 1) {
+            // if (1 == tim3_noblocked_1MS_delay(&last_timeMS_upload, 20)) {
+                w5500_sdramDataReportTask(sdramRecord.frameNum);
+            // }
+        } 
     #endif
 }
 

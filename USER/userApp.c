@@ -28,6 +28,7 @@ wiz_NetInfo gWIZNETINFO = { .mac = {0x00, 0x08, 0xdc,0x11, 0x11, 0x11},
                             .dhcp = NETINFO_STATIC };
 
 volatile uint32_t last_timeMS = 0;
+volatile uint32_t last_timeMS_upload = 0;
 volatile uint32_t tim3_timeBaseCnt_10US = 0;
 #endif
 
@@ -550,7 +551,7 @@ void w5500_stateMachineTask(void)
 		
     switch (getSn_SR(0)) {
 			case SOCK_UDP:																							    
-					if (1 == tim3_noblocked_1MS_delay(&last_timeMS, 1)) {
+			    if (1 == tim3_noblocked_1MS_delay(&last_timeMS, 1)) {
               if (getSn_IR(0) & Sn_IR_RECV) {
                 setSn_IR(0, Sn_IR_RECV);															   
               }
@@ -706,7 +707,7 @@ uint32_t w5500_sdramDataReportTask(uint32_t reportFrameNum)
     sendPack.subType = 0x01;  //数据传输
 
     // 计算总包数
-    sendPack.totalSubPackNum = reportFrameNum/SUBPACKNUM -1; // 902/100=9+1 0-8
+    sendPack.totalSubPackNum = reportFrameNum/SUBPACKNUM; // 902/100=9+1 0-8
     if (reportFrameNum % SUBPACKNUM > 0) {
         sendPack.totalSubPackNum += 1;
     }
@@ -725,6 +726,7 @@ uint32_t w5500_sdramDataReportTask(uint32_t reportFrameNum)
     } else {        
         // 计算本报上报数据包数
         sendPack.ENum = (sendPack.totalSubPackNum - subPackNum > 0) ? SUBPACKNUM : (reportFrameNum - SUBPACKNUM*(subPackNum-1));
+        sendPack.SubPackNum = subPackNum;
         for (cnt=0; cnt<sendPack.ENum; cnt++) {
             sendPack.sdramSubPack[cnt].g_time_ms = sramArray[(subPackNum-1)*SUBPACKNUM+cnt].g_timeSync_ms;
             sendPack.sdramSubPack[cnt].l_time_ms = sramArray[(subPackNum-1)*SUBPACKNUM+cnt].l_time_ms;
@@ -735,6 +737,8 @@ uint32_t w5500_sdramDataReportTask(uint32_t reportFrameNum)
     sendPack.ELen = sizeof(CASREPORTSDRAMPACK);
     memcpy(gSendBUF, &sendPack, sizeof(sendPack));
     ret = sendto(1, gSendBUF, sizeof(sendPack), w5500_udp_var.DstHostIP, 8888);
+
+    printf("W5500: %d ms SDRAM Data is uploading! subPackNum/totalSubPackNum : %d/%d\r\n", gTime.l_time_ms, subPackNum, sendPack.totalSubPackNum);
 
 __end:
     subPackNum++;

@@ -116,6 +116,9 @@ void exit_critical(uint32_t primask);
 void sdram_write_recordData(uint32_t frameNum);
 void sdram_read_recordData(uint32_t frameNum);
 
+
+extern volatile uint32_t last_timeMS_upload;
+
 #endif
 
 

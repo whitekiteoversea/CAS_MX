@@ -297,8 +297,8 @@ typedef struct {
     uint32_t EHeader;        //Ethernet帧头
     uint32_t ENum;           //Ethernet帧号
     uint32_t ELen;           //Ethernet长度 Byte
-    uint8_t EType;           //报文类型
-    uint8_t subType;         // 子报文类型 0：请求告知 1:传输数据
+    uint16_t EType;           //报文类型
+    uint16_t subType;         // 子报文类型 0：请求告知 1:传输数据
     uint8_t CASNode;         // 上报CAS节点
     uint8_t SubPackNum;
     uint8_t totalSubPackNum;
