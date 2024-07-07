@@ -1278,36 +1278,8 @@ void userAppLoop(void)
     // BiSS-C
     #if HAL_BISSC_ENABLE
         if (gStatus.l_bissc_sensor_acquire == 1) { // 左侧电机
-            retPosi = bissc_processDataAcquire();
-            if (can_var.CASNodeID == 0x01) {
-                if ((retPosi >= POSIRANGESTART_LEFT) && (retPosi <= POSIRANGEEND_LEFT)) {
-                    motionStatus.g_Distance = retPosi;
-                    if (gStatus.l_sdram_record_enable == 1) {
-                        if ((sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) && (sdramRecord.frameNum <= ALLOWEDLENGTH)) {
-                            sdram_write_recordData(sdramRecord.frameNum);
-                            sdramRecord.frameNum++;
-                        } else { // 记录数据超限之后从头开始
-                          sdramRecord.frameNum = 0;
-                          sdram_write_recordData(sdramRecord.frameNum);
-                          sdramRecord.frameNum++;
-                          printf("SDRAM: Rrcord Data Over Range! \r\n");
-                        }
-                    }
-                }
-            } else if (can_var.CASNodeID == 0x02){
-                if ((retPosi >= POSIRANGESTART_RIGHT) && (retPosi <= POSIRANGEEND_RIGHT)) {
-                    motionStatus.g_Distance = retPosi; 
-                    if (sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) {
-                        sdram_write_recordData(sdramRecord.frameNum);
-                        sdramRecord.frameNum++;
-                    } else { 
-                      sdramRecord.frameNum = 0;
-                      sdram_write_recordData(sdramRecord.frameNum);
-                      sdramRecord.frameNum++;
-                      printf("SDRAM: Rrcord Data Over Range! \r\n");
-                    }
-                }
-            }
+            HAL_BISSC_effectDataAcquire();
+            gStatus.l_bissc_sensor_acquire = 0;
         }
     #else
       // deal with AMG2000 RS485 MSG
@@ -1334,9 +1306,7 @@ void userAppLoop(void)
         w5500_stateMachineTask();
 
         if (gStatus.l_w5500_send_flag == 1) {
-            // if (1 == tim3_noblocked_1MS_delay(&last_timeMS_upload, 20)) {
-                w5500_sdramDataReportTask(sdramRecord.frameNum);
-            // }
+            w5500_sdramDataReportTask(sdramRecord.frameNum);
         } 
     #endif
 }

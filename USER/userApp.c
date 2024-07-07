@@ -1277,23 +1277,38 @@ void sdram_read_recordData(uint32_t frameNum)
     sdramRecord.realTimePosi_um = sramArray[frameNum].realTimePosi_um;
 }
 
-
-/*
-//////////////////////////////////////////////////////
-// Keil 环境下实现（见 cmsis_armclang.h 文件）
-__STATIC_FORCEINLINE void __set_PRIMASK(uint32_t priMask)
-{
-  __ASM volatile ("MSR primask, %0" : : "r" (priMask) : "memory");
+void HAL_BISSC_effectDataAcquire(void) {
+    volatile uint32_t retPosi = bissc_processDataAcquire();
+    if (can_var.CASNodeID == 0x01) {
+        if ((retPosi >= POSIRANGESTART_LEFT) && (retPosi <= POSIRANGEEND_LEFT)) {
+            motionStatus.g_Distance = retPosi;
+            if (gStatus.l_sdram_record_enable == 1) {
+                if ((sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) && (sdramRecord.frameNum <= ALLOWEDLENGTH)) {
+                    sdram_write_recordData(sdramRecord.frameNum);
+                    sdramRecord.frameNum++;
+                } else { // 记录数据超限之后从头开始
+                    sdramRecord.frameNum = 0;
+                    sdram_write_recordData(sdramRecord.frameNum);
+                    sdramRecord.frameNum++;
+                    printf("SDRAM: Rrcord Data Over Range! \r\n");
+                }
+            }
+        }
+    } else if (can_var.CASNodeID == 0x02){
+        if ((retPosi >= POSIRANGESTART_RIGHT) && (retPosi <= POSIRANGEEND_RIGHT)) {
+            motionStatus.g_Distance = retPosi; 
+            if ((sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) && (sdramRecord.frameNum <= ALLOWEDLENGTH)) {     
+                sdram_write_recordData(sdramRecord.frameNum);
+                sdramRecord.frameNum++;
+            } else { 
+                sdramRecord.frameNum = 0;
+                sdram_write_recordData(sdramRecord.frameNum);
+                sdramRecord.frameNum++;
+                printf("SDRAM: Rrcord Data Over Range! \r\n");
+            }
+        }
+    }
 }
 
-__STATIC_FORCEINLINE uint32_t __get_PRIMASK(void)
-{
-  uint32_t result;
-
-  __ASM volatile ("MRS %0, primask" : "=r" (result) );
-  return(result);
-}
-
-*/
 
 

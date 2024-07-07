@@ -109,6 +109,7 @@ uint16_t canopenStopMachineAndTransMode(uint8_t targetOperationMode);
 uint32_t bissc_processDataAcquire(void);
 void bissc_errorRateMonitor(void);
 void BISSC_ReStore(uint8_t *errCnt);
+void HAL_BISSC_effectDataAcquire(void);
 
 uint32_t enter_critical(void);
 void exit_critical(uint32_t primask);
