@@ -159,7 +159,7 @@
           <Type>0</Type>
           <LineNumber>93</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134238830</Address>
+          <Address>134239498</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -175,7 +175,7 @@
           <Type>0</Type>
           <LineNumber>725</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134275348</Address>
+          <Address>134276702</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -185,6 +185,38 @@
           <Filename>..\USER\userApp.c</Filename>
           <ExecCommand></ExecCommand>
           <Expression>\\CAS_MX\../USER/userApp.c\725</Expression>
+        </Bp>
+        <Bp>
+          <Number>2</Number>
+          <Type>0</Type>
+          <LineNumber>126</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134257146</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>../Core/Src/main.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\CAS_MX\../Core/Src/main.c\126</Expression>
+        </Bp>
+        <Bp>
+          <Number>3</Number>
+          <Type>0</Type>
+          <LineNumber>1267</LineNumber>
+          <EnabledFlag>1</EnabledFlag>
+          <Address>134275952</Address>
+          <ByteObject>0</ByteObject>
+          <HtxType>0</HtxType>
+          <ManyObjects>0</ManyObjects>
+          <SizeOfObject>0</SizeOfObject>
+          <BreakByAccess>0</BreakByAccess>
+          <BreakIfRCount>1</BreakIfRCount>
+          <Filename>../Core/Src/main.c</Filename>
+          <ExecCommand></ExecCommand>
+          <Expression>\\CAS_MX\../Core/Src/main.c\1267</Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -277,6 +309,16 @@
           <count>17</count>
           <WinNumber>1</WinNumber>
           <ItemText>subPackNum,0x10</ItemText>
+        </Ww>
+        <Ww>
+          <count>18</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>sdramRecord</ItemText>
+        </Ww>
+        <Ww>
+          <count>19</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>totalSubPackNum</ItemText>
         </Ww>
       </WatchWindow1>
       <MemoryWindow1>

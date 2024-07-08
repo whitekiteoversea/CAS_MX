@@ -170,6 +170,7 @@ typedef struct {
   volatile uint32_t noeffectCnt;
 
   volatile unsigned char l_sdram_record_enable; // SDRAM开始记录数据
+  volatile unsigned char l_not_in_data_report;  // 标识是否正在上传SDRAM数据
   volatile unsigned char l_w5500_send_flag;  //主循环发包标志
 } GLOBALSTATUS;
 
@@ -300,8 +301,8 @@ typedef struct {
     uint16_t EType;           //报文类型
     uint16_t subType;         // 子报文类型 0：请求告知 1:传输数据
     uint8_t CASNode;         // 上报CAS节点
-    uint8_t SubPackNum;
-    uint8_t totalSubPackNum;
+    uint32_t SubPackNum;
+    uint32_t totalSubPackNum;
     SUBPACK sdramSubPack[SUBPACKNUM]; // 单次上传100包
     uint32_t FrameTailer;
 } CASREPORTSDRAMPACK;

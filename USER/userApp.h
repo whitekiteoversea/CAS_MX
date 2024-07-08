@@ -46,10 +46,6 @@
 
 #define MOTOR_ENCODER_IDENTIFYWIDTH  (8388608)  // 23bit
 
-// 目前测试只有2MByte 0xC0000000 - 0xC1FFFFF0 可以写，再写就触发HardFault
-// 未确认是硬件还是程序初始化问题，先做软件保护
-#define ALLOWEDLENGTH                  (131071)
-
 #define MAXRECORDALLOWEDLENGTH         (500000)
 #define MAXRECORDLENGTH                (800000)
 
@@ -60,7 +56,7 @@
 #define CANOPEN_NONBLOACK_DELAY_ENABLE       (1)
 #define HAL_SDRAM_ENABLE       			     (1)
 #define HAL_DAC_ENABLE           			 (0)
-#define HAL_EEPROM_ENABLE        			 (0)
+#define HAL_EEPROM_ENABLE        			 (1)
 #define HAL_LCD_ENABLE                       (0)  // CANOpen与LCD相冲
 
 extern uint8_t gDATABUF[DATA_BUF_SIZE];  
@@ -117,6 +113,8 @@ void exit_critical(uint32_t primask);
 void sdram_write_recordData(uint32_t frameNum);
 void sdram_read_recordData(uint32_t frameNum);
 
+void set_BASEPRI_REG(uint32_t basePri);
+uint32_t  get_BASEPRI_REG(void);
 
 extern volatile uint32_t last_timeMS_upload;
 

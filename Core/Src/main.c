@@ -1263,8 +1263,11 @@ void userAppLoop(void)
     uint32_t primask = 0;
     volatile uint32_t retPosi = 0;
 
+    volatile uint32_t primaskBuckup = 0;
+    uint8_t offPrority = 2; // 抢占优先级2及以下的中断
+
     if (gStatus.l_time_heartbeat == 1) {
-        printf("%d ms HeartBeat Msg, Current Posi is %d um \n\r", gTime.l_time_ms, motionStatus.g_Distance); 
+        printf("%d ms HeartBeat Msg, Current Posi is %d um, Record TotalNum is %d\n\r", gTime.l_time_ms, motionStatus.g_Distance, sdramRecord.frameNum); 
         bissc_errorRateMonitor();
 
         #if HAL_CANOPEN_ENABLE
@@ -1277,7 +1280,7 @@ void userAppLoop(void)
 
     // BiSS-C
     #if HAL_BISSC_ENABLE
-        if (gStatus.l_bissc_sensor_acquire == 1) { // 左侧电机
+        if (gStatus.l_bissc_sensor_acquire == 1) { 
             HAL_BISSC_effectDataAcquire();
             gStatus.l_bissc_sensor_acquire = 0;
         }
@@ -1306,7 +1309,11 @@ void userAppLoop(void)
         w5500_stateMachineTask();
 
         if (gStatus.l_w5500_send_flag == 1) {
+            primaskBuckup = get_BASEPRI_REG();
+            set_BASEPRI_REG(offPrority << 6); 
             w5500_sdramDataReportTask(sdramRecord.frameNum);
+            set_BASEPRI_REG(primaskBuckup);
+            HAL_Delay(10);
         } 
     #endif
 }

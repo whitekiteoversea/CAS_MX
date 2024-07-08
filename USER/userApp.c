@@ -37,14 +37,14 @@ volatile uint32_t tim4_timeBaseCnt_1MS = 0;
 uint8_t flagStatus = 0; 																	
 int32_t avgPosiErr[2] = {0}; 		
 
-static inline void set_BASEPRI_REG(uint32_t basePri)
+void set_BASEPRI_REG(uint32_t basePri)
 {
   register uint32_t __regBasePri         __ASM("basepri");
   __regBasePri = (basePri & 0xff);
 }
  
  
-static inline uint32_t  get_BASEPRI_REG(void)
+uint32_t  get_BASEPRI_REG(void)
 {
   register uint32_t __regBasePri         __ASM("basepri");
   return(__regBasePri);
@@ -164,6 +164,8 @@ void systemParaInit(void)
     sdramRecord.g_timeSync_ms = 0;
     sdramRecord.l_time_ms = 0;
     sdramRecord.realTimePosi_um = 0;
+
+    gStatus.l_not_in_data_report = 1; // 初始化为1
 #endif
 
     // 预设工作模式初始化
@@ -429,14 +431,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
             gStatus.l_rs485_getposi_cnt++; // 1ms ++
         }
 
-        // 1ms
+        // 2KHz BISS-C Acquire
         if (bissc_interval_cnt >= 360000000) {
             bissc_interval_cnt = 0;
             bissc_interval_old = 0;
         }
-
-        // 1ms
-        if (bissc_interval_cnt - bissc_interval_old >= 100) { 
+        if (bissc_interval_cnt - bissc_interval_old >= 50) { 
             bissc_interval_old = bissc_interval_cnt;
             if (gStatus.l_bissc_sw == 1) {
                gStatus.l_bissc_sensor_acquire = 1;
@@ -634,6 +634,7 @@ uint8_t w5500_Decoder(EthControlFrameSingleCAS frame)
         break;
         
         case CANDriverInfoAcquire: // SDRAM数据获取
+            gStatus.l_not_in_data_report = 0;   // 标识正在进行SDRAM数据上报
             gStatus.l_sdram_record_enable = 0; // 停止新数据记录
             if (frame.canpack.CANData[4] == 0) {
                 w5500_sdramDataRequestReport(sdramRecord.frameNum);
@@ -695,9 +696,9 @@ uint32_t w5500_sdramDataRequestReport(uint32_t readyReportNum)
 uint32_t w5500_sdramDataReportTask(uint32_t reportFrameNum)
 {
     uint32_t ret =0;
-    uint8_t cnt = 0;
+    uint32_t cnt = 0;
     CASREPORTSDRAMPACK sendPack;
-    static uint8_t subPackNum = 1; // 初始第一包
+    static uint32_t subPackNum = 1; // 初始第一包
 
     sendPack.EHeader = 0xAA55;
     sendPack.FrameTailer = 0x55AA;
@@ -707,7 +708,7 @@ uint32_t w5500_sdramDataReportTask(uint32_t reportFrameNum)
     sendPack.subType = 0x01;  //数据传输
 
     // 计算总包数
-    sendPack.totalSubPackNum = reportFrameNum/SUBPACKNUM; // 902/100=9+1 0-8
+    sendPack.totalSubPackNum = reportFrameNum/SUBPACKNUM; // e.g: 902/100=9+1 0-8
     if (reportFrameNum % SUBPACKNUM > 0) {
         sendPack.totalSubPackNum += 1;
     }
@@ -721,7 +722,8 @@ uint32_t w5500_sdramDataReportTask(uint32_t reportFrameNum)
     // 判断任务是否完成:当前分包号是否为最后一包
     if (subPackNum > sendPack.totalSubPackNum) {
         gStatus.l_w5500_send_flag = 0;
-        printf("W5500: Task Send Finished!\r\n");
+        printf("W5500: up;oad Task Send Finished!\r\n");
+        gStatus.l_not_in_data_report = 1; // 下一秒canopen状态机会自动启动biss-c获取
         goto __end;
     } else {        
         // 计算本报上报数据包数
@@ -1086,7 +1088,7 @@ uint8_t canopenStateMachine(void)
       motionStatus.g_DS402_SMStatus = 4;
 
       // SDRAM数据记录
-      if (gStatus.l_sdram_record_enable == 0) {
+      if ((gStatus.l_sdram_record_enable == 0) && (gStatus.l_not_in_data_report == 1)) {
          gStatus.l_sdram_record_enable = 1;
          sdram_data_reset();
       }
@@ -1262,11 +1264,10 @@ void sdram_data_reset(void)
 
 void sdram_write_recordData(uint32_t frameNum)
 {
-    uint32_t writeAddr = 0XC0000000+ frameNum*sizeof(MOTIONRECORD);
-    sramArray[writeAddr].frameNum = frameNum;
-    sramArray[writeAddr].g_timeSync_ms = gTime.g_time_ms;
-    sramArray[writeAddr].l_time_ms = gTime.l_time_ms;
-    sramArray[writeAddr].realTimePosi_um = motionStatus.g_Distance;
+    sramArray[frameNum].frameNum = frameNum;
+    sramArray[frameNum].g_timeSync_ms = gTime.g_time_ms;
+    sramArray[frameNum].l_time_ms = gTime.l_time_ms;
+    sramArray[frameNum].realTimePosi_um = motionStatus.g_Distance;
 }
 
 void sdram_read_recordData(uint32_t frameNum)
@@ -1283,7 +1284,7 @@ void HAL_BISSC_effectDataAcquire(void) {
         if ((retPosi >= POSIRANGESTART_LEFT) && (retPosi <= POSIRANGEEND_LEFT)) {
             motionStatus.g_Distance = retPosi;
             if (gStatus.l_sdram_record_enable == 1) {
-                if ((sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) && (sdramRecord.frameNum <= ALLOWEDLENGTH)) {
+                if (sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) {
                     sdram_write_recordData(sdramRecord.frameNum);
                     sdramRecord.frameNum++;
                 } else { // 记录数据超限之后从头开始
@@ -1297,7 +1298,7 @@ void HAL_BISSC_effectDataAcquire(void) {
     } else if (can_var.CASNodeID == 0x02){
         if ((retPosi >= POSIRANGESTART_RIGHT) && (retPosi <= POSIRANGEEND_RIGHT)) {
             motionStatus.g_Distance = retPosi; 
-            if ((sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) && (sdramRecord.frameNum <= ALLOWEDLENGTH)) {     
+            if (sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) {     
                 sdram_write_recordData(sdramRecord.frameNum);
                 sdramRecord.frameNum++;
             } else { 
