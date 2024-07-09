@@ -591,6 +591,8 @@ uint8_t w5500_Decoder(EthControlFrameSingleCAS frame)
     short torqueGivenCmd = 0;  // 上面发下来的单位是0.001Nm
     CASREPORTFRAME statusPack;
     uint8_t pcSetupOperationMode = 0;
+    uint32_t pcUpdateGlobalTimeMS = 0;
+    uint8_t cnt = 0;
 
     switch (frame.EType) {
         case CANTargetCmd: // 向下更新控制输入
@@ -630,6 +632,16 @@ uint8_t w5500_Decoder(EthControlFrameSingleCAS frame)
         break;
 
         case CANPisiAcquireCmd: // 0x05
+            // update sync time MS
+            for (cnt =0 ;cnt <4; cnt++) {
+                pcUpdateGlobalTimeMS += frame.canpack.CANData[cnt];
+                if (cnt < 3) {
+                    pcUpdateGlobalTimeMS <<= 8;
+                }
+            }
+            gTime.g_time_ms = pcUpdateGlobalTimeMS;
+            gTime.latest_sync_ltime_ms = gTime.l_time_ms;
+            gTime.time_diff_ms = pcUpdateGlobalTimeMS - gTime.latest_sync_ltime_ms;
             w5500_reportStatus(statusPack);
         break;
         
@@ -665,6 +677,7 @@ uint32_t w5500_reportStatus(CASREPORTFRAME statusPack)
 
     statusPack.CASNodeID = can_var.CASNodeID;
     statusPack.curWorkMode = motionStatus.g_curOperationMode;
+    statusPack.CAS_gTime_MS = gTime.g_time_ms;
     statusPack.localTimeMS = gTime.l_time_ms;
     statusPack.motorPosiUM = motionStatus.g_Distance;
     statusPack.motorRealTimeTorqueNM = motionStatus.g_Torque; // 0.001Nm
@@ -1265,7 +1278,7 @@ void sdram_data_reset(void)
 void sdram_write_recordData(uint32_t frameNum)
 {
     sramArray[frameNum].frameNum = frameNum;
-    sramArray[frameNum].g_timeSync_ms = gTime.g_time_ms;
+    sramArray[frameNum].g_timeSync_ms = gTime.g_time_ms + gTime.l_time_ms - gTime.latest_sync_ltime_ms;
     sramArray[frameNum].l_time_ms = gTime.l_time_ms;
     sramArray[frameNum].realTimePosi_um = motionStatus.g_Distance;
 }

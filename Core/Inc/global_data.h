@@ -43,7 +43,9 @@ enum WORKMODE {
 typedef struct {
   volatile unsigned int l_time_cnt_10us;
   volatile unsigned int l_time_ms;
-  volatile unsigned int g_time_ms;
+  volatile unsigned int g_time_ms; // 这玩意儿其实是最近一次sync得到的pc时间
+  volatile int time_diff_ms; // 时间同步差值
+  volatile unsigned int latest_sync_ltime_ms; // 最近一次同步成功时的本地时间 
 } GLOBALTIME;
 
 typedef struct {
@@ -274,11 +276,12 @@ typedef struct {
     uint32_t EHeader;        // Ethernet帧头
     uint32_t ENum;           // Ethernet帧号
     uint32_t ELen;           // Ethernet长度 Byte
-    uint16_t EType;           // 报文类型
-    uint16_t subType;           // 子报文类型
+    uint16_t EType;          // 报文类型
+    uint16_t subType;        // 子报文类型
     uint8_t CASNodeID;       // 数据来源
     uint8_t curWorkMode;     // 当前工作模式
     uint16_t statusWord;     // 状态字
+    uint32_t CAS_gTime_MS;   // CAS端记录的数据记录时刻时间
     uint32_t localTimeMS;    // 上报时间 
     uint32_t motorPosiUM;    // 当前绝对位置
     short motorRealTimeTorqueNM; //实时转矩
@@ -287,9 +290,9 @@ typedef struct {
 } CASREPORTFRAME;
 
 typedef struct {
-    uint32_t g_time_ms;        //Ethernet帧头
-    uint32_t l_time_ms;           //Ethernet帧号
-    uint32_t posi_um;           //Ethernet长度 Byte
+    uint32_t g_time_ms;      
+    uint32_t l_time_ms;         
+    uint32_t posi_um;           
 } SUBPACK;
 
 #define  SUBPACKNUM    (100)
