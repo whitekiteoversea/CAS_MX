@@ -1267,7 +1267,7 @@ void userAppLoop(void)
     uint8_t offPrority = 2; // 抢占优先级2及以下的中断
 
     if (gStatus.l_time_heartbeat == 1) {
-        printf("%d ms HeartBeat Msg, Current Posi is %d um, Record TotalNum is %d\n\r", gTime.l_time_ms, motionStatus.g_Distance, sdramRecord.frameNum); 
+        printf("latest Sync GTC: %d ms, CAS:%d ms HeartBeat Msg, Current Posi is %d um, Record TotalNum is %d\n\r", gTime.g_time_ms, gTime.l_time_ms, motionStatus.g_Distance, sdramRecord.frameNum); 
         bissc_errorRateMonitor();
 
         #if HAL_CANOPEN_ENABLE

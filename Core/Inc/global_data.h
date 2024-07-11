@@ -191,7 +191,7 @@ typedef struct {
 typedef struct {
   uint8_t g_posi[4];      // unit depends on BISS-C
   // 上报反馈值
-	int32_t g_Distance; 	// um
+	uint32_t g_Distance; 	// um
 	int32_t g_Speed; 			// rpm
   int16_t g_Torque;     // N.m 
   int16_t g_phaseAmp;   // A

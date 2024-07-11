@@ -1277,6 +1277,7 @@ void sdram_data_reset(void)
 
 void sdram_write_recordData(uint32_t frameNum)
 {
+    // 新bug 有时候有些地址写不进去，地址是随机的，可能是帧号，可能是位置
     sramArray[frameNum].frameNum = frameNum;
     sramArray[frameNum].g_timeSync_ms = gTime.g_time_ms + gTime.l_time_ms - gTime.latest_sync_ltime_ms;
     sramArray[frameNum].l_time_ms = gTime.l_time_ms;
