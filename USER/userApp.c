@@ -229,7 +229,7 @@ void CANRecvMsgDeal(CAN_HandleTypeDef *phcan, uint8_t CTRCode)
     u32 tempGivenVol = 0;    //mV
     u32 sendCnt = 0;
     u16 tempFrameCnt = 0;
-		UNS32 writeinCnt = 0;
+	UNS32 writeinCnt = 0;
     int32_t tempPosiErr = 0;
     int32_t tempRecvPosi = 0;
 
@@ -366,7 +366,7 @@ int32_t avgErrUpdate(int32_t *sampleData)
 	return duss_result;
 }
 
-// SDRAM内存测试	    
+// SDRAM内存测试1(实际使用的是另一个)	    
 void fsmc_sdram_test()
 {  
 	u32 i=0;  	  
@@ -1279,100 +1279,103 @@ void sdram_write_recordData(uint32_t frameNum)
 {
     MOTIONRECORD testRec = {0};
     uint32_t g_recordTime = gTime.g_time_ms + gTime.l_time_ms - gTime.latest_sync_ltime_ms;
-    // 新bug 有时候有些地址写不进去，地址是随机的，可能是帧号，可能是位置
+	uint8_t errFlag = 0;
+		
     sramArray[frameNum].frameNum = frameNum;
-	HAL_Delay_us(10); // 等待写恢复时间tWR+tRCD = 6 Tsdram(90MHz) = 66.6ns 
     testRec.frameNum = sramArray[frameNum].frameNum;
-    HAL_Delay_us(10);
     if (testRec.frameNum != frameNum) {
-         printf("SDRAM: FrameNum Fail \r\n");
+        printf("SDRAM: FrameNum Fail \r\n");
+        errFlag =1;
         goto __end;
     } 
 
     sramArray[frameNum].g_timeSync_ms = g_recordTime;
-    HAL_Delay_us(10);
     testRec.g_timeSync_ms = sramArray[frameNum].g_timeSync_ms;
-    HAL_Delay_us(10);
     if (testRec.g_timeSync_ms != g_recordTime) {
         printf("SDRAM: gTime Fail \r\n");
+        errFlag = 1;
         goto __end;
     }    
 
     sramArray[frameNum].l_time_ms = gTime.l_time_ms;
-    HAL_Delay_us(10);
     testRec.l_time_ms = sramArray[frameNum].l_time_ms;
-    HAL_Delay_us(10);
     if (testRec.l_time_ms != gTime.l_time_ms) {
         printf("SDRAM: lTime Fail \r\n");
+        errFlag = 1;
         goto __end;
     }    
 
     sramArray[frameNum].realTimePosi_um = motionStatus.g_Distance;
-    HAL_Delay_us(10);
     testRec.realTimePosi_um = sramArray[frameNum].realTimePosi_um;
-    HAL_Delay_us(10);
     if (testRec.realTimePosi_um != motionStatus.g_Distance) {
         printf("SDRAM: posi Fail \r\n");
+        errFlag = 1;
         goto __end;
     }    
 
 __end:
-
+    if (errFlag == 1) {
+        gStatus.sdram_record_err_cnt++;   
+    }
 }
 
 void sdram_read_recordData(uint32_t frameNum)
 {
     sdramRecord.frameNum = sramArray[frameNum].frameNum;
-    HAL_Delay_us(1);
     sdramRecord.g_timeSync_ms = sramArray[frameNum].g_timeSync_ms;
-    HAL_Delay_us(1);
     sdramRecord.l_time_ms = sramArray[frameNum].l_time_ms;
-    HAL_Delay_us(1);
     sdramRecord.realTimePosi_um = sramArray[frameNum].realTimePosi_um;
-    HAL_Delay_us(1);
 }
 
-void HAL_BISSC_effectDataAcquire(void) {
+uint8_t HAL_BISSC_effectDataAcquire(void) 
+{
+		uint8_t ret =0;
     volatile uint32_t retPosi = bissc_processDataAcquire();
-    if (can_var.CASNodeID == 0x01) {
+
+    if (can_var.CASNodeID == 0x03) {
+        if ((retPosi >= POSIRANGESTART_X) && (retPosi <= POSIRANGEEND_X)) {
+            motionStatus.g_Distance = retPosi; // 更新当前负载位置
+        }
+        goto __end; // X轴不使用SDRAM进行连续记录，仅保留最新单次位置数据
+    } else if (can_var.CASNodeID == 0x01) {
         if ((retPosi >= POSIRANGESTART_LEFT) && (retPosi <= POSIRANGEEND_LEFT)) {
             motionStatus.g_Distance = retPosi;
-            if (gStatus.l_sdram_record_enable == 1) {
-                if (sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) {
-                    #if !HAL_SDRAM_TEST_ENABLE
-                        sdram_write_recordData(sdramRecord.frameNum);
-                        sdramRecord.frameNum++;
-                    #endif
-                } else { // 记录数据超限之后从头开始
-                    sdramRecord.frameNum = 0;
-                    #if !HAL_SDRAM_TEST_ENABLE
-                        sdram_write_recordData(sdramRecord.frameNum);
-                        sdramRecord.frameNum++;
-                    #endif
-                    printf("SDRAM: Rrcord Data Over Range! \r\n");
-                }
-            }
+        } else {
+            goto __end;
         }
     } else if (can_var.CASNodeID == 0x02){
         if ((retPosi >= POSIRANGESTART_RIGHT) && (retPosi <= POSIRANGEEND_RIGHT)) {
             motionStatus.g_Distance = retPosi; 
-            if (sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) {     
-                #if !HAL_SDRAM_TEST_ENABLE
-                    sdram_write_recordData(sdramRecord.frameNum);
-                    sdramRecord.frameNum++;
-                #endif
-            } else { 
-                sdramRecord.frameNum = 0;
-                #if !HAL_SDRAM_TEST_ENABLE
-                    sdram_write_recordData(sdramRecord.frameNum);
-                    sdramRecord.frameNum++;
-                #endif
-                printf("SDRAM: Rrcord Data Over Range! \r\n");
-            }
+        } else {
+            goto __end;
+        }
+    } else {
+        goto __end; 
+    }
+
+    // SDRAM Records Update
+    if (gStatus.l_sdram_record_enable == 1) {
+        if (sdramRecord.frameNum < MAXRECORDALLOWEDLENGTH) {
+            #if !HAL_SDRAM_TEST_ENABLE
+                sdram_write_recordData(sdramRecord.frameNum);
+                sdramRecord.frameNum++;
+            #endif
+        } else { // 记录数据超限之后从头开始
+            sdramRecord.frameNum = 0;
+            gStatus.sdram_record_err_cnt = 0;
+            #if !HAL_SDRAM_TEST_ENABLE
+                sdram_write_recordData(sdramRecord.frameNum);
+                sdramRecord.frameNum++;
+            #endif
+            printf("SDRAM: Rrcord Data Over Range! \r\n");
         }
     }
+__end:
+    return ret;
 }
 
+
+#if HAL_SDRAM_TEST_ENABLE
 /*
 *********************************************************************************************************
 *	函 数 名: bsp_TestExtSDRAM
@@ -1464,4 +1467,4 @@ uint32_t bsp_TestExtSDRAM(void)
 	return 0;
 }
 
-/* USER CODE END 4 */
+#endif

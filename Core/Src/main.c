@@ -1231,7 +1231,10 @@ printf("************NEW BOOT!******************\n\r");
   // 6. CANOpen NMI Init
 #if HAL_CANOPEN_ENABLE
 	HAL_Delay(500);  
-  canOpenInit();
+  // 仅双Z轴电机需要使能canopen，x负载轴未安装电机，仅获取当前bissc位置
+  if (can_var.CASNodeID >= 1 && can_var.CASNodeID <= 2) {
+      canOpenInit();
+  }
 #endif
 	
 #if HAL_SDRAM_TEST_ENABLE
@@ -1267,19 +1270,28 @@ void userAppLoop(void)
     uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
     uint32_t primask = 0;
     volatile uint32_t retPosi = 0;
-
-    static uint32_t data[128] = {0};
-
     volatile uint32_t primaskBuckup = 0;
     uint8_t offPrority = 2; // 抢占优先级2及以下的中断
 
     if (gStatus.l_time_heartbeat == 1) {
-        printf("latest Sync GTC: %d ms, CAS:%d ms HeartBeat Msg, Current Posi is %d um, Record TotalNum is %d\n\r", gTime.g_time_ms, gTime.l_time_ms, motionStatus.g_Distance, sdramRecord.frameNum); 
+        printf("CASNode %d: latest Sync GTC: %d ms, CAS:%d ms HeartBeat Msg, Current Posi is %d um, Record TotalNum is %d, Record ErrNum is %d \n\r", can_var.CASNodeID, \
+                                                                                                                                                      gTime.g_time_ms, \
+                                                                                                                                                      gTime.l_time_ms, \
+                                                                                                                                                      motionStatus.g_Distance, \
+                                                                                                                                                      sdramRecord.frameNum, \
+                                                                                                                                                      gStatus.sdram_record_err_cnt); 
+                                                                                         
         bissc_errorRateMonitor();
 
         #if HAL_CANOPEN_ENABLE
-            canopenStatusMonitor(); 
-            canopenStateMachine();
+            if (can_var.CASNodeID == 3) { // 本节点为负载轴时，无条件使能BISS-C获取
+                if (gStatus.l_sdram_record_enable == 0) {
+                    gStatus.l_sdram_record_enable = 1;
+                }
+            } else { // 节点为Z轴CAS时启动canopen状态机
+                canopenStatusMonitor(); 
+                canopenStateMachine();
+            }
         #endif
 
         gStatus.l_time_heartbeat = 0;
@@ -1288,10 +1300,10 @@ void userAppLoop(void)
     // BiSS-C
     #if HAL_BISSC_ENABLE
         if (gStatus.l_bissc_sensor_acquire == 1) { 
-            // HAL_BISSC_effectDataAcquire();
+            HAL_BISSC_effectDataAcquire();
             gStatus.l_bissc_sensor_acquire = 0;
         }
-    #else
+    #else // CAS单板硬件已拆除对应RS485芯片以避免误导AMG2000传感器
       // deal with AMG2000 RS485 MSG
       if(modbusPosi.g_RTU_RcvFinishedflag == 1) {
         motionStatus.g_Distance = g_RS485_recvDataDeal();
@@ -1314,7 +1326,6 @@ void userAppLoop(void)
 
     #if HAL_W5500_ENABLE
         w5500_stateMachineTask();
-
         if (gStatus.l_w5500_send_flag == 1) {
             primaskBuckup = get_BASEPRI_REG();
             set_BASEPRI_REG(offPrority << 6); 

@@ -55,7 +55,7 @@
 #define HAL_CANOPEN_ENABLE                   (1)
 #define CANOPEN_NONBLOACK_DELAY_ENABLE       (1)
 #define HAL_SDRAM_ENABLE       			     (1)
-#define HAL_SDRAM_TEST_ENABLE                (1)
+#define HAL_SDRAM_TEST_ENABLE                (0)
 #define HAL_DAC_ENABLE           			 (0)
 #define HAL_EEPROM_ENABLE        			 (1)
 #define HAL_LCD_ENABLE                       (0)  // CANOpen与LCD相冲
@@ -106,7 +106,7 @@ uint16_t canopenStopMachineAndTransMode(uint8_t targetOperationMode);
 uint32_t bissc_processDataAcquire(void);
 void bissc_errorRateMonitor(void);
 void BISSC_ReStore(uint8_t *errCnt);
-void HAL_BISSC_effectDataAcquire(void);
+uint8_t HAL_BISSC_effectDataAcquire(void);
 
 uint32_t enter_critical(void);
 void exit_critical(uint32_t primask);

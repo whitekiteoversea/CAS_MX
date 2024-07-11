@@ -168,8 +168,12 @@ typedef struct {
   volatile unsigned char l_bissc_sw;  // BISSC轮询开关 1默认开启 0暂时关掉
   volatile unsigned char l_canopenSM_sw; // canopen状态机开关 1默认开启 0暂时关掉
 
+// biss-c err cnt
   volatile uint32_t effectCnt;
   volatile uint32_t noeffectCnt;
+
+// sdram err cnt
+  volatile unsigned int sdram_record_err_cnt;
 
   volatile unsigned char l_sdram_record_enable; // SDRAM开始记录数据
   volatile unsigned char l_not_in_data_report;  // 标识是否正在上传SDRAM数据
