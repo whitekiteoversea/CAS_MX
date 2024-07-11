@@ -55,6 +55,7 @@
 #define HAL_CANOPEN_ENABLE                   (1)
 #define CANOPEN_NONBLOACK_DELAY_ENABLE       (1)
 #define HAL_SDRAM_ENABLE       			     (1)
+#define HAL_SDRAM_TEST_ENABLE                (1)
 #define HAL_DAC_ENABLE           			 (0)
 #define HAL_EEPROM_ENABLE        			 (1)
 #define HAL_LCD_ENABLE                       (0)  // CANOpen与LCD相冲
@@ -112,6 +113,7 @@ void exit_critical(uint32_t primask);
 
 void sdram_write_recordData(uint32_t frameNum);
 void sdram_read_recordData(uint32_t frameNum);
+uint32_t bsp_TestExtSDRAM(void);
 
 void set_BASEPRI_REG(uint32_t basePri);
 uint32_t  get_BASEPRI_REG(void);

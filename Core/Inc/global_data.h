@@ -191,13 +191,13 @@ typedef struct {
 typedef struct {
   uint8_t g_posi[4];      // unit depends on BISS-C
   // 上报反馈值
-	uint32_t g_Distance; 	// um
-	int32_t g_Speed; 			// rpm
-  int16_t g_Torque;     // N.m 
-  int16_t g_phaseAmp;   // A
+	volatile uint32_t g_Distance; 	// um
+	volatile int32_t g_Speed; 			// rpm
+  volatile int16_t g_Torque;     // N.m 
+  volatile int16_t g_phaseAmp;   // A
   //log显示
-  float g_realTimeTorque; // 实时转矩
-	uint32_t g_InitialPosi; //um
+  volatile float g_realTimeTorque; // 实时转矩
+	volatile uint32_t g_InitialPosi; //um
 
   volatile uint8_t g_DS402_SMStatus;  //状态字处于0x1237时，此状态为1
 

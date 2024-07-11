@@ -1012,8 +1012,9 @@ static void MX_FMC_Init(void)
   }
 
   /* USER CODE BEGIN FMC_Init 2 */
-  SDRAM_Initialization_Sequence(&hsdram1);//发送SDRAM初始化序列
-  HAL_SDRAM_ProgramRefreshRate(&hsdram1, 683);//设置刷新频率
+  SDRAM_Initialization_Sequence(&hsdram1);//发送SDRAM初始化序列、预充电
+  // 64000(64ms) / 8192*90MHz -20 =  64000/8192*90 -20 = 683.125
+  HAL_SDRAM_ProgramRefreshRate(&hsdram1, 683);//设置自刷新频率为 64ms
 
   /* USER CODE END FMC_Init 2 */
 }
@@ -1233,8 +1234,12 @@ printf("************NEW BOOT!******************\n\r");
   canOpenInit();
 #endif
 	
-#if HAL_SDRAM_ENABLE
-  printf ("SDRAM: Init Success! \r\n");
+#if HAL_SDRAM_TEST_ENABLE
+  if (bsp_TestExtSDRAM() == 0) {
+      printf("SDRAM Test success\r\n");
+  } else {
+      printf("SDRAM Test fail\r\n");
+  }
 #endif
 
 #if HAL_LCD_ENABLE
@@ -1263,6 +1268,8 @@ void userAppLoop(void)
     uint32_t primask = 0;
     volatile uint32_t retPosi = 0;
 
+    static uint32_t data[128] = {0};
+
     volatile uint32_t primaskBuckup = 0;
     uint8_t offPrority = 2; // 抢占优先级2及以下的中断
 
@@ -1281,7 +1288,7 @@ void userAppLoop(void)
     // BiSS-C
     #if HAL_BISSC_ENABLE
         if (gStatus.l_bissc_sensor_acquire == 1) { 
-            HAL_BISSC_effectDataAcquire();
+            // HAL_BISSC_effectDataAcquire();
             gStatus.l_bissc_sensor_acquire = 0;
         }
     #else
