@@ -57,7 +57,7 @@
 #define HAL_SDRAM_ENABLE       			     (1)
 #define HAL_SDRAM_TEST_ENABLE                (0)
 #define HAL_DAC_ENABLE           			 (0)
-#define HAL_EEPROM_ENABLE        			 (1)
+#define HAL_EEPROM_ENABLE        			 (0)
 #define HAL_LCD_ENABLE                       (0)  // CANOpen与LCD相冲
 
 extern uint8_t gDATABUF[DATA_BUF_SIZE];  
