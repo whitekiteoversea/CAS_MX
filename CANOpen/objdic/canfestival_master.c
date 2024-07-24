@@ -642,7 +642,7 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
                      };
 
 /* index 0x1006 :   Communication / Cycle Period. */
-                    UNS32 canfestival_master_obj1006 = 10000;	/* 10ms SYNC */
+                    UNS32 canfestival_master_obj1006 = 5000;	/* 5ms SYNC */
                     ODCallback_t _Index1006_callbacks[] = 
                      {
                        NULL,

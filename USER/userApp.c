@@ -587,7 +587,7 @@ void w5500_stateMachineTask(void)
 uint8_t w5500_Decoder(EthControlFrameSingleCAS frame) 
 {
     uint8_t ret = 0;
-    short speedGivenRpm = 0;   // 单位rpm
+    short speedGivenRpm = 0;   // 单位0.1rpm
     short torqueGivenCmd = 0;  // 上面发下来的单位是0.001Nm
     CASREPORTFRAME statusPack;
     uint8_t pcSetupOperationMode = 0;
@@ -812,7 +812,7 @@ uint16_t message_sdo[PRESETSDOLENG][10] = {
     {0x608, 0x2f, 0x03, 0x14, 0x02, 0xFF, 0x00, 0x00, 0x00, uint8}, // RPDO4 传输类型
     // TPDO1
     {0x608, 0x23, 0x00, 0x18, 0x01, 0x88, 0x01, 0x00, 0x80, uint8}, // TPDO1 失能
-    {0x608, 0x2f, 0x00, 0x18, 0x02, 0x64, 0x00, 0x00, 0x00, uint8}, // TPDO1 传输类型 周期触发 100SYNC 1000ms
+    {0x608, 0x2f, 0x00, 0x18, 0x02, 0x01, 0x00, 0x00, 0x00, uint8}, // TPDO1 传输类型 周期触发 1 SYNC 5ms
     {0x608, 0x2f, 0x00, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // 清除原有映射内容
     {0x608, 0x23, 0x00, 0x1A, 0x01, 0x10, 0x00, 0x41, 0x60, uint8}, // 映射为状态字 0x6041
     {0x608, 0x23, 0x00, 0x1A, 0x02, 0x20, 0x00, 0x6C, 0x60, uint8}, // 映射为实时速度指令 0x606C
@@ -821,7 +821,7 @@ uint16_t message_sdo[PRESETSDOLENG][10] = {
     {0x608, 0x23, 0x00, 0x18, 0x01, 0x88, 0x01, 0x00, 0x00, uint8}, // TPDO1 使能      
     // TDO2 
     {0x608, 0x23, 0x01, 0x18, 0x01, 0x88, 0x02, 0x00, 0x80, uint8}, // TPDO2 失能
-    {0x608, 0x2f, 0x01, 0x18, 0x02, 0x01, 0x00, 0x00, 0x00, uint8}, // TPDO2 传输类型 周期触发 1 SYNC 10ms
+    {0x608, 0x2f, 0x01, 0x18, 0x02, 0x01, 0x00, 0x00, 0x00, uint8}, // TPDO2 传输类型 周期触发 1 SYNC 5ms
     {0x608, 0x2f, 0x01, 0x1A, 0x00, 0x00, 0x00, 0x00, 0x00, uint8}, // TPDO2 映射清零
     {0x608, 0x23, 0x01, 0x1A, 0x01, 0x08, 0x00, 0x61, 0x60, uint8}, // 0x6061 当前运动模式显示 速度/位置/转矩
     {0x608, 0x23, 0x01, 0x1A, 0x02, 0x20, 0x00, 0x64, 0x60, uint8}, // 0x6064 编码器绝对位置
@@ -972,9 +972,9 @@ uint8_t canopen_send_sdo(uint16_t *message_sdo)
         break;
     }
 
-		if (ret == 0xFF) {
-				goto __end_label;
-		}
+    if (ret == 0xFF) {
+            goto __end_label;
+    }
 	
     nodeID=(uint8_t)(message_sdo[0] & 0x7f);  // get low 7 bit (0-255)  
     index = (message_sdo[3] << 8);
@@ -1011,16 +1011,16 @@ uint8_t canopenDriverSpeedGive(short speedCmdRpm)
     int64_t sendSpeed = 0;
 
     if ((motionStatus.g_curOperationMode == RECVSPEEDMODE) && (motionStatus.g_DS402_SMStatus == 4)) {
-        if ((speedCmdRpm <= MAX_ALLOWED_SPEED_RPM) && (speedCmdRpm >= MIN_ALLOWED_SPEED_RPM)) {
+        if ((speedCmdRpm <= (MAX_ALLOWED_SPEED_RPM*10)) && (speedCmdRpm >= (MIN_ALLOWED_SPEED_RPM*10))) {
             Controlword = 0x0F;
             sendSpeed = speedCmdRpm;
             sendSpeed *= MOTOR_ENCODER_IDENTIFYWIDTH;
-            sendSpeed = sendSpeed /60;
+            sendSpeed = sendSpeed /600;
 
             Target_velocity = (int)sendSpeed; // update speed instruction pulse per second
             Modes_of_operation = RECVSPEEDMODE; // 速度模式
             sendOnePDOevent(&masterObjdict_Data, 1);  // TPDO2
-            printf("UTC: %d ms CAS: %d ms, ETH update Speed :%d rpm\n\r", gTime.g_time_ms, gTime.l_time_ms, speedCmdRpm);
+            printf("UTC: %d ms CAS: %d ms, ETH update Speed :%2f rpm\n\r", gTime.g_time_ms, gTime.l_time_ms, ((float)speedCmdRpm/10));
         } else {
             printf("CAS:  %d ms SpeedGiven OverFlow, which is 0x%d rpm\n\r!", gTime.l_time_ms, speedCmdRpm);
         }
@@ -1329,7 +1329,7 @@ void sdram_read_recordData(uint32_t frameNum)
 
 uint8_t HAL_BISSC_effectDataAcquire(void) 
 {
-		uint8_t ret =0;
+	uint8_t ret =0;
     volatile uint32_t retPosi = bissc_processDataAcquire();
 
     if (can_var.CASNodeID == 0x03) {
@@ -1398,31 +1398,26 @@ uint32_t bsp_TestExtSDRAM(void)
 
 	/* 写SDRAM */
 	pSRAM = (uint32_t *)EXT_SDRAM_ADDR;
-	for (i = 0; i < EXT_SDRAM_SIZE / 4; i++)
-	{
+	for (i = 0; i < EXT_SDRAM_SIZE / 4; i++) {
 		*pSRAM++ = i;
 	}
 
 	/* 读SDRAM */
 	err = 0;
 	pSRAM = (uint32_t *)EXT_SDRAM_ADDR;
-	for (i = 0; i < EXT_SDRAM_SIZE / 4; i++)
-	{
-		if (*pSRAM++ != i)
-		{
+	for (i = 0; i < EXT_SDRAM_SIZE / 4; i++) {
+		if (*pSRAM++ != i) {
 			err++;
 		}
 	}
 
-	if (err >  0)
-	{
+	if (err >  0) {
 		return  (4 * err);
 	}
 
 	/* 对SDRAM 的数据求反并写入 */
 	pSRAM = (uint32_t *)EXT_SDRAM_ADDR;
-	for (i = 0; i < EXT_SDRAM_SIZE / 4; i++)
-	{
+	for (i = 0; i < EXT_SDRAM_SIZE / 4; i++) {
 		*pSRAM = ~*pSRAM;
 		pSRAM++;
 	}
@@ -1430,38 +1425,31 @@ uint32_t bsp_TestExtSDRAM(void)
 	/* 再次比较SDRAM的数据 */
 	err = 0;
 	pSRAM = (uint32_t *)EXT_SDRAM_ADDR;
-	for (i = 0; i < EXT_SDRAM_SIZE / 4; i++)
-	{
-		if (*pSRAM++ != (~i))
-		{
+	for (i = 0; i < EXT_SDRAM_SIZE / 4; i++) {
+		if (*pSRAM++ != (~i)) {
 			err++;
 		}
 	}
 
-	if (err >  0)
-	{
+	if (err >  0) {
 		return (4 * err);
 	}
 
 	/* 测试按字节方式访问, 目的是验证 FSMC_NBL0 、 FSMC_NBL1 口线 */
 	pBytes = (uint8_t *)EXT_SDRAM_ADDR;
-	for (i = 0; i < sizeof(ByteBuf); i++)
-	{
+	for (i = 0; i < sizeof(ByteBuf); i++) {
 		*pBytes++ = ByteBuf[i];
 	}
 
 	/* 比较SDRAM的数据 */
 	err = 0;
 	pBytes = (uint8_t *)EXT_SDRAM_ADDR;
-	for (i = 0; i < sizeof(ByteBuf); i++)
-	{
-		if (*pBytes++ != ByteBuf[i])
-		{
+	for (i = 0; i < sizeof(ByteBuf); i++) {
+		if (*pBytes++ != ByteBuf[i]) {
 			err++;
 		}
 	}
-	if (err >  0)
-	{
+	if (err >  0) {
 		return err;
 	}
 	return 0;
