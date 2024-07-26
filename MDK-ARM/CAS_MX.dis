@@ -31,8 +31,8 @@
     Program header entries: 2
     Section header entries: 17
 
-    Program header offset: 1768636 (0x001afcbc)
-    Section header offset: 1768700 (0x001afcfc)
+    Program header offset: 1768644 (0x001afcc4)
+    Section header offset: 1768708 (0x001afd04)
 
     Section header string table index: 16
 
@@ -14029,7 +14029,7 @@
         0x0800831c:    69687720     whi    DCD    1768453920
         0x08008320:    69206863    ch i    DCD    1763731555
         0x08008324:    78302073    s 0x    DCD    2016419955
-        0x08008328:    72206425    %d r    DCD    1914725413
+        0x08008328:    72207825    %x r    DCD    1914730533
         0x0800832c:    0d0a6d70    pm..    DCD    218787184
         0x08008330:    00000021    !...    DCD    33
         0x08008334:    0800fc08    ....    DCD    134282248
@@ -25737,7 +25737,7 @@
 
 
 ** Section #15 '.comment' (SHT_PROGBITS)
-    Size   : 112608 bytes
+    Size   : 112616 bytes
 
 
 ** Section #16 '.shstrtab' (SHT_STRTAB)

@@ -1023,7 +1023,7 @@ uint8_t canopenDriverSpeedGive(short speedCmdRpm)
             sendOnePDOevent(&masterObjdict_Data, 1);  // TPDO2
             printf("UTC: %d ms CAS: %d ms, ETH update Speed :%2f rpm\n\r", gTime.g_time_ms, gTime.l_time_ms, ((float)speedCmdRpm/10));
         } else {
-            printf("CAS:  %d ms SpeedGiven OverFlow, which is 0x%d rpm\n\r!", gTime.l_time_ms, speedCmdRpm);
+            printf("CAS:  %d ms SpeedGiven OverFlow, which is 0x%x rpm\n\r!", gTime.l_time_ms, speedCmdRpm);
         }
     } else {
         printf("CAS:  %d ms OperationMode 0x%x disMatched or SystemStatus Wrong! \n\r!", gTime.l_time_ms, \
