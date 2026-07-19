@@ -1160,6 +1160,10 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 void bspInit(void)
 {
+#if IC_MB4_STANDALONE_DEBUG
+  GPIO_InitTypeDef bisscDebugGpio = {0};
+#endif
+
   HAL_Init();
 
   /* USER CODE BEGIN Init */
@@ -1172,6 +1176,34 @@ void bspInit(void)
   /* USER CODE BEGIN SysInit */
 
   /* USER CODE END SysInit */
+
+#if IC_MB4_STANDALONE_DEBUG
+  /* Standalone iC-MB4 mode: do not initialize CAN, W5500 or business timers. */
+  MX_GPIO_Init();
+  MX_SPI2_Init();
+  MX_UART4_Init();
+
+  /* NER is a low-active status output from MB4; never drive it high here. */
+  bisscDebugGpio.Pin = NER_Pin;
+  bisscDebugGpio.Mode = GPIO_MODE_INPUT;
+  bisscDebugGpio.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(NER_GPIO_Port, &bisscDebugGpio);
+
+  GPIO_SPI_BISSC_CS_SET;
+  GPIO_SPI_BISSC_GETSENS_RESET;
+
+  printf("******** IC-MB4 STANDALONE DEBUG BOOT ********\r\n");
+
+  /* Hardware reset MB4, then leave enough time for its internal oscillator. */
+  GPIO_SPI_BISSC_NRES_RESET;
+  HAL_Delay(1);
+  GPIO_SPI_BISSC_NRES_SET;
+  HAL_Delay(10);
+
+  IC_MB4_DebugSetup();
+  printf("MB4 DEBUG: setup complete; one-shot acquisition every 1000 ms\r\n");
+  return;
+#endif
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
@@ -1265,8 +1297,18 @@ printf("************NEW BOOT!******************\n\r");
   printf("CAS: %d ms All Function Initial Finished! \n\r", gTime.l_time_ms);
 }
 
-void userAppLoop(void) 
+void userAppLoop(void)
 {
+#if IC_MB4_STANDALONE_DEBUG
+    static uint32_t lastDebugTick = 0;
+    uint32_t now = HAL_GetTick();
+
+    if ((now - lastDebugTick) >= 1000U) {
+        lastDebugTick = now;
+        IC_MB4_DebugOneShot();
+    }
+    return;
+#else
     uint8_t rs485_posi_acquire_data[8] = {0x05, 0x03, 0x00, 0x00, 0x00, 0x02, 0xC5, 0x8F};
     uint32_t primask = 0;
     volatile uint32_t retPosi = 0;
@@ -1334,6 +1376,7 @@ void userAppLoop(void)
             HAL_Delay(10);
         } 
     #endif
+#endif
 }
 
 /* USER CODE END 4 */

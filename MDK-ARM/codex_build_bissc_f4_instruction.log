@@ -1,0 +1,20 @@
+*** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil\ARM\Bin'
+Build target 'CAS_MX'
+compiling spi.c...
+..\HARDWARE\SPI\spi.c(137): warning:  #188-D: enumerated type mixed with another type
+  	HAL_StatusTypeDef retStatus = 0;
+..\HARDWARE\SPI\spi.c(154): warning:  #550-D: variable "rtData"  was set but never used
+  	u8 rtData = 0;
+..\HARDWARE\SPI\spi.c(280): warning:  #177-D: variable "rData"  was declared but never referenced
+  	uint8_t rData = 0;
+..\HARDWARE\SPI\spi.c(281): warning:  #177-D: variable "curStatus"  was declared but never referenced
+  	uint8_t curStatus = 0x00;
+..\HARDWARE\SPI\spi.c(282): warning:  #177-D: variable "readAddr"  was declared but never referenced
+  	uint8_t readAddr = 0x00;
+..\HARDWARE\SPI\spi.c: 5 warnings, 0 errors
+linking...
+Program Size: Code=43588 RO-data=3316 RW-data=13888 ZI-data=12804264  
+FromELF: creating hex file...
+After Build - User command #1: fromelf --text -a -c --output=CAS_MX.dis C:\Users\WhiteKite2020\Desktop\CAS_MX\MDK-ARM\CAS_MX\CAS_MX.axf
+"CAS_MX\CAS_MX.axf" - 0 Error(s), 5 Warning(s).
+Build Time Elapsed:  00:00:02

@@ -20,6 +20,12 @@
 #define HAL_DAC_ENABLE      (0)  
 #define HAL_BISSC_ENABLE    (1)
 
+/*
+ * 1: 只初始化 GPIO/SPI2/UART4，独立调试 iC-MB4 和 BiSS-C。
+ * 0: 恢复原有 W5500/CANopen/定时器等完整业务流程。
+ */
+#define IC_MB4_STANDALONE_DEBUG (1)
+
 // 位置增长方向为向下
 #define POSIRANGESTART_LEFT (8697903)
 #define POSIRANGEEND_LEFT   (9203551)
@@ -137,6 +143,8 @@ void HAL_CTLRegsWrite_Slave0(uint8_t reg_addr, uint8_t reg_data);
 uint8_t HAL_CTLRegs_Read_Slave0(uint8_t readAddr);
 void HAL_BISSC_reStartAGS(void);
 void HAL_BISSC_StartAGS(void); 
+void IC_MB4_DebugSetup(void);
+void IC_MB4_DebugOneShot(void);
 
 #endif
 
@@ -146,4 +154,3 @@ extern SPI_HandleTypeDef hspi2;
 extern SPI_HandleTypeDef hspi3;
 		 
 #endif
-

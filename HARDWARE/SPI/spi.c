@@ -330,6 +330,164 @@ void HAL_BISSC_reStartAGS(void)
 	mb4_write_registers(0xF4, &txData, 1);// AGS RESET
 }
 
+/*
+ * iC-MB4 独立调试：
+ *   - 不启动 AGS，避免 2 kHz 业务轮询和自动恢复覆盖故障现场；
+ *   - 先验证 SPI 主机接口，再按 AN3/AN4 建议清理并配置寄存器；
+ *   - 使用项目原有的 2 MHz MA 时钟执行单次 BiSS-C 采集。
+ */
+static void IC_MB4_DebugHostInterface(void)
+{
+	uint8_t id[2] = {0};
+	uint8_t writeValue = 0xA5;
+	uint8_t readValue = 0;
+
+	mb4_read_registers(0xEA, id, 2);
+	mb4_write_registers(0x00, &writeValue, 1);
+	mb4_read_registers(0x00, &readValue, 1);
+
+	printf("MB4 HOST: REV(EA)=0x%02X VER(EB)=0x%02X RAM00 write/read=0x%02X/0x%02X %s\r\n",
+		id[0], id[1], writeValue, readValue,
+		((id[1] == 0x84U) && (readValue == writeValue)) ? "PASS" : "FAIL");
+}
+
+void IC_MB4_DebugSetup(void)
+{
+	uint8_t zeroSCD[64] = {0};
+	uint8_t zeroSlaveCfg[32] = {0};
+	uint8_t zeroControl[6] = {0};
+	uint8_t zeroChannel[3] = {0};
+	uint8_t value = 0;
+	uint8_t instruction = 0x80;
+	uint8_t cfg[9] = {0};
+
+	IC_MB4_DebugHostInterface();
+
+	/* RS-422 interface + internal 20 MHz oscillator. */
+	value = 0x09;
+	mb4_write_registers(0xF5, &value, 1);
+
+	/* BiSS BREAK; protocol requires at least 40 us before the next frame. */
+	mb4_write_instruction(&instruction, 1);
+	HAL_Delay(1);
+
+	/* Clear volatile data/configuration areas recommended by AN3. */
+	mb4_write_registers(0x00, zeroSCD, sizeof(zeroSCD));
+	mb4_write_registers(0xC0, zeroSlaveCfg, sizeof(zeroSlaveCfg));
+	mb4_write_registers(0xE0, zeroControl, sizeof(zeroControl));
+	mb4_write_registers(0xEC, zeroChannel, sizeof(zeroChannel));
+
+	/* Channel 1 = BiSS-C. */
+	value = 0x01;
+	mb4_write_registers(0xED, &value, 1);
+
+	/*
+	 * AMG2000: 26-bit position + 2 status bits + 6 CRC bits.
+	 * CRC is deliberately treated as normal data because the existing sensor
+	 * and MB4 CRC result are known not to agree.
+	 */
+	value = 0x61;
+	mb4_write_registers(0xC0, &value, 1);
+	value = 0x00;
+	mb4_write_registers(0xC1, &value, 1);
+
+	/* Restore the known 2 MHz sensor clock; AGS remains disabled in debug mode. */
+	value = 0x04;
+	mb4_write_registers(0xE6, &value, 1);
+	value = 0x00;
+	mb4_write_registers(0xE7, &value, 1);
+	value = 0x9F;
+	mb4_write_registers(0xE8, &value, 1);
+
+	/* Clear all SVALID flags before the first explicit single cycle. */
+	value = 0x00;
+	mb4_write_registers(0xF1, &value, 1);
+	mb4_write_registers(0xF2, &value, 1);
+
+	mb4_read_registers(0xEA, &cfg[0], 2); /* revision, version */
+	mb4_read_registers(0xED, &cfg[2], 1); /* CFGCH */
+	mb4_read_registers(0xF5, &cfg[3], 1); /* CFGIF/CLKENI */
+	mb4_read_registers(0xC0, &cfg[4], 2); /* SCD configuration */
+	mb4_read_registers(0xE6, &cfg[6], 3); /* FREQS/FREQR, SINGLEBANK, FREQAGS */
+
+	printf("MB4 CFG : EA=%02X EB=%02X ED=%02X F5=%02X C0=%02X C1=%02X E6=%02X E7=%02X E8=%02X\r\n",
+		cfg[0], cfg[1], cfg[2], cfg[3], cfg[4], cfg[5], cfg[6], cfg[7], cfg[8]);
+}
+
+void IC_MB4_DebugOneShot(void)
+{
+	uint8_t statusF0 = 0;
+	uint8_t statusF1 = 0;
+	uint8_t statusF4 = 0;
+	uint8_t statusF8Before = 0;
+	uint8_t statusF8 = 0;
+	uint8_t recoverF0 = 0;
+	uint8_t recoverF4 = 0;
+	uint8_t recoverF8 = 0;
+	uint8_t sg[5] = {0};
+	uint8_t value = 0;
+	uint8_t instruction = 0x04; /* INSTR=2: one sensor-data cycle, CDM=0. */
+	uint32_t startTick = 0;
+	uint32_t rawPosition = 0;
+
+	/* Capture the idle level before triggering a new BiSS-C cycle. */
+	mb4_read_registers(0xF8, &statusF8Before, 1);
+
+	/* Clear the old SVALID result, then trigger exactly one BiSS-C cycle. */
+	mb4_write_registers(0xF1, &value, 1);
+	mb4_write_instruction(&instruction, 1);
+
+	startTick = HAL_GetTick();
+	do {
+		mb4_read_status(&statusF0, 1);
+	} while (((statusF0 & 0x01U) == 0U) &&
+		 ((HAL_GetTick() - startTick) < 20U));
+
+	mb4_read_registers(0xF1, &statusF1, 1);
+	mb4_read_registers(0xF4, &statusF4, 1);
+	mb4_read_registers(0xF8, &statusF8, 1);
+
+	printf("MB4 STAT: F0=%02X F1=%02X F4=%02X F8=%02X | EOT=%u nERR=%u nAGSERR=%u nDELAYERR=%u nSCDERR=%u SVALID1=%u SL1pre=%u SL1=%u | PIN EOT=%u NER=%u\r\n",
+		statusF0, statusF1, statusF4, statusF8,
+		(statusF0 >> 0) & 1U, (statusF0 >> 7) & 1U,
+		(statusF0 >> 6) & 1U, (statusF0 >> 5) & 1U,
+		(statusF0 >> 4) & 1U, (statusF1 >> 1) & 1U,
+		statusF8Before & 1U, statusF8 & 1U,
+		(unsigned int)HAL_GPIO_ReadPin(GPIOI, GPIO_PIN_2),
+		(unsigned int)HAL_GPIO_ReadPin(GPIOI, GPIO_PIN_4));
+
+	/* Single-cycle validity does not depend on the AGS status bit. */
+	if (((statusF0 & 0x11U) != 0x11U) || ((statusF1 & 0x02U) == 0U)) {
+		printf("MB4 DATA: invalid; snapshot saved above, issuing BREAK for next independent test\r\n");
+
+		/*
+		 * A manual SCD command can wait indefinitely for ACK/START.  Abort it
+		 * only after the diagnostic snapshot so the next call starts a new frame.
+		 */
+		instruction = 0x80;
+		mb4_write_instruction(&instruction, 1);
+		HAL_Delay(1); /* More than the BiSS minimum BREAK/timeout interval. */
+
+		mb4_read_status(&recoverF0, 1);
+		mb4_read_registers(0xF4, &recoverF4, 1);
+		mb4_read_registers(0xF8, &recoverF8, 1);
+		printf("MB4 RECOVER: F0=%02X F4=%02X F8=%02X | EOT=%u SL1=%u\r\n",
+			recoverF0, recoverF4, recoverF8,
+			recoverF0 & 1U, recoverF8 & 1U);
+		return;
+	}
+
+	mb4_read_registers(0x00, sg, sizeof(sg));
+	rawPosition = (((uint32_t)sg[4] & 0x03U) << 24) |
+		((uint32_t)sg[3] << 16) |
+		((uint32_t)sg[2] << 8) |
+		(uint32_t)sg[1];
+
+	printf("MB4 DATA: SG[0..4]=%02X %02X %02X %02X %02X raw26=%lu statusBits=%u\r\n",
+		sg[0], sg[1], sg[2], sg[3], sg[4],
+		(unsigned long)rawPosition, (unsigned int)((sg[0] >> 6) & 0x03U));
+}
+
 // 获取传感器过程数据
 uint8_t HAL_SG_SenSorAcquire(uint32_t *pSG_Data) 
 {
